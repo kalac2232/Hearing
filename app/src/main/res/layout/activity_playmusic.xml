@@ -175,6 +175,7 @@
                 android:src="@drawable/ic_playing_bar_play"/>
 
             <ImageView
+                android:id="@+id/iv_playmusic_nextbtn"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_weight="1"

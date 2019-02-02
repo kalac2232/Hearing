@@ -1,8 +1,12 @@
 package cn.kalac.hearing.activity;
 
-import android.media.AudioManager;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,7 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
@@ -20,6 +24,8 @@ import cn.kalac.hearing.javabean.song.SongDetailBean;
 import cn.kalac.hearing.javabean.song.SongMp3Bean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
+import cn.kalac.hearing.service.MusicBinder;
+import cn.kalac.hearing.service.PlayMusicService;
 
 
 /*
@@ -39,7 +45,14 @@ public class PlayMusicActivity extends BaseActivity {
     private ImageView mPlaybtn;
     private TextView mSongName;
     private TextView mSongAuthor;
-    private MediaPlayer mMediaPlayer;
+
+    private MusicBinder mMusicBinder;
+
+    //进度条下面的当前进度文字，将毫秒化为m:ss格式
+    private SimpleDateFormat time = new SimpleDateFormat("m:ss");
+
+    Handler mHandler = new Handler();
+    private View mNextbtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +84,8 @@ public class PlayMusicActivity extends BaseActivity {
         mPlayProgressSB = findViewById(R.id.sb_playmusic_playProgress);
         //音乐播放按钮
         mPlaybtn = findViewById(R.id.iv_playmusic_playbtn);
+        //下一首
+        mNextbtn = findViewById(R.id.iv_playmusic_nextbtn);
 
     }
 
@@ -79,43 +94,81 @@ public class PlayMusicActivity extends BaseActivity {
         mPlaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mMediaPlayer != null) {
-                    //如果正在播放
-                    if (mMediaPlayer.isPlaying()) {
-                        Log.i(TAG, "mMediaPlayer pause: ");
-                        mMediaPlayer.pause();
-                        mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play);
-                    } else {
-                        Log.i(TAG, "mMediaPlayer start: ");
-                        mMediaPlayer.start();
-                        mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause);
-                    }
+                //如果正在播放
+                if (mMusicBinder.isPlaying()) {
+                    //暂停播放
+                    mMusicBinder.pause();
+                    //更换图标
+                    mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play);
+                    //暂停刷新时间
+                    mHandler.removeCallbacks(mReFreshTime);
                 } else {
-                    Log.i(TAG, "mMediaPlayer null: ");
+                    //开始播放
+                    mMusicBinder.start();
+                    //更换图标
+                    mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause);
+                    //开始刷新
+                    mHandler.postDelayed(mReFreshTime,1000);
                 }
             }
         });
-        mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+        mPlayProgressSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                Log.i(TAG, "onBufferingUpdate: percent"+percent);
-                mPlayProgressSB.setSecondaryProgress(percent);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                //如果是人主动的拖拽
+                if (fromUser){
+                    mMusicBinder.seekToPositon(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
-
+        mNextbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play);
+                //获取歌曲详情
+                loadSongDetail(108402);
+                //获取歌曲
+                loadSongMp3(108402);
+            }
+        });
     }
 
     @Override
     protected void initData() {
-        //创建MediaPlayer对象
-        mMediaPlayer = new MediaPlayer();
-        Log.i(TAG, "mMediaPlayer Create Success: ");
+
+        Intent intent = new Intent(this, PlayMusicService.class);
+        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
         //获取歌曲详情
         loadSongDetail(108401);
         //获取歌曲
         loadSongMp3(108401);
 
+
     }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+            mMusicBinder = (MusicBinder) service;
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     /**
      * 通过歌曲id获取封面，歌曲名，歌手信息
@@ -145,7 +198,7 @@ public class PlayMusicActivity extends BaseActivity {
 
     /**
      * 加载mp3
-     * @param songId
+     * @param songId 歌曲id
      */
     private void loadSongMp3(int songId) {
         String url = ApiHelper.getSongMp3(songId);
@@ -159,14 +212,26 @@ public class PlayMusicActivity extends BaseActivity {
                     SongMp3Bean.DataBean dataBean = songMp3Bean.getData().get(0);
                     String mp3Url = dataBean.getUrl();
 
-                    try {
-                        mMediaPlayer.setDataSource(mp3Url);
-                        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);// 设置媒体流类型
-                        mMediaPlayer.prepare();
-                        Log.i(TAG, "mMediaPlayer setDataSource Success: ");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    mMusicBinder.setDataSource(mp3Url);
+                    
+                    mMusicBinder.setPreparedListener(new MusicBinder.OnPreparedListener() {
+                        @Override
+                        public void onPrepared() {
+                            Log.i(TAG, "onPrepared: ");
+                            int duration = mMusicBinder.getDuration();
+                            //设置seekbar总大小
+                            mPlayProgressSB.setMax(duration);
+                            //设置歌曲总时长
+                            String totalTime = time.format(duration);
+                            mTotalTimeTV.setText("0"+totalTime);
+                            //开始刷新
+                            mHandler.postDelayed(mReFreshTime,1000);
+                            //更改图标
+                            mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause);
+                        }
+                    });
+
+                    mMusicBinder.AutoPlay();
 
                 }
             }
@@ -180,7 +245,7 @@ public class PlayMusicActivity extends BaseActivity {
 
     /**
      * 显示获取到的面，歌曲名，歌手信息
-     * @param songsBean
+     * @param songsBean 歌曲id
      */
     private void showSongInfo(SongDetailBean.SongsBean songsBean) {
         //获取歌曲名称
@@ -201,5 +266,52 @@ public class PlayMusicActivity extends BaseActivity {
         Glide.with(mContext).load(picUrl).apply(options).into(mCoverIV);
         //设置背景封面
         Glide.with(mContext).load(picUrl).into(mBgCoverIV);
+    }
+
+    /**
+     * 用于刷新当前运行时间
+     */
+    Runnable mReFreshTime = new Runnable(){
+
+        @Override
+        public void run() {
+            mHandler.postDelayed(this,1000);
+            //获取当前播放的时长
+            int playPosition = mMusicBinder.getPlayPosition();
+            //设置给seekbar
+            mPlayProgressSB.setProgress(playPosition);
+            //转换时间，更新时间
+            String currentTime = time.format(playPosition);
+            mCurrentTimeTV.setText("0" + currentTime);
+
+        }
+    };
+
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        if (mMusicBinder != null && mMusicBinder.isPlaying()) {
+//            //停止刷新
+//            mHandler.removeCallbacks(mReFreshTime);
+//        }
+//
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if (mMusicBinder != null && mMusicBinder.isPlaying()) {
+//            //开始刷新
+//            mHandler.postDelayed(mReFreshTime,1000);
+//            mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause);
+//        }
+//    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacks(mReFreshTime);
+        mMusicBinder.closeMedia();
+        unbindService(mServiceConnection);
     }
 }

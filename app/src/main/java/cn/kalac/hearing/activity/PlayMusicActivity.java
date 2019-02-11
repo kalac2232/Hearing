@@ -38,7 +38,7 @@ public class PlayMusicActivity extends BaseActivity {
     private static final String TAG = "PlayMusicActivity";
     private ImageView mBgCoverIV;
 
-    private ImageView mCoverIV;
+    //private ImageView mCoverIV;
     private TextView mCurrentTimeTV;
     private TextView mTotalTimeTV;
     private SeekBar mPlayProgressSB;
@@ -48,8 +48,8 @@ public class PlayMusicActivity extends BaseActivity {
 
     private MusicBinder mMusicBinder;
 
-    //进度条下面的当前进度文字，将毫秒化为m:ss格式
-    private SimpleDateFormat time = new SimpleDateFormat("m:ss");
+    //进度条下面的当前进度文字，将毫秒化为mm:ss格式
+    private SimpleDateFormat time = new SimpleDateFormat("mm:ss");
 
     Handler mHandler = new Handler();
     private View mNextbtn;
@@ -71,7 +71,7 @@ public class PlayMusicActivity extends BaseActivity {
         //封面背景
         mBgCoverIV = findViewById(R.id.iv_playmusic_cover_bg);
         //封面
-        mCoverIV = findViewById(R.id.iv_playmusic_cover);
+        //mCoverIV = findViewById(R.id.iv_playmusic_cover);
         //音乐名称
         mSongName = findViewById(R.id.tv_playmusic_songName);
         //音乐作者
@@ -99,25 +99,32 @@ public class PlayMusicActivity extends BaseActivity {
                     //暂停播放
                     mMusicBinder.pause();
                     //更换图标
-                    mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play);
+                    mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play_selector);
                     //暂停刷新时间
                     mHandler.removeCallbacks(mReFreshTime);
                 } else {
                     //开始播放
                     mMusicBinder.start();
                     //更换图标
-                    mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause);
+                    mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause_selector);
                     //开始刷新
                     mHandler.postDelayed(mReFreshTime,1000);
                 }
             }
         });
+        /*
         mPlayProgressSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 //如果是人主动的拖拽
                 if (fromUser){
                     mMusicBinder.seekToPositon(progress);
+                    //刷新当前时间显示
+                    //获取当前播放的时长
+                    int playPosition = mMusicBinder.getPlayPosition();
+                    //转换时间，更新时间
+                    String currentTime = time.format(playPosition);
+                    mCurrentTimeTV.setText(currentTime);
                 }
             }
 
@@ -131,10 +138,11 @@ public class PlayMusicActivity extends BaseActivity {
 
             }
         });
+        */
         mNextbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play);
+                mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play_selector);
                 //获取歌曲详情
                 loadSongDetail(108402);
                 //获取歌曲
@@ -146,12 +154,12 @@ public class PlayMusicActivity extends BaseActivity {
     @Override
     protected void initData() {
 
-        Intent intent = new Intent(this, PlayMusicService.class);
-        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
-        //获取歌曲详情
-        loadSongDetail(108401);
-        //获取歌曲
-        loadSongMp3(108401);
+//        Intent intent = new Intent(this, PlayMusicService.class);
+//        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+//        //获取歌曲详情
+//        loadSongDetail(108401);
+//        //获取歌曲
+//        loadSongMp3(108401);
 
 
     }
@@ -223,11 +231,11 @@ public class PlayMusicActivity extends BaseActivity {
                             mPlayProgressSB.setMax(duration);
                             //设置歌曲总时长
                             String totalTime = time.format(duration);
-                            mTotalTimeTV.setText("0"+totalTime);
+                            mTotalTimeTV.setText(totalTime);
                             //开始刷新
                             mHandler.postDelayed(mReFreshTime,1000);
                             //更改图标
-                            mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause);
+                            mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause_selector);
                         }
                     });
 
@@ -259,11 +267,11 @@ public class PlayMusicActivity extends BaseActivity {
         //设置封面
         RequestOptions options = new RequestOptions()
                 .placeholder(R.drawable.ic_back_btn)//图片加载出来前，显示的图片
-                .fallback( R.drawable.ic_playing_bar_play) //url为空的时候,显示的图片
+                .fallback( R.drawable.ic_playing_bar_play_selector) //url为空的时候,显示的图片
                 .error(R.drawable.testfenmian);//图片加载失败后，显示的图片
 
 
-        Glide.with(mContext).load(picUrl).apply(options).into(mCoverIV);
+        //Glide.with(mContext).load(picUrl).apply(options).into(mCoverIV);
         //设置背景封面
         Glide.with(mContext).load(picUrl).into(mBgCoverIV);
     }
@@ -282,30 +290,30 @@ public class PlayMusicActivity extends BaseActivity {
             mPlayProgressSB.setProgress(playPosition);
             //转换时间，更新时间
             String currentTime = time.format(playPosition);
-            mCurrentTimeTV.setText("0" + currentTime);
+            mCurrentTimeTV.setText(currentTime);
 
         }
     };
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        if (mMusicBinder != null && mMusicBinder.isPlaying()) {
-//            //停止刷新
-//            mHandler.removeCallbacks(mReFreshTime);
-//        }
-//
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (mMusicBinder != null && mMusicBinder.isPlaying()) {
-//            //开始刷新
-//            mHandler.postDelayed(mReFreshTime,1000);
-//            mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause);
-//        }
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mMusicBinder != null && mMusicBinder.isPlaying()) {
+            //停止刷新
+            mHandler.removeCallbacks(mReFreshTime);
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mMusicBinder != null && mMusicBinder.isPlaying()) {
+            //开始刷新
+            mHandler.postDelayed(mReFreshTime,1000);
+            mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause_selector);
+        }
+    }
 
     @Override
     protected void onDestroy() {

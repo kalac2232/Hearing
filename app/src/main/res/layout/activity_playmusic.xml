@@ -6,13 +6,18 @@
     android:orientation="vertical">
 
     <ImageView
+
         android:id="@+id/iv_playmusic_cover_bg"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
+        android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:alpha="0.4"
-        />
+        android:src="@drawable/ic_playmusic_bg_default"
 
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#5000"/>
     <LinearLayout
         android:fitsSystemWindows="true"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -27,8 +32,8 @@
             >
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="15dp"
@@ -45,81 +50,75 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="我想念"
-                    android:textColor="#000"
-                    android:textSize="20sp"/>
-
-                <TextView
-                    android:id="@+id/tv_playmusic_songAuthor"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="22sp"/>
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_gravity="center"
-                    android:text="金志文"/>
+                    android:gravity="center"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tv_playmusic_songAuthor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="#ccc"
+                        android:textAlignment="center"
+                        android:text="金志文"/>
+                    <ImageView
+
+                        android:layout_width="10dp"
+                        android:layout_height="match_parent"
+                        android:alpha="0.9"
+                        android:src="@drawable/ic_playing_author_more"
+                        />
+                </LinearLayout>
+
             </LinearLayout>
         </RelativeLayout>
-
-        <LinearLayout
+        <ImageView
+            android:src="@drawable/center_white_view_liner_gradient"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="1dp"/>
+        <cn.kalac.hearing.view.RecordView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </cn.kalac.hearing.view.RecordView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical">
 
             <ImageView
-                android:id="@+id/iv_playmusic_cover"
-                android:layout_width="230dp"
-                android:layout_height="230dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="50dp"
-                android:background="@drawable/shape_for_elevation"
-                android:elevation="10dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_unlike_selector"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    android:text="我想念那个不下雪的冬天"/>
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_download_selector"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    android:textSize="16sp"
-                    android:textColor="#FF0008"
-                    android:text="我想念你躲在我围巾里面"/>
+            <ImageView
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    android:text="我想念我们取暖的咖啡店"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="80dp"
-                android:layout_marginRight="80dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="15dp"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_weight="1"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_fav_normal"
-                    />
-                <ImageView
-                    android:layout_weight="1"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_download_normal"
-                    />
-            </LinearLayout>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_comments_selector"/>
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_more_selector"/>
         </LinearLayout>
         <LinearLayout
             android:gravity="center"
@@ -132,6 +131,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:id="@+id/tv_playmusic_currentTime"
+                android:textColor="#eee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00:00"/>
@@ -139,10 +139,14 @@
                 android:layout_weight="10"
                 android:id="@+id/sb_playmusic_playProgress"
                 android:layout_width="0dp"
+                android:maxHeight="2dp"
+                android:thumb="@drawable/ic_playing_seekbar_thumb"
+                android:progressDrawable="@drawable/ic_playing_seekbar_background"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textColor="#eee"
                 android:id="@+id/tv_playmusic_totalTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -151,42 +155,39 @@
 
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical">
+
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_playing_bar_repeat"/>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_bar_repeat_listloop_selector"/>
 
             <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_playing_bar_prev"/>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_bar_prev_selector"/>
 
             <ImageView
                 android:id="@+id/iv_playmusic_playbtn"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_playing_bar_play"/>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_bar_play_selector"/>
 
             <ImageView
                 android:id="@+id/iv_playmusic_nextbtn"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_playing_bar_next"/>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_bar_next_selector"/>
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:padding="1dp"
-                android:src="@drawable/ic_playing_bar_list"/>
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_playing_bar_list_selector"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

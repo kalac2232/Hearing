@@ -13,11 +13,11 @@ import android.support.annotation.Nullable;
  */
 
 public class PlayMusicService extends Service {
-    private MusicBinder mBinder = new MusicBinder();
+    private MusicBinder mBinder ;
 
     @Override
     public void onCreate() {
-
+        mBinder = new MusicBinder(getApplicationContext());
         super.onCreate();
     }
 

@@ -9,6 +9,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_playing_needle"/>
+    <ImageView
+        android:id="@+id/iv_recordview_DiscBlackgound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"/>
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_recordview_record"
         android:layout_width="match_parent"

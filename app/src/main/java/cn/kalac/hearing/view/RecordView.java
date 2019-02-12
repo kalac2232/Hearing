@@ -1,12 +1,21 @@
 package cn.kalac.hearing.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import cn.kalac.hearing.R;
+import cn.kalac.hearing.utils.DisplayUtil;
 
 
 /*
@@ -16,6 +25,9 @@ import cn.kalac.hearing.R;
 public class RecordView extends RelativeLayout {
 
     private View mRootView;
+    private ImageView mIvNeedle;
+    private int mScreenWidth;
+    private int mScreenHeigth;
 
     public RecordView(Context context) {
         this(context,null);
@@ -34,5 +46,66 @@ public class RecordView extends RelativeLayout {
     private void initView(Context context) {
         // 导入布局
         mRootView = LayoutInflater.from(context).inflate(R.layout.recordview_layout, this, true);
+        //获取屏幕的宽高信息
+        mScreenHeigth = DisplayUtil.getScreenHeight(context);
+        mScreenWidth = DisplayUtil.getScreenWidth(context);
+        //初始化指针
+        initNeedle();
+        //初始化背景圆盘
+        initDiscBlackground();
+
+
+    }
+    private void initNeedle() {
+        //获取指针
+        mIvNeedle = mRootView.findViewById(R.id.iv_recordview_Needle);
+
+        int needleWidth = (int) (DisplayUtil.SCALE_NEEDLE_WIDTH * mScreenWidth);
+        int needleHeight = (int) (DisplayUtil.SCALE_NEEDLE_HEIGHT * mScreenHeigth);
+
+        /*设置手柄的外边距为负数，让其隐藏一部分*/
+        int marginTop = (int) (DisplayUtil.SCALE_NEEDLE_MARGIN_TOP * mScreenHeigth) * -1;
+        int marginLeft = (int) (DisplayUtil.SCALE_NEEDLE_MARGIN_LEFT * mScreenWidth);
+
+        Bitmap originBitmap = BitmapFactory.decodeResource(getResources(), R.drawable
+                .ic_playing_needle);
+        Bitmap bitmap = Bitmap.createScaledBitmap(originBitmap, needleWidth, needleHeight, false);
+
+        RelativeLayout.LayoutParams layoutParams = (LayoutParams) mIvNeedle.getLayoutParams();
+        layoutParams.setMargins(marginLeft, marginTop, 0, 0);
+
+        int pivotX = (int) (DisplayUtil.SCALE_NEEDLE_PIVOT_X * mScreenWidth);
+        int pivotY = (int) (DisplayUtil.SCALE_NEEDLE_PIVOT_Y * mScreenWidth);
+
+        mIvNeedle.setPivotX(pivotX);
+        mIvNeedle.setPivotY(pivotY);
+        mIvNeedle.setRotation(DisplayUtil.ROTATION_INIT_NEEDLE);
+        mIvNeedle.setImageBitmap(bitmap);
+        mIvNeedle.setLayoutParams(layoutParams);
+    }
+
+    /*得到唱盘背后半透明的圆形背景*/
+    private Drawable getDiscBlackgroundDrawable() {
+        int discSize = (int) (mScreenWidth * DisplayUtil.SCALE_DISC_SIZE);
+        Bitmap bitmapDisc = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R
+                .drawable.ic_playing_disc_blackground), discSize, discSize, false);
+        RoundedBitmapDrawable roundDiscDrawable = RoundedBitmapDrawableFactory.create
+                (getResources(), bitmapDisc);
+        return roundDiscDrawable;
+    }
+
+    /**
+     * 初始化背景圆盘
+     */
+    private void initDiscBlackground() {
+        ImageView mDiscBlackground = findViewById(R.id.iv_recordview_DiscBlackgound);
+        mDiscBlackground.setImageDrawable(getDiscBlackgroundDrawable());
+
+        int marginTop = (int) (DisplayUtil.SCALE_DISC_MARGIN_TOP * mScreenHeigth);
+        RelativeLayout.LayoutParams layoutParams = (LayoutParams) mDiscBlackground
+                .getLayoutParams();
+        layoutParams.setMargins(0, marginTop, 0, 0);
+
+        mDiscBlackground.setLayoutParams(layoutParams);
     }
 }

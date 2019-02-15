@@ -5,5 +5,5 @@ package cn.kalac.hearing.api;
  */
 
 class Api {
-    public static final String HostUrl = "http://59.110.213.97:3000/";
+    public static final String HostUrl = "http://59.110.213.97:3000";
 }

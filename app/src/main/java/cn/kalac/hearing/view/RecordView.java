@@ -3,18 +3,20 @@ package cn.kalac.hearing.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import cn.kalac.hearing.R;
+import cn.kalac.hearing.adapter.RecordViewAdapter;
 import cn.kalac.hearing.utils.DisplayUtil;
 
 
@@ -31,7 +33,6 @@ public class RecordView extends RelativeLayout {
 
     public RecordView(Context context) {
         this(context,null);
-
     }
 
     public RecordView(Context context, AttributeSet attrs) {
@@ -53,9 +54,16 @@ public class RecordView extends RelativeLayout {
         initNeedle();
         //初始化背景圆盘
         initDiscBlackground();
+        //初始化ViewPager
+        initViewPager();
 
 
     }
+
+
+    /**
+     * 初始化指针
+     */
     private void initNeedle() {
         //获取指针
         mIvNeedle = mRootView.findViewById(R.id.iv_recordview_Needle);
@@ -86,9 +94,9 @@ public class RecordView extends RelativeLayout {
 
     /*得到唱盘背后半透明的圆形背景*/
     private Drawable getDiscBlackgroundDrawable() {
-        int discSize = (int) (mScreenWidth * DisplayUtil.SCALE_DISC_SIZE);
+        int discSize = (int) (mScreenWidth * DisplayUtil.SCALE_DISC_BG_SIZE);
         Bitmap bitmapDisc = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R
-                .drawable.ic_playing_disc_blackground), discSize, discSize, false);
+                .drawable.ic_recordview_disc_blackground), discSize, discSize, false);
         RoundedBitmapDrawable roundDiscDrawable = RoundedBitmapDrawableFactory.create
                 (getResources(), bitmapDisc);
         return roundDiscDrawable;
@@ -101,11 +109,27 @@ public class RecordView extends RelativeLayout {
         ImageView mDiscBlackground = findViewById(R.id.iv_recordview_DiscBlackgound);
         mDiscBlackground.setImageDrawable(getDiscBlackgroundDrawable());
 
-        int marginTop = (int) (DisplayUtil.SCALE_DISC_MARGIN_TOP * mScreenHeigth);
+        int marginTop = (int) (DisplayUtil.SCALE_DISC_BG_MARGIN_TOP * mScreenHeigth);
         RelativeLayout.LayoutParams layoutParams = (LayoutParams) mDiscBlackground
                 .getLayoutParams();
         layoutParams.setMargins(0, marginTop, 0, 0);
 
         mDiscBlackground.setLayoutParams(layoutParams);
+    }
+
+    /**
+     * 初始化Viewpager
+     */
+    private void initViewPager() {
+        ViewPager mVpRecord = findViewById(R.id.vp_recordview_record);
+
+        RelativeLayout.LayoutParams layoutParams = (LayoutParams) mVpRecord.getLayoutParams();
+        int marginTop = (int) (DisplayUtil.SCALE_DISC_MARGIN_TOP * mScreenHeigth);
+        layoutParams.setMargins(0, marginTop, 0, 0);
+        mVpRecord.setLayoutParams(layoutParams);
+
+        //设置适配器
+        RecordViewAdapter recordViewAdapter = new RecordViewAdapter(getContext());
+        mVpRecord.setAdapter(recordViewAdapter);
     }
 }

@@ -1,9 +1,10 @@
 package cn.kalac.hearing.activity;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.MediaPlayer;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -14,6 +15,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.text.SimpleDateFormat;
@@ -26,6 +28,8 @@ import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.MusicBinder;
 import cn.kalac.hearing.service.PlayMusicService;
+import cn.kalac.hearing.utils.DisplayUtil;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 
 /*
@@ -36,6 +40,8 @@ import cn.kalac.hearing.service.PlayMusicService;
 public class PlayMusicActivity extends BaseActivity {
 
     private static final String TAG = "PlayMusicActivity";
+
+
     private ImageView mBgCoverIV;
 
     //private ImageView mCoverIV;
@@ -112,7 +118,7 @@ public class PlayMusicActivity extends BaseActivity {
                 }
             }
         });
-        /*
+
         mPlayProgressSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -138,15 +144,15 @@ public class PlayMusicActivity extends BaseActivity {
 
             }
         });
-        */
+
         mNextbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play_selector);
                 //获取歌曲详情
-                loadSongDetail(108402);
+                loadSongDetail(108404);
                 //获取歌曲
-                loadSongMp3(108402);
+                loadSongMp3(108404);
             }
         });
     }
@@ -154,12 +160,12 @@ public class PlayMusicActivity extends BaseActivity {
     @Override
     protected void initData() {
 
-//        Intent intent = new Intent(this, PlayMusicService.class);
-//        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
-//        //获取歌曲详情
-//        loadSongDetail(108401);
-//        //获取歌曲
-//        loadSongMp3(108401);
+        Intent intent = new Intent(this, PlayMusicService.class);
+        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+        //获取歌曲详情
+        loadSongDetail(108403);
+        //获取歌曲
+        loadSongMp3(108403);
 
 
     }
@@ -183,9 +189,9 @@ public class PlayMusicActivity extends BaseActivity {
      * @param songId id
      */
     private void loadSongDetail(int songId) {
-        String url = ApiHelper.getSongDetail(songId);
+        String url = ApiHelper.getSongDetailUrl(songId);
 
-        HttpHelper.getInstance().get(url, null, new HttpCallback<SongDetailBean>() {
+        HttpHelper.getInstance().get(url, new HttpCallback<SongDetailBean>() {
 
             @Override
             public void onSuccess(SongDetailBean songDetailBean) {
@@ -193,7 +199,6 @@ public class PlayMusicActivity extends BaseActivity {
                 if (code == 200) {
                     SongDetailBean.SongsBean songsBean = songDetailBean.getSongs().get(0);
                     showSongInfo(songsBean);
-
                 }
             }
 
@@ -209,15 +214,19 @@ public class PlayMusicActivity extends BaseActivity {
      * @param songId 歌曲id
      */
     private void loadSongMp3(int songId) {
-        String url = ApiHelper.getSongMp3(songId);
+        String url = ApiHelper.getSongMp3Url(songId);
 
-        HttpHelper.getInstance().get(url, null, new HttpCallback<SongMp3Bean>() {
+        HttpHelper.getInstance().get(url, new HttpCallback<SongMp3Bean>() {
 
             @Override
             public void onSuccess(SongMp3Bean songMp3Bean) {
                 int code = songMp3Bean.getCode();
                 if (code == 200) {
                     SongMp3Bean.DataBean dataBean = songMp3Bean.getData().get(0);
+                    //判断是否成功获取到了mp3地址 (有可能出现这个歌曲没有版权而导致无法获取到地址)
+                    if (dataBean.getCode() != 200) {
+                        return;
+                    }
                     String mp3Url = dataBean.getUrl();
 
                     mMusicBinder.setDataSource(mp3Url);
@@ -272,8 +281,11 @@ public class PlayMusicActivity extends BaseActivity {
 
 
         //Glide.with(mContext).load(picUrl).apply(options).into(mCoverIV);
+        //设置模糊效果
+        RequestOptions requestOptions = new RequestOptions().transform(
+                new BlurTransformation(25,3));
         //设置背景封面
-        Glide.with(mContext).load(picUrl).into(mBgCoverIV);
+        Glide.with(mContext).load(picUrl).apply(requestOptions).into(mBgCoverIV);
     }
 
     /**
@@ -321,5 +333,34 @@ public class PlayMusicActivity extends BaseActivity {
         mHandler.removeCallbacks(mReFreshTime);
         mMusicBinder.closeMedia();
         unbindService(mServiceConnection);
+    }
+
+    class CropBlurTransformation extends BlurTransformation{
+        public CropBlurTransformation() {
+        }
+
+        public CropBlurTransformation(int radius) {
+            super(radius);
+        }
+
+        public CropBlurTransformation(int radius, int sampling) {
+            super(radius, sampling);
+        }
+
+        @Override
+        protected Bitmap transform(Context context, BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+            /*得到屏幕的宽高比，以便按比例切割图片一部分*/
+            final float screenScale = (float) (DisplayUtil.getScreenWidth(mContext) * 1.0 / DisplayUtil.getScreenHeight(mContext) * 1.0);
+
+            int cropBitmapWidth = (int) (screenScale * toTransform.getHeight());
+            int cropBitmapWidthX = (int) ((toTransform.getWidth() - cropBitmapWidth) / 2.0);
+
+            /*切割部分图片*/
+            Bitmap cropBitmap = Bitmap.createBitmap(toTransform, cropBitmapWidthX, 0, cropBitmapWidth, toTransform.getHeight());
+            /*缩小图片*/
+//            Bitmap scaleBitmap = Bitmap.createScaledBitmap(cropBitmap, toTransform.getWidth() / 50, toTransform
+//                    .getHeight() / 50, false);
+            return super.transform(context, pool, cropBitmap, outWidth, outHeight);
+        }
     }
 }

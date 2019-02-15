@@ -9,7 +9,7 @@ import java.util.Map;
 public interface IHttpProcessor {
 
     // Get
-    void get(String url, Map<String, Object> params, ICallBack callBack);
+    void get(String url, ICallBack callBack);
     //Post
     void post(String url, Map<String, Object> params, ICallBack callBack);
     //Update

@@ -8,30 +8,53 @@ import android.os.Handler;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class OkHttpProcessor implements IHttpProcessor {
-    private final String TAG = "OkHttpProcessor";
 
     private OkHttpClient mOkHttpClient;
 
     private Handler myHandler;
 
+    List<Cookie> mCookies = new ArrayList<>();
     public OkHttpProcessor() {
-        mOkHttpClient = new OkHttpClient();
+        //创建cookieJar 用来保存登录的状态
+        CookieJar cookieJar = new CookieJar(){
+            @Override
+            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                mCookies = cookies;
+            }
+
+            @Override
+            public List<Cookie> loadForRequest(HttpUrl url) {
+                return mCookies;
+            }
+        };
+        //通过newBuilder设置cookjar并构建OkHttpClient对象
+        mOkHttpClient = new OkHttpClient()
+                .newBuilder()
+                .cookieJar(cookieJar)
+                .build();
+
         myHandler = new Handler();
     }
 
     @Override
-    public void get(String url, Map<String, Object> params, final ICallBack callBack) {
+    public void get(String url, final ICallBack callBack) {
+
         final Request request = new Request.Builder()
                 .get()
                 .url(url)
@@ -55,7 +78,6 @@ public class OkHttpProcessor implements IHttpProcessor {
                     });
 
                 } else {
-
                     myHandler.post(new Runnable() {
                         @Override
                         public void run() {

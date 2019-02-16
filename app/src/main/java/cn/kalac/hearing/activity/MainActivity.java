@@ -4,7 +4,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.HashMap;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
@@ -26,7 +27,7 @@ public class MainActivity extends BaseActivity {
     }
 
     protected void initData() {
-
+        refreshLoginState();
     }
 
     @Override
@@ -62,12 +63,12 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 String url = ApiHelper.getRecommendSongsUrl();
                 Log.i(TAG, "onClick: "+url);
-                HttpHelper.getInstance().get(url, new HttpCallback<String>() {
+                HttpHelper.getInstance().get(url, new HttpCallback<RecommendSongsBean>() {
 
                     @Override
-                    public void onSuccess(String recommendSongsBean) {
-                        //Toast.makeText(mContext,"获取了"+recommendSongsBean.getRecommend().size()+"个数据",Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "onSuccess: "+recommendSongsBean);
+                    public void onSuccess(RecommendSongsBean recommendSongsBean) {
+                        Toast.makeText(mContext,"获取了"+recommendSongsBean.getRecommend().size()+"个数据",Toast.LENGTH_SHORT).show();
+                        //Log.i(TAG, "onSuccess: "+recommendSongsBean);
                     }
 
                     @Override
@@ -85,5 +86,38 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 刷新登录状态
+     */
+    private void refreshLoginState() {
+        String url = ApiHelper.getRefreshUrl();
+
+        HttpHelper.getInstance().get(url, new HttpCallback<String>() {
+
+            @Override
+            public void onSuccess(String s) {
+
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(s);
+                    int code = jsonObject.getInt("code");
+                    if (code == 200) {
+                        Toast.makeText(mContext,"刷新登录状态成功"+s,Toast.LENGTH_SHORT).show();
+                    } else {
+                        String msg = jsonObject.getString("msg");
+                        Toast.makeText(mContext,msg + s,Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailed(String string) {
+                Toast.makeText(mContext,"刷新登录状态错误"+string,Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }

@@ -4,6 +4,7 @@ package cn.kalac.hearing.net;
  * Created by Kalac on 2019/2/1
  */
 
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cn.kalac.hearing.HearingApplication;
+import cn.kalac.hearing.net.cookies.PersistentCookieStore;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Cookie;
@@ -27,20 +30,29 @@ public class OkHttpProcessor implements IHttpProcessor {
 
     private OkHttpClient mOkHttpClient;
 
+    /**
+     * 用于将结果数据post到主线程
+     */
     private Handler myHandler;
 
-    List<Cookie> mCookies = new ArrayList<>();
-    public OkHttpProcessor() {
+    public OkHttpProcessor(Context context) {
+
+        final PersistentCookieStore cookieStore = new PersistentCookieStore(context);
+
         //创建cookieJar 用来保存登录的状态
         CookieJar cookieJar = new CookieJar(){
             @Override
             public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                mCookies = cookies;
+                if (cookies != null && cookies.size() > 0) {
+                    for (Cookie item : cookies) {
+                        cookieStore.add(url, item);
+                    }
+                }
             }
-
             @Override
             public List<Cookie> loadForRequest(HttpUrl url) {
-                return mCookies;
+                List<Cookie> cookies = cookieStore.get(url);
+                return cookies;
             }
         };
         //通过newBuilder设置cookjar并构建OkHttpClient对象

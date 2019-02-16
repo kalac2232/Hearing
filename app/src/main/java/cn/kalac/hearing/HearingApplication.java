@@ -14,6 +14,7 @@ public class HearingApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        HttpHelper.init(new OkHttpProcessor());
+        //初始化httpHelper 使用okhttp完成网络请求
+        HttpHelper.init(new OkHttpProcessor(this));
     }
 }

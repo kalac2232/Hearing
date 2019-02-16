@@ -1,6 +1,7 @@
 package cn.kalac.hearing.javabean;
 
-/*
+/**
+ * 日推javabean
  * Created by Kalac on 2019/2/15
  */
 
@@ -946,7 +947,6 @@ public class RecommendSongsBean {
             private int dfsId;
             private int bitrate;
             private int playTime;
-            private int volumeDelta;
 
             public Object getName() {
                 return name;
@@ -1012,13 +1012,6 @@ public class RecommendSongsBean {
                 this.playTime = playTime;
             }
 
-            public int getVolumeDelta() {
-                return volumeDelta;
-            }
-
-            public void setVolumeDelta(int volumeDelta) {
-                this.volumeDelta = volumeDelta;
-            }
         }
 
         public static class MMusicBean {
@@ -1042,7 +1035,6 @@ public class RecommendSongsBean {
             private int dfsId;
             private int bitrate;
             private int playTime;
-            private int volumeDelta;
 
             public Object getName() {
                 return name;
@@ -1108,13 +1100,6 @@ public class RecommendSongsBean {
                 this.playTime = playTime;
             }
 
-            public int getVolumeDelta() {
-                return volumeDelta;
-            }
-
-            public void setVolumeDelta(int volumeDelta) {
-                this.volumeDelta = volumeDelta;
-            }
         }
 
         public static class LMusicBean {
@@ -1138,7 +1123,7 @@ public class RecommendSongsBean {
             private int dfsId;
             private int bitrate;
             private int playTime;
-            private int volumeDelta;
+
 
             public Object getName() {
                 return name;
@@ -1204,13 +1189,6 @@ public class RecommendSongsBean {
                 this.playTime = playTime;
             }
 
-            public int getVolumeDelta() {
-                return volumeDelta;
-            }
-
-            public void setVolumeDelta(int volumeDelta) {
-                this.volumeDelta = volumeDelta;
-            }
         }
 
         public static class BMusicBean {
@@ -1234,7 +1212,7 @@ public class RecommendSongsBean {
             private int dfsId;
             private int bitrate;
             private int playTime;
-            private int volumeDelta;
+
 
             public Object getName() {
                 return name;
@@ -1300,13 +1278,6 @@ public class RecommendSongsBean {
                 this.playTime = playTime;
             }
 
-            public int getVolumeDelta() {
-                return volumeDelta;
-            }
-
-            public void setVolumeDelta(int volumeDelta) {
-                this.volumeDelta = volumeDelta;
-            }
         }
 
         public static class PrivilegeBean {

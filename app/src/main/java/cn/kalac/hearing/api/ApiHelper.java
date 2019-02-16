@@ -14,6 +14,13 @@ public class ApiHelper {
         return url;
     }
     /**
+     * 刷新用户状态
+     */
+    public static String getRefreshUrl(){
+        String url = Api.HostUrl + "/login/refresh";
+        return url;
+    }
+    /**
      * 获取每日推荐歌曲
      */
     public static String getRecommendSongsUrl(){

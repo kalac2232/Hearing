@@ -1,13 +1,9 @@
 package cn.kalac.hearing.activity;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,10 +16,10 @@ import com.bumptech.glide.request.RequestOptions;
 
 import java.text.SimpleDateFormat;
 
+import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.song.SongDetailBean;
-import cn.kalac.hearing.javabean.song.SongMp3Bean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.MusicBinder;
@@ -60,11 +56,19 @@ public class PlayMusicActivity extends BaseActivity {
     Handler mHandler = new Handler();
     private View mNextbtn;
 
+    private boolean isMusicPlaying = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //播放音乐
+        sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_PLAY);
 
+    }
 
+    @Override
+    public boolean registerReciver() {
+        return true;
     }
 
     @Override
@@ -100,21 +104,10 @@ public class PlayMusicActivity extends BaseActivity {
         mPlaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //如果正在播放
-                if (mMusicBinder.isPlaying()) {
-                    //暂停播放
-                    mMusicBinder.pause();
-                    //更换图标
-                    mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play_selector);
-                    //暂停刷新时间
-                    mHandler.removeCallbacks(mReFreshTime);
+                if (isMusicPlaying) {
+                    sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_PAUSE);
                 } else {
-                    //开始播放
-                    mMusicBinder.start();
-                    //更换图标
-                    mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause_selector);
-                    //开始刷新
-                    mHandler.postDelayed(mReFreshTime,1000);
+                    sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_PLAY);
                 }
             }
         });
@@ -148,11 +141,10 @@ public class PlayMusicActivity extends BaseActivity {
         mNextbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play_selector);
+                sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_NEXT);
                 //获取歌曲详情
-                loadSongDetail(108404);
-                //获取歌曲
-                loadSongMp3(108404);
+                //loadSongDetail(108404);
+
             }
         });
     }
@@ -160,29 +152,12 @@ public class PlayMusicActivity extends BaseActivity {
     @Override
     protected void initData() {
 
-        Intent intent = new Intent(this, PlayMusicService.class);
-        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
-        //获取歌曲详情
-        loadSongDetail(108403);
-        //获取歌曲
-        loadSongMp3(108403);
-
+        //Intent intent = new Intent(this, PlayMusicService.class);
+        //bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
 
     }
 
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
 
-            mMusicBinder = (MusicBinder) service;
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
 
     /**
      * 通过歌曲id获取封面，歌曲名，歌手信息
@@ -209,56 +184,6 @@ public class PlayMusicActivity extends BaseActivity {
         });
     }
 
-    /**
-     * 加载mp3
-     * @param songId 歌曲id
-     */
-    private void loadSongMp3(int songId) {
-        String url = ApiHelper.getSongMp3Url(songId);
-
-        HttpHelper.getInstance().get(url, new HttpCallback<SongMp3Bean>() {
-
-            @Override
-            public void onSuccess(SongMp3Bean songMp3Bean) {
-                int code = songMp3Bean.getCode();
-                if (code == 200) {
-                    SongMp3Bean.DataBean dataBean = songMp3Bean.getData().get(0);
-                    //判断是否成功获取到了mp3地址 (有可能出现这个歌曲没有版权而导致无法获取到地址)
-                    if (dataBean.getCode() != 200) {
-                        return;
-                    }
-                    String mp3Url = dataBean.getUrl();
-
-                    mMusicBinder.setDataSource(mp3Url);
-                    
-                    mMusicBinder.setPreparedListener(new MusicBinder.OnPreparedListener() {
-                        @Override
-                        public void onPrepared() {
-                            Log.i(TAG, "onPrepared: ");
-                            int duration = mMusicBinder.getDuration();
-                            //设置seekbar总大小
-                            mPlayProgressSB.setMax(duration);
-                            //设置歌曲总时长
-                            String totalTime = time.format(duration);
-                            mTotalTimeTV.setText(totalTime);
-                            //开始刷新
-                            mHandler.postDelayed(mReFreshTime,1000);
-                            //更改图标
-                            mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause_selector);
-                        }
-                    });
-
-                    mMusicBinder.AutoPlay();
-
-                }
-            }
-
-            @Override
-            public void onFailed(String string) {
-                Log.i(TAG, "onFailed: "+string);
-            }
-        });
-    }
 
     /**
      * 显示获取到的面，歌曲名，歌手信息
@@ -286,6 +211,40 @@ public class PlayMusicActivity extends BaseActivity {
                 new BlurTransformation(25,3));
         //设置背景封面
         Glide.with(mContext).load(picUrl).apply(requestOptions).into(mBgCoverIV);
+    }
+
+    /**
+     * 歌曲状态转到了播放状态
+     */
+    @Override
+    protected void musicStatusToPlay() {
+        Log.i(TAG, "musicStatusToPlay: ");
+        //更改图片
+        mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause_selector);
+        //更改状态
+        isMusicPlaying = true;
+
+
+
+    }
+
+    @Override
+    protected void musicStatusToPause() {
+        Log.i(TAG, "musicStatusToPause: ");
+        //更改图片
+        mPlaybtn.setImageResource(R.drawable.ic_playing_bar_play_selector);
+
+        isMusicPlaying = false;
+    }
+
+    @Override
+    protected void musicComplete() {
+        Log.i(TAG, "musicComplete: ");
+        //获取当前播放的歌曲id
+        Integer songId = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+        //获取歌曲详情
+        loadSongDetail(songId);
+
     }
 
     /**
@@ -331,36 +290,7 @@ public class PlayMusicActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacks(mReFreshTime);
-        mMusicBinder.closeMedia();
-        unbindService(mServiceConnection);
+
     }
 
-    class CropBlurTransformation extends BlurTransformation{
-        public CropBlurTransformation() {
-        }
-
-        public CropBlurTransformation(int radius) {
-            super(radius);
-        }
-
-        public CropBlurTransformation(int radius, int sampling) {
-            super(radius, sampling);
-        }
-
-        @Override
-        protected Bitmap transform(Context context, BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
-            /*得到屏幕的宽高比，以便按比例切割图片一部分*/
-            final float screenScale = (float) (DisplayUtil.getScreenWidth(mContext) * 1.0 / DisplayUtil.getScreenHeight(mContext) * 1.0);
-
-            int cropBitmapWidth = (int) (screenScale * toTransform.getHeight());
-            int cropBitmapWidthX = (int) ((toTransform.getWidth() - cropBitmapWidth) / 2.0);
-
-            /*切割部分图片*/
-            Bitmap cropBitmap = Bitmap.createBitmap(toTransform, cropBitmapWidthX, 0, cropBitmapWidth, toTransform.getHeight());
-            /*缩小图片*/
-//            Bitmap scaleBitmap = Bitmap.createScaledBitmap(cropBitmap, toTransform.getWidth() / 50, toTransform
-//                    .getHeight() / 50, false);
-            return super.transform(context, pool, cropBitmap, outWidth, outHeight);
-        }
-    }
 }

@@ -8,6 +8,11 @@ import cn.kalac.hearing.R;
 
 public class LoginActivity extends BaseActivity {
     @Override
+    public boolean registerReciver() {
+        return false;
+    }
+
+    @Override
     protected int getLayoutResID() {
         return R.layout.activity_login;
     }

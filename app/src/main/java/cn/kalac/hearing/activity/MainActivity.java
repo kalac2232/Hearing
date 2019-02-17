@@ -7,12 +7,17 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.LoginResultBean;
 import cn.kalac.hearing.javabean.RecommendSongsBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
+import cn.kalac.hearing.service.PlayMusicService;
 
 public class MainActivity extends BaseActivity {
 
@@ -22,12 +27,20 @@ public class MainActivity extends BaseActivity {
     private View mBtnJump;
 
     @Override
+    public boolean registerReciver() {
+        return true;
+    }
+
+    @Override
     protected int getLayoutResID() {
         return R.layout.activity_main;
     }
 
     protected void initData() {
+        //刷新登录状态
         refreshLoginState();
+        //初始化服务
+        initService();
     }
 
     @Override
@@ -67,8 +80,13 @@ public class MainActivity extends BaseActivity {
 
                     @Override
                     public void onSuccess(RecommendSongsBean recommendSongsBean) {
-                        Toast.makeText(mContext,"获取了"+recommendSongsBean.getRecommend().size()+"个数据",Toast.LENGTH_SHORT).show();
+                        List<RecommendSongsBean.RecommendBean> recommendSongBeanList = recommendSongsBean.getRecommend();
+                        Toast.makeText(mContext,"获取了"+recommendSongBeanList.size()+"个数据",Toast.LENGTH_SHORT).show();
                         //Log.i(TAG, "onSuccess: "+recommendSongsBean);
+                        //提取日推列表中歌曲的id方便进行播放
+                        extractSongIdFromRecommendList(recommendSongBeanList);
+                        //设置将从第一个开始播放
+                        HearingApplication.mCurrentPlayPos = 1;
                     }
 
                     @Override
@@ -84,6 +102,30 @@ public class MainActivity extends BaseActivity {
                 startActivty(PlayMusicActivity.class);
             }
         });
+    }
+
+    /**
+     * 初始化播放service
+     */
+    private void initService() {
+        startService(PlayMusicService.class);
+    }
+
+    /**
+     * 提取日推列表中歌曲的id方便进行播放
+     * @param recommendSongBeanList 日推列表
+     */
+    private void extractSongIdFromRecommendList(List<RecommendSongsBean.RecommendBean> recommendSongBeanList) {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (RecommendSongsBean.RecommendBean bean : recommendSongBeanList) {
+            list.add(bean.getId());
+        }
+        if (list.size() > 0) {
+            //将数据存放到application中用于全局使用
+            HearingApplication.mPlayingSongList.clear();
+            HearingApplication.mPlayingSongList.addAll(list);
+
+        }
     }
 
     /**
@@ -119,5 +161,6 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
 
 }

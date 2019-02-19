@@ -15,6 +15,7 @@ import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.LoginResultBean;
 import cn.kalac.hearing.javabean.RecommendSongsBean;
+import cn.kalac.hearing.javabean.song.Song;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.PlayMusicService;
@@ -86,7 +87,7 @@ public class MainActivity extends BaseActivity {
                         //提取日推列表中歌曲的id方便进行播放
                         extractSongIdFromRecommendList(recommendSongBeanList);
                         //设置将从第一个开始播放
-                        HearingApplication.mCurrentPlayPos = 1;
+                        HearingApplication.mCurrentPlayPos = 0;
                     }
 
                     @Override
@@ -116,9 +117,13 @@ public class MainActivity extends BaseActivity {
      * @param recommendSongBeanList 日推列表
      */
     private void extractSongIdFromRecommendList(List<RecommendSongsBean.RecommendBean> recommendSongBeanList) {
-        ArrayList<Integer> list = new ArrayList<>();
+        ArrayList<Song> list = new ArrayList<>();
         for (RecommendSongsBean.RecommendBean bean : recommendSongBeanList) {
-            list.add(bean.getId());
+            int songId = bean.getId();
+            String songName = bean.getName();
+            String singerName = bean.getArtists().get(0).getName();
+            String picUrl = bean.getAlbum().getPicUrl();
+            list.add(new Song(songId,songName,singerName,picUrl));
         }
         if (list.size() > 0) {
             //将数据存放到application中用于全局使用

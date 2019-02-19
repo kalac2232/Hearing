@@ -6,7 +6,7 @@ package cn.kalac.hearing.javabean.song;
 
 import java.util.List;
 
-public class SongMp3Bean {
+public class SongMp3ResultBean {
 
     /**
      * data : [{"id":33894312,"url":"http://m10.music.126.net/20190202151651/1b09c6bafea535cdf030675e4c4adfab/ymusic/0fd6/4f65/43ed/a8772889f38dfcb91c04da915b301617.mp3","br":320000,"size":10691439,"md5":"a8772889f38dfcb91c04da915b301617","code":200,"expi":1200,"type":"mp3","gain":-2.0E-4,"fee":0,"uf":null,"payed":0,"flag":0,"canExtend":false,"freeTrialInfo":null}]

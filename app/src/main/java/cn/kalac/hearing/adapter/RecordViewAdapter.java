@@ -4,11 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Rect;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.PagerAdapter;
@@ -19,16 +20,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 
 import java.security.MessageDigest;
 
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.song.SongDetailBean;
+import cn.kalac.hearing.javabean.song.Song;
+import cn.kalac.hearing.javabean.song.SongDetailResultBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.utils.DisplayUtil;
@@ -44,6 +50,7 @@ public class RecordViewAdapter extends PagerAdapter {
 
     private static final String TAG = "RecordViewAdapter";
     private ImageView mCoverImageView;
+
 
     public RecordViewAdapter(Context context) {
         mContext = context;
@@ -65,16 +72,26 @@ public class RecordViewAdapter extends PagerAdapter {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_recordview_viewpager_layout, container, false);
         mCoverImageView = view.findViewById(R.id.iv_recordview_Album);
 
-        ImageView discImageView = view.findViewById(R.id.iv_recordview_Disc);
         //获取当前播放的歌曲id
-        Integer songId = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos + position);
 
-        //loadSongDetail(songId);
-        String url = "https://p2.music.126.net/TwAneq36w2qHc3CPGQyvtw==/19078725765198700.jpg";
-        Glide.with(mContext).load(url).into(mCoverImageView);
-        //获取唱片图片
-        Bitmap bitmap = getDiscBitmap();
-        discImageView.setImageBitmap(bitmap);
+//        int discSize = (int) (DisplayUtil.getScreenWidth(mContext) * DisplayUtil.SCALE_DISC_SIZE);
+//        Bitmap bitmapDefault = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(), R
+//                .drawable.ic_recordview_album_default), discSize, discSize, false);
+//
+//        RoundedBitmapDrawable defaultDrawable = RoundedBitmapDrawableFactory.create
+//                (mContext.getResources(), bitmapDefault);
+
+
+        RequestOptions requestOptions = new RequestOptions()
+                .transform(new CompositeCoverTransformation())
+                .placeholder(R.drawable.ic_recordview_album_default)//图片加载出来前，显示的图片
+                .fallback( R.drawable.ic_recordview_album_default) //url为空的时候,显示的图片
+                .error(R.drawable.ic_recordview_album_default);//图片加载失败后，显示的图片
+        Glide.with(mContext)
+                .load(song.getPicUrl())
+                .apply(requestOptions)
+                .into(mCoverImageView);
         container.addView(view);
         return view;
     }
@@ -85,44 +102,12 @@ public class RecordViewAdapter extends PagerAdapter {
 
     }
 
-    /**
-     * 通过歌曲id获取封面，歌曲名，歌手信息
-     * @param songId id
-     */
-    private void loadSongDetail(int songId) {
-        String url = ApiHelper.getSongDetailUrl(songId);
-
-        HttpHelper.getInstance().get(url, new HttpCallback<SongDetailBean>() {
-
-            @Override
-            public void onSuccess(SongDetailBean songDetailBean) {
-                int code = songDetailBean.getCode();
-                if (code == 200) {
-                    SongDetailBean.SongsBean songsBean = songDetailBean.getSongs().get(0);
-                    //获取封面地址
-                    String picUrl = songsBean.getAl().getPicUrl();
-                    Log.i(TAG, "onSuccess: picurl"+picUrl);
-                    RequestOptions requestOptions = new RequestOptions()
-                            .placeholder(R.drawable.ic_recordview_album_default)//图片加载出来前，显示的图片
-                            .fallback( R.drawable.ic_recordview_album_default) //url为空的时候,显示的图片
-                            .error(R.drawable.ic_recordview_album_default);//图片加载失败后，显示的图片
-
-                    Glide.with(mContext).load(picUrl).apply(requestOptions).into(mCoverImageView);
-                }
-            }
-
-            @Override
-            public void onFailed(String string) {
-                Log.i(TAG, "onFailed: "+string);
-            }
-        });
-    }
 
     class CompositeCoverTransformation extends BitmapTransformation{
 
         @Override
         protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
-            return toTransform;
+            return getDiscBitmap(toTransform);
         }
 
         @Override
@@ -135,40 +120,51 @@ public class RecordViewAdapter extends PagerAdapter {
      * 得到唱盘图片
      * 唱盘图片由空心圆盘及音乐专辑图片“合成”得到
      */
-    private Bitmap getDiscBitmap() {
+    private Bitmap getDiscBitmap(Bitmap musicPicBitmap) {
         int discSize = (int) (DisplayUtil.getScreenWidth(mContext) * DisplayUtil.SCALE_DISC_SIZE);
-
+        int musicPicSize = (int) (DisplayUtil.getScreenWidth(mContext) * DisplayUtil.SCALE_MUSIC_PIC_SIZE);
+        //获得专辑背景圆环
         Bitmap bitmapDisc = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(), R
                 .drawable.ic_recordview_disc), discSize, discSize, false);
+        //缩放专辑图片
+        Bitmap bitmapMusicPic = Bitmap.createScaledBitmap(musicPicBitmap, musicPicSize, musicPicSize, true);
+        BitmapDrawable discDrawable = new BitmapDrawable(bitmapDisc);
+        RoundedBitmapDrawable roundMusicDrawable = RoundedBitmapDrawableFactory.create
+                (mContext.getResources(), bitmapMusicPic);
 
-        return bitmapDisc;
+        //抗锯齿
+        discDrawable.setAntiAlias(true);
+        roundMusicDrawable.setAntiAlias(true);
+
+        Drawable[] drawables = new Drawable[2];
+        drawables[0] = roundMusicDrawable;
+        drawables[1] = discDrawable;
+
+        LayerDrawable layerDrawable = new LayerDrawable(drawables);
+        int musicPicMargin = (int) ((DisplayUtil.SCALE_DISC_SIZE - DisplayUtil
+                .SCALE_MUSIC_PIC_SIZE) * DisplayUtil.getScreenWidth(mContext) / 2);
+        //调整专辑图片的四周边距，让其显示在正中
+        layerDrawable.setLayerInset(0, musicPicMargin, musicPicMargin, musicPicMargin,
+                musicPicMargin);
+
+        return drawableToBitmap(layerDrawable);
     }
 
+
     /**
-     * 获取专辑图片
-     * @param musicPicSize
-     * @param musicPicRes
-     * @return
+     * drawable转为bitmap
+     * @param drawable 要转的drawable
+     * @return 转换成的bitmap
      */
-    private Bitmap getMusicPicBitmap(int musicPicSize, int musicPicRes) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-
-        BitmapFactory.decodeResource(mContext.getResources(),musicPicRes,options);
-        int imageWidth = options.outWidth;
-
-        int sample = imageWidth / musicPicSize;
-        int dstSample = 1;
-        if (sample > dstSample) {
-            dstSample = sample;
-        }
-        options.inJustDecodeBounds = false;
-        //设置图片采样率
-        options.inSampleSize = dstSample;
-        //设置图片解码格式
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-
-        return Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(),
-                musicPicRes, options), musicPicSize, musicPicSize, true);
+    public Bitmap drawableToBitmap(Drawable drawable) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565
+        );
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return bitmap;
     }
 }

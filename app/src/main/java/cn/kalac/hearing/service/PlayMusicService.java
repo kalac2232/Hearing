@@ -15,7 +15,8 @@ import java.io.IOException;
 
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.song.SongMp3Bean;
+import cn.kalac.hearing.javabean.song.Song;
+import cn.kalac.hearing.javabean.song.SongMp3ResultBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 
@@ -113,7 +114,8 @@ public class PlayMusicService extends Service {
             mIsMusicPause = false;
         } else {
             //获取当前要播放的songid
-            Integer songid = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+            Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+            int songid = song.getSongId();
             //如果当前记录的播放id和要播放的id相同，说明是之前已经播放过得，但是暂停了，只需要直接调用start即可
             if (mCurrentSongID == songid) {
                 mMediaPlayer.start();
@@ -163,9 +165,9 @@ public class PlayMusicService extends Service {
 
         HearingApplication.mCurrentPlayPos++;
         //获取当前要播放的songid
-        Integer songid = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
 
-        loadSongMp3(songid);
+        loadSongMp3(song.getSongId());
 
     }
 
@@ -180,13 +182,13 @@ public class PlayMusicService extends Service {
     private void loadSongMp3(int songId) {
         String url = ApiHelper.getSongMp3Url(songId);
 
-        HttpHelper.getInstance().get(url, new HttpCallback<SongMp3Bean>() {
+        HttpHelper.getInstance().get(url, new HttpCallback<SongMp3ResultBean>() {
 
             @Override
-            public void onSuccess(SongMp3Bean songMp3Bean) {
-                int code = songMp3Bean.getCode();
+            public void onSuccess(SongMp3ResultBean songMp3ResultBean) {
+                int code = songMp3ResultBean.getCode();
                 if (code == 200) {
-                    SongMp3Bean.DataBean dataBean = songMp3Bean.getData().get(0);
+                    SongMp3ResultBean.DataBean dataBean = songMp3ResultBean.getData().get(0);
                     //判断是否成功获取到了mp3地址 (有可能出现这个歌曲没有版权而导致无法获取到地址)
                     if (dataBean.getCode() != 200) {
                         return;

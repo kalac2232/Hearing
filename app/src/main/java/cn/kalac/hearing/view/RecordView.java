@@ -130,6 +130,7 @@ public class RecordView extends RelativeLayout {
 
         //设置适配器
         RecordViewAdapter recordViewAdapter = new RecordViewAdapter(getContext());
+        mVpRecord.setOffscreenPageLimit(1);
         mVpRecord.setAdapter(recordViewAdapter);
     }
 }

@@ -20,7 +20,8 @@ import java.text.SimpleDateFormat;
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.song.SongDetailBean;
+import cn.kalac.hearing.javabean.song.Song;
+import cn.kalac.hearing.javabean.song.SongDetailResultBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.MusicBinder;
@@ -83,8 +84,6 @@ public class PlayMusicActivity extends BaseActivity {
         mTitle = findViewById(R.id.ll_playmusic_title);
         //封面背景
         mBgCoverIV = findViewById(R.id.iv_playmusic_cover_bg);
-        //封面
-        //mCoverIV = findViewById(R.id.iv_playmusic_cover);
         //音乐名称
         mSongName = findViewById(R.id.tv_playmusic_songName);
         //音乐作者
@@ -143,9 +142,8 @@ public class PlayMusicActivity extends BaseActivity {
         mNextbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //下一首
                 sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_NEXT);
-                //获取歌曲详情
-                //loadSongDetail(108404);
 
             }
         });
@@ -179,49 +177,25 @@ public class PlayMusicActivity extends BaseActivity {
         }
     };
 
-    /**
-     * 通过歌曲id获取封面，歌曲名，歌手信息
-     * @param songId id
-     */
-    private void loadSongDetail(int songId) {
-        String url = ApiHelper.getSongDetailUrl(songId);
-
-        HttpHelper.getInstance().get(url, new HttpCallback<SongDetailBean>() {
-
-            @Override
-            public void onSuccess(SongDetailBean songDetailBean) {
-                int code = songDetailBean.getCode();
-                if (code == 200) {
-                    SongDetailBean.SongsBean songsBean = songDetailBean.getSongs().get(0);
-                    showSongInfo(songsBean);
-                }
-            }
-
-            @Override
-            public void onFailed(String string) {
-                Log.i(TAG, "onFailed: "+string);
-            }
-        });
-    }
 
 
     /**
      * 显示获取到的面，歌曲名，歌手信息
-     * @param songsBean 歌曲id
+     * @param song 歌曲
      */
-    private void showSongInfo(SongDetailBean.SongsBean songsBean) {
+    private void showSongDetail(Song song) {
         //获取歌曲名称
-        String name = songsBean.getName();
+        String name = song.getSongName();
         mSongName.setText(name);
         //获取歌曲作者
-        String author = songsBean.getAr().get(0).getName();
+        String author = song.getSingerName();
         mSongAuthor.setText(author);
         //获取封面地址
-        String picUrl = songsBean.getAl().getPicUrl();
+        String picUrl = song.getPicUrl();
         //设置gilde的设置
         RequestOptions requestOptions = new RequestOptions()
                 .transform(new BlurTransformation(25,3))//设置模糊效果
-                //.placeholder(R.drawable.ic_playmusic_bg_default)//图片加载出来前，显示的图片
+                .placeholder(R.drawable.ic_playmusic_bg_default)//图片加载出来前，显示的图片
                 .fallback( R.drawable.ic_playmusic_bg_default) //url为空的时候,显示的图片
                 .error(R.drawable.ic_playmusic_bg_default);//图片加载失败后，显示的图片
 
@@ -266,9 +240,9 @@ public class PlayMusicActivity extends BaseActivity {
         //显示标题栏
         mTitle.setVisibility(View.VISIBLE);
         //获取当前播放的歌曲id
-        Integer songId = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
-        //获取歌曲详情
-        loadSongDetail(songId);
+        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+        //设置歌曲详情
+        showSongDetail(song);
         //设置seekbar总时长
         mPlayProgressSB.setMax(duration);
         //初始化seekbar状态

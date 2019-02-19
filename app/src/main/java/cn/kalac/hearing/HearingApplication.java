@@ -5,6 +5,7 @@ import android.app.Application;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.kalac.hearing.javabean.song.Song;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.net.OkHttpProcessor;
 
@@ -14,7 +15,7 @@ import cn.kalac.hearing.net.OkHttpProcessor;
  */
 
 public class HearingApplication extends Application {
-    public static List<Integer> mPlayingSongList = new ArrayList<>();
+    public static List<Song> mPlayingSongList = new ArrayList<>();
     public static int mCurrentPlayPos = -1;
     @Override
     public void onCreate() {

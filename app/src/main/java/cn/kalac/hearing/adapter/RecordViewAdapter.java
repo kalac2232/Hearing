@@ -37,6 +37,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 import java.security.MessageDigest;
+import java.util.ArrayList;
 
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
@@ -61,6 +62,7 @@ public class RecordViewAdapter extends PagerAdapter {
 
     private View mCurrentView;
     private  ObjectAnimator mDiscObjectAnimator;
+    private  ObjectAnimator jjj;
 
     public RecordViewAdapter(Context context) {
         mContext = context;
@@ -84,7 +86,7 @@ public class RecordViewAdapter extends PagerAdapter {
         mCoverImageView = view.findViewById(R.id.iv_recordview_Album);
 
         //获取当前播放的歌曲id
-        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos + position);
+        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
 
         RequestOptions requestOptions = new RequestOptions()
                 .transform(new CompositeCoverTransformation());
@@ -100,49 +102,63 @@ public class RecordViewAdapter extends PagerAdapter {
 
         return view;
     }
+
+    public void createObjectAnimator() {
+        Log.i(TAG, "createObjectAnimator: ");
+        if (mDiscObjectAnimator != null) {
+            mDiscObjectAnimator.cancel();
+        }
+        //唱片旋转动画
+        mDiscObjectAnimator = ObjectAnimator.ofFloat(getPrimaryItem(), View.ROTATION, 0, 360);
+        mDiscObjectAnimator.setDuration(20 * 1000);
+        //使ObjectAnimator动画匀速平滑旋转
+        LinearInterpolator lir = new LinearInterpolator();
+        mDiscObjectAnimator.setInterpolator(lir);
+        //无限循环旋转
+        mDiscObjectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mDiscObjectAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mDiscObjectAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+                //当关闭动画的时候，清除状态，恢复原来的角度
+                animator.removeListener(this);
+                animator.setDuration(0);
+                animator.setInterpolator(new ReverseInterpolator());
+                animator.start();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+    }
     public void play() {
         Log.i(TAG, "play: ");
-        if (mDiscObjectAnimator != null && mDiscObjectAnimator.isPaused()) {
-            mDiscObjectAnimator.resume();
+        if (mDiscObjectAnimator != null ) {
+            Log.i(TAG, "play: 1");
+            if (mDiscObjectAnimator.isPaused()) {
+                Log.i(TAG, "play: 2");
+                mDiscObjectAnimator.resume();
+            } else {
+                createObjectAnimator();
+                Log.i(TAG, "play: 3");
+                mDiscObjectAnimator.start();
+            }
 
         } else {
-            if (mDiscObjectAnimator != null && mDiscObjectAnimator.isRunning()) {
-                mDiscObjectAnimator.cancel();
-            }
-            //唱片旋转动画
-            mDiscObjectAnimator = ObjectAnimator.ofFloat(getPrimaryItem(), View.ROTATION, 0, 360);
-            mDiscObjectAnimator.setDuration(20 * 1000);
-            //使ObjectAnimator动画匀速平滑旋转
-            LinearInterpolator lir = new LinearInterpolator();
-            mDiscObjectAnimator.setInterpolator(lir);
-            //无限循环旋转
-            mDiscObjectAnimator.setRepeatCount(ValueAnimator.INFINITE);
-            mDiscObjectAnimator.setRepeatMode(ValueAnimator.RESTART);
-            mDiscObjectAnimator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animator) {
-
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animator) {
-                    //当关闭动画的时候，清除状态，恢复原来的角度
-                    animator.removeListener(this);
-                    animator.setDuration(0);
-                    animator.setInterpolator(new ReverseInterpolator());
-                    animator.start();
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animator) {
-
-                }
-            });
+            Log.i(TAG, "play: 4");
+            createObjectAnimator();
             mDiscObjectAnimator.start();
         }
 
@@ -154,7 +170,12 @@ public class RecordViewAdapter extends PagerAdapter {
             mDiscObjectAnimator.pause();
         }
     }
-
+    public void cleanObjectAnimator() {
+        Log.i(TAG, "cleanObjectAnimator: ");
+        if (mDiscObjectAnimator != null) {
+            mDiscObjectAnimator.cancel();
+        }
+    }
 
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
@@ -196,7 +217,6 @@ public class RecordViewAdapter extends PagerAdapter {
 
         @Override
         protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
-            Log.i(TAG, "CompositeCoverTransformation: ");
             return getDiscBitmap(toTransform);
         }
 
@@ -206,11 +226,6 @@ public class RecordViewAdapter extends PagerAdapter {
         }
     }
 
-    class a extends DrawableTransformation{
-        public a(Transformation<Bitmap> wrapped, boolean isRequired) {
-            super(wrapped, isRequired);
-        }
-    }
     /**
      * 得到唱盘图片
      * 唱盘图片由空心圆盘及音乐专辑图片“合成”得到

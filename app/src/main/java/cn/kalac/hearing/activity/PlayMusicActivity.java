@@ -58,6 +58,7 @@ public class PlayMusicActivity extends BaseActivity {
     private View mTitle;
     private View mBackBtn;
     private RecordView mRecordView;
+    private View mPrevbtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +102,8 @@ public class PlayMusicActivity extends BaseActivity {
         mPlaybtn = findViewById(R.id.iv_playmusic_playbtn);
         //下一首
         mNextbtn = findViewById(R.id.iv_playmusic_nextbtn);
+        //上一首
+        mPrevbtn = findViewById(R.id.iv_playmusic_prevbtn);
 
     }
 
@@ -154,6 +157,16 @@ public class PlayMusicActivity extends BaseActivity {
             public void onClick(View v) {
                 //下一首
                 sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_NEXT);
+                mRecordView.next();
+
+            }
+        });
+        mPrevbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //上一首
+                sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_PREV);
+
 
             }
         });

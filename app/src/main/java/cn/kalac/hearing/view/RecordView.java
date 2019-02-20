@@ -14,8 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Scroller;
+
+import java.lang.reflect.Field;
 
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.RecordViewAdapter;
@@ -153,7 +157,6 @@ public class RecordView extends RelativeLayout {
         //设置当前位置
         mVpRecord.setOffscreenPageLimit(1);
         mVpRecord.setAdapter(mRecordViewAdapter);
-        mVpRecord.setCurrentItem(6);
 
         //添加监听
         mVpRecord.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -165,7 +168,11 @@ public class RecordView extends RelativeLayout {
             @Override
             public void onPageSelected(int position) {
                 //用于重新获取mDiscObjectAnimator中的getPrimaryItem(),否则无法滑动后自动旋转。
-                mRecordViewAdapter.play();
+                Log.i(TAG, "RecordViewAdapteronPageSelected: ");
+                mRecordViewAdapter.cleanObjectAnimator();
+                if (mRecordStatus == RecordStatus.PLAY) {
+                    mRecordViewAdapter.play();
+                }
             }
 
             @Override
@@ -250,4 +257,50 @@ public class RecordView extends RelativeLayout {
 
         mNeedleAnimator.reverse();
     }
+    public void next() {
+        try {
+            Field mField = ViewPager.class.getDeclaredField("mScroller");
+            mField.setAccessible(true);
+            FixedSpeedScroller mScroller = new FixedSpeedScroller(mVpRecord.getContext(),
+                    new AccelerateInterpolator());
+            mField.set(mVpRecord, mScroller);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mVpRecord.setCurrentItem(mVpRecord.getCurrentItem() + 1);
+    }
+    public class FixedSpeedScroller extends Scroller {
+        private int mDuration = 400;
+
+        public FixedSpeedScroller(Context context) {
+            super(context);
+        }
+
+        public FixedSpeedScroller(Context context, Interpolator interpolator) {
+            super(context, interpolator);
+        }
+
+        @Override
+        public void startScroll(int startX, int startY, int dx, int dy, int duration) {
+            // Ignore received duration, use fixed one instead
+            super.startScroll(startX, startY, dx, dy, mDuration);
+        }
+
+        @Override
+        public void startScroll(int startX, int startY, int dx, int dy) {
+            // Ignore received duration, use fixed one instead
+            super.startScroll(startX, startY, dx, dy, mDuration);
+        }
+
+        public void setmDuration(int time) {
+            mDuration = time;
+        }
+
+        public int getmDuration() {
+            return mDuration;
+        }
+    }
+
+
 }

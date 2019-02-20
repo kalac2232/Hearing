@@ -19,13 +19,10 @@ import java.text.SimpleDateFormat;
 
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.song.Song;
-import cn.kalac.hearing.javabean.song.SongDetailResultBean;
-import cn.kalac.hearing.net.HttpCallback;
-import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.MusicBinder;
 import cn.kalac.hearing.service.PlayMusicService;
+import cn.kalac.hearing.view.RecordView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 
@@ -59,6 +56,8 @@ public class PlayMusicActivity extends BaseActivity {
 
     private boolean isMusicPlaying = false;
     private View mTitle;
+    private View mBackBtn;
+    private RecordView mRecordView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +79,14 @@ public class PlayMusicActivity extends BaseActivity {
 
 
     protected void initView() {
+        //返回按钮
+        mBackBtn = findViewById(R.id.ib_goback_btn);
         //标题
         mTitle = findViewById(R.id.ll_playmusic_title);
         //封面背景
         mBgCoverIV = findViewById(R.id.iv_playmusic_cover_bg);
+        //唱片
+        mRecordView = findViewById(R.id.Rv_playmusic_RecordView);
         //音乐名称
         mSongName = findViewById(R.id.tv_playmusic_songName);
         //音乐作者
@@ -103,11 +106,18 @@ public class PlayMusicActivity extends BaseActivity {
 
     @Override
     protected void addListener() {
+        mBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         mPlaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isMusicPlaying) {
                     sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_PAUSE);
+
                 } else {
                     sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_PLAY);
                 }
@@ -169,6 +179,10 @@ public class PlayMusicActivity extends BaseActivity {
                     mPlayProgressSB.setSecondaryProgress(percent / 100 * mPlayProgressSB.getMax());
                 }
             });
+            //如果进入播放页的时候已经开始了播放，显示封面，歌曲等信息
+            if (mMusicBinder.isStart()){
+                musicComplete();
+            }
         }
 
         @Override
@@ -199,9 +213,6 @@ public class PlayMusicActivity extends BaseActivity {
                 .fallback( R.drawable.ic_playmusic_bg_default) //url为空的时候,显示的图片
                 .error(R.drawable.ic_playmusic_bg_default);//图片加载失败后，显示的图片
 
-
-        //Glide.with(mContext).load(picUrl).apply(options).into(mCoverIV);
-
         //设置背景封面
         Glide.with(mContext).load(picUrl).apply(requestOptions).into(mBgCoverIV);
     }
@@ -216,10 +227,10 @@ public class PlayMusicActivity extends BaseActivity {
         mPlaybtn.setImageResource(R.drawable.ic_playing_bar_pause_selector);
         //更改状态
         isMusicPlaying = true;
-
         //开始刷新时间
         mHandler.postDelayed(mReFreshTime,1000);
-
+        //使唱片的动画开始播放
+        mRecordView.play();
     }
 
     @Override
@@ -232,10 +243,13 @@ public class PlayMusicActivity extends BaseActivity {
 
         //停止刷新时间
         mHandler.removeCallbacks(mReFreshTime);
+        //使唱片的动画暂停
+        mRecordView.pause();
+
     }
 
     @Override
-    protected void musicComplete(int duration) {
+    protected void musicComplete() {
         Log.i(TAG, "musicComplete: ");
         //显示标题栏
         mTitle.setVisibility(View.VISIBLE);
@@ -244,9 +258,11 @@ public class PlayMusicActivity extends BaseActivity {
         //设置歌曲详情
         showSongDetail(song);
         //设置seekbar总时长
+        int duration = mMusicBinder.getDuration();
         mPlayProgressSB.setMax(duration);
         //初始化seekbar状态
-        mPlayProgressSB.setProgress(0);
+        int currentPosition = mMusicBinder.getCurrentPosition();
+        mPlayProgressSB.setProgress(currentPosition);
         //转换时间，更新时间
         String totalTime = time.format(duration);
         mTotalTimeTV.setText(totalTime);

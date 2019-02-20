@@ -4,11 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/record_layout">
-    <ImageView
-        android:id="@+id/iv_recordview_Needle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_playing_needle"/>
+
     <ImageView
         android:id="@+id/iv_recordview_DiscBlackgound"
         android:layout_width="wrap_content"
@@ -19,8 +15,12 @@
         android:id="@+id/vp_recordview_record"
         android:overScrollMode="never"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp">
 
     </android.support.v4.view.ViewPager>
-
+    <ImageView
+        android:id="@+id/iv_recordview_Needle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_playing_needle"/>
 </RelativeLayout>

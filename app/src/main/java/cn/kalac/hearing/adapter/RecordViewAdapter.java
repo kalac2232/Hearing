@@ -1,5 +1,8 @@
 package cn.kalac.hearing.adapter;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,13 +20,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.bumptech.glide.load.resource.bitmap.DrawableTransformation;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -51,14 +59,17 @@ public class RecordViewAdapter extends PagerAdapter {
     private static final String TAG = "RecordViewAdapter";
     private ImageView mCoverImageView;
 
+    private View mCurrentView;
+    private  ObjectAnimator mDiscObjectAnimator;
 
     public RecordViewAdapter(Context context) {
         mContext = context;
+
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return HearingApplication.mPlayingSongList.size();
     }
 
     @Override
@@ -75,38 +86,117 @@ public class RecordViewAdapter extends PagerAdapter {
         //获取当前播放的歌曲id
         Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos + position);
 
-//        int discSize = (int) (DisplayUtil.getScreenWidth(mContext) * DisplayUtil.SCALE_DISC_SIZE);
-//        Bitmap bitmapDefault = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(), R
-//                .drawable.ic_recordview_album_default), discSize, discSize, false);
-//
-//        RoundedBitmapDrawable defaultDrawable = RoundedBitmapDrawableFactory.create
-//                (mContext.getResources(), bitmapDefault);
-
-
         RequestOptions requestOptions = new RequestOptions()
-                .transform(new CompositeCoverTransformation())
-                .placeholder(R.drawable.ic_recordview_album_default)//图片加载出来前，显示的图片
-                .fallback( R.drawable.ic_recordview_album_default) //url为空的时候,显示的图片
-                .error(R.drawable.ic_recordview_album_default);//图片加载失败后，显示的图片
+                .transform(new CompositeCoverTransformation());
+
+        RequestBuilder<Drawable> requestBuilder = Glide.with(mContext).load(R.mipmap.ic_recordview_album_default).apply(requestOptions);
+
         Glide.with(mContext)
                 .load(song.getPicUrl())
                 .apply(requestOptions)
+                .thumbnail(requestBuilder)
                 .into(mCoverImageView);
         container.addView(view);
+
         return view;
     }
+    public void play() {
+        Log.i(TAG, "play: ");
+        if (mDiscObjectAnimator != null && mDiscObjectAnimator.isPaused()) {
+            mDiscObjectAnimator.resume();
 
+        } else {
+            if (mDiscObjectAnimator != null && mDiscObjectAnimator.isRunning()) {
+                mDiscObjectAnimator.cancel();
+            }
+            //唱片旋转动画
+            mDiscObjectAnimator = ObjectAnimator.ofFloat(getPrimaryItem(), View.ROTATION, 0, 360);
+            mDiscObjectAnimator.setDuration(20 * 1000);
+            //使ObjectAnimator动画匀速平滑旋转
+            LinearInterpolator lir = new LinearInterpolator();
+            mDiscObjectAnimator.setInterpolator(lir);
+            //无限循环旋转
+            mDiscObjectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            mDiscObjectAnimator.setRepeatMode(ValueAnimator.RESTART);
+            mDiscObjectAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+                    //当关闭动画的时候，清除状态，恢复原来的角度
+                    animator.removeListener(this);
+                    animator.setDuration(0);
+                    animator.setInterpolator(new ReverseInterpolator());
+                    animator.start();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            });
+            mDiscObjectAnimator.start();
+        }
+
+    }
+
+    public void pause() {
+        Log.i(TAG, "pause: ");
+        if (mDiscObjectAnimator != null) {
+            mDiscObjectAnimator.pause();
+        }
+    }
+
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        Log.i(TAG, "setPrimaryItem: ");
+        mCurrentView = (View)object;
+    }
+
+    /**
+     * 获取当前显示的view，用于旋转
+     * @return
+     */
+    private View getPrimaryItem() {
+        return mCurrentView;
+    }
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
 
     }
 
+    public class ReverseInterpolator implements Interpolator {
 
+        private final Interpolator delegate;
+
+        public ReverseInterpolator(Interpolator delegate){
+            this.delegate = delegate;
+        }
+
+        public ReverseInterpolator(){
+            this(new LinearInterpolator());
+        }
+
+        @Override
+        public float getInterpolation(float input) {
+            return 1 - delegate.getInterpolation(input);
+        }
+    }
     class CompositeCoverTransformation extends BitmapTransformation{
 
         @Override
         protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
+            Log.i(TAG, "CompositeCoverTransformation: ");
             return getDiscBitmap(toTransform);
         }
 
@@ -116,6 +206,11 @@ public class RecordViewAdapter extends PagerAdapter {
         }
     }
 
+    class a extends DrawableTransformation{
+        public a(Transformation<Bitmap> wrapped, boolean isRequired) {
+            super(wrapped, isRequired);
+        }
+    }
     /**
      * 得到唱盘图片
      * 唱盘图片由空心圆盘及音乐专辑图片“合成”得到

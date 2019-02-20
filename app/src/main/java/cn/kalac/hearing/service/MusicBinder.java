@@ -4,9 +4,15 @@ package cn.kalac.hearing.service;
  * Created by Kalac on 2019/2/2
  */
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.support.v4.content.LocalBroadcastManager;
+
+import cn.kalac.hearing.activity.BaseActivity;
 
 
 public class MusicBinder extends Binder {
@@ -14,12 +20,21 @@ public class MusicBinder extends Binder {
 
     private final Context mContext;
 
-    MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer;
+
+    private MusicStatusReceiver mMusicStatusReceiver;
+    /**
+     * 音乐播放状态枚举类
+     */
+    public enum MusicStatue{
+        STOP,PLAY,PAUSE;
+    }
+    MusicStatue mMusicStatue = MusicStatue.STOP;
 
     public MusicBinder(Context context, MediaPlayer mediaPlayer) {
         mContext = context;
         mMediaPlayer = mediaPlayer;
-
+        registerMusicStatusReciver();
     }
 
 
@@ -48,8 +63,62 @@ public class MusicBinder extends Binder {
         mMediaPlayer.seekTo(progress);
     }
 
+    public boolean isStart() {
+        return mMusicStatue != MusicStatue.STOP;
+    }
+
+    /**
+     * 获取歌曲时长
+     * @return
+     */
+    public int getDuration() {
+        return mMediaPlayer.getDuration();
+    }
     public interface OnBufferingUpdateListener{
         void onBufferingUpdate(int percent);
     }
 
+    /**
+     * 解除注册
+     */
+    public void unRegisterMusicStatusReciver() {
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mMusicStatusReceiver);
+    }
+
+    /**
+     * 注册广播接收者
+     */
+    private void registerMusicStatusReciver() {
+        mMusicStatusReceiver = new MusicStatusReceiver();
+
+        IntentFilter intentFilter = new IntentFilter();
+
+        intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PLAY);
+        intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PAUSE);
+        intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_COMPLETE);
+
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mMusicStatusReceiver,intentFilter);
+    }
+
+    /**
+     * 用于接收状态改变的广播接收者
+     */
+    class MusicStatusReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case PlayMusicService.ACTION_STATUS_MUSIC_PLAY:
+                    mMusicStatue = MusicStatue.PLAY;
+                    break;
+                case PlayMusicService.ACTION_STATUS_MUSIC_PAUSE:
+                    mMusicStatue = MusicStatue.PAUSE;
+                    break;
+                case PlayMusicService.ACTION_STATUS_MUSIC_COMPLETE:
+
+                    break;
+            }
+        }
+    }
 }

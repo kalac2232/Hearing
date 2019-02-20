@@ -34,6 +34,7 @@
             >
 
             <ImageView
+                android:id="@+id/ib_goback_btn"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignParentLeft="true"
@@ -86,6 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"/>
         <cn.kalac.hearing.view.RecordView
+            android:id="@+id/Rv_playmusic_RecordView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

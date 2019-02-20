@@ -120,7 +120,7 @@ public abstract class BaseActivity extends Activity {
 
     }
 
-    protected void musicComplete(int duration) {
+    protected void musicComplete() {
 
     }
     @Override
@@ -155,8 +155,8 @@ public abstract class BaseActivity extends Activity {
                     musicStatusToPause();
                     break;
                 case PlayMusicService.ACTION_STATUS_MUSIC_COMPLETE:
-                    int duration = intent.getIntExtra("duration", 0);
-                    musicComplete(duration);
+
+                    musicComplete();
                     break;
             }
         }

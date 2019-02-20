@@ -49,15 +49,16 @@ public class PlayMusicService extends Service {
 
     private boolean mIsMusicPause = false;
 
+
     private Context mContext;
     private int mCurrentSongID = -1;
+    private MusicBinder mMusicBinder;
 
     @Override
     public void onCreate() {
         super.onCreate();
         initBoardCastReceiver();
         mContext = this;
-
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
@@ -69,7 +70,8 @@ public class PlayMusicService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return new MusicBinder(mContext,mMediaPlayer);
+        mMusicBinder = new MusicBinder(mContext, mMediaPlayer);
+        return mMusicBinder;
     }
 
     @Override
@@ -149,12 +151,12 @@ public class PlayMusicService extends Service {
                     mMediaPlayer.pause();
                     mIsMusicPause = true;
                     //发送暂停状态
-                    sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
+
                 }
             }
         });
         valueAnimator.start();
-
+        sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
     }
 
     private void next() {
@@ -221,10 +223,8 @@ public class PlayMusicService extends Service {
                             mp.start();
                             //发送状态改变广播
                             sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
-                            //获取歌曲总时长
-                            int duration = mp.getDuration();
-                            //通过广播接收者发送给需要的activity
-                            sendCompleteStatus(duration);
+                            //完成状态是为了其他页展示出相关信息
+                            sendLocalBroadcast(ACTION_STATUS_MUSIC_COMPLETE);
                         }
 
                     });
@@ -242,6 +242,7 @@ public class PlayMusicService extends Service {
     }
     @Override
     public boolean onUnbind(Intent intent) {
+        mMusicBinder.unRegisterMusicStatusReciver();
         return super.onUnbind(intent);
     }
 
@@ -256,12 +257,6 @@ public class PlayMusicService extends Service {
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 
-    private void sendCompleteStatus(int duration) {
-        Intent intent = new Intent();
-        intent.setAction(ACTION_STATUS_MUSIC_COMPLETE);
-        intent.putExtra("duration",duration);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
-    }
     /**
      * 音乐操作指令广播接收者
      */
@@ -288,4 +283,5 @@ public class PlayMusicService extends Service {
 
         }
     }
+
 }

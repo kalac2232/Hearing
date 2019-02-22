@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.PagerAdapter;
@@ -26,26 +25,15 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.bumptech.glide.load.resource.bitmap.DrawableTransformation;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 
 import java.security.MessageDigest;
-import java.util.ArrayList;
 
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.song.Song;
-import cn.kalac.hearing.javabean.song.SongDetailResultBean;
-import cn.kalac.hearing.net.HttpCallback;
-import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.utils.DisplayUtil;
 
 
@@ -62,11 +50,12 @@ public class RecordViewAdapter extends PagerAdapter {
 
     private View mCurrentView;
     private  ObjectAnimator mDiscObjectAnimator;
-    private  ObjectAnimator jjj;
+    private final int mFristSongPosition;
 
     public RecordViewAdapter(Context context) {
         mContext = context;
-
+        //获取第一首播放的歌曲的位置
+        mFristSongPosition = HearingApplication.mCurrentPlayPos;
     }
 
     @Override
@@ -86,7 +75,7 @@ public class RecordViewAdapter extends PagerAdapter {
         mCoverImageView = view.findViewById(R.id.iv_recordview_Album);
 
         //获取当前播放的歌曲id
-        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+        Song song = HearingApplication.mPlayingSongList.get(mFristSongPosition + position);
 
         RequestOptions requestOptions = new RequestOptions()
                 .transform(new CompositeCoverTransformation());
@@ -102,12 +91,15 @@ public class RecordViewAdapter extends PagerAdapter {
 
         return view;
     }
-
-    public void createObjectAnimator() {
-        Log.i(TAG, "createObjectAnimator: ");
+    public void cancelObjectAnimator() {
+        Log.i(TAG, "cancelObjectAnimator: ");
         if (mDiscObjectAnimator != null) {
             mDiscObjectAnimator.cancel();
         }
+    }
+    public void createObjectAnimator() {
+        Log.i(TAG, "createObjectAnimator: ");
+        
         //唱片旋转动画
         mDiscObjectAnimator = ObjectAnimator.ofFloat(getPrimaryItem(), View.ROTATION, 0, 360);
         mDiscObjectAnimator.setDuration(20 * 1000);
@@ -179,7 +171,6 @@ public class RecordViewAdapter extends PagerAdapter {
 
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
-        Log.i(TAG, "setPrimaryItem: ");
         mCurrentView = (View)object;
     }
 

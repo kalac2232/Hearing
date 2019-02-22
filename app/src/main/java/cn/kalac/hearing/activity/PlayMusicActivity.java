@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -155,19 +156,38 @@ public class PlayMusicActivity extends BaseActivity {
         mNextbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //下一首
-                sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_NEXT);
-                mRecordView.next();
+                //因为再RecordView的回调中已经完成了发送广播的事件，在这发送回重复
+                //sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_NEXT);
+                //使唱片向下一个滑
+                mRecordView.nextMusic();
+                //将当前进度置为初始值
+                String currentTime = time.format(0);
+                mCurrentTimeTV.setText(currentTime);
 
             }
         });
         mPrevbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //上一首
+                //使唱片向上一个滑
+                mRecordView.prevMusic();
+                //将当前进度置为初始值
+                String currentTime = time.format(0);
+                mCurrentTimeTV.setText(currentTime);
+
+            }
+        });
+        mRecordView.setOnSrollListener(new RecordView.onSrollListener() {
+            @Override
+            public void next() {
+                //发送广播
+                sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_NEXT);
+            }
+
+            @Override
+            public void prev() {
+                //发送广播
                 sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_PREV);
-
-
             }
         });
     }

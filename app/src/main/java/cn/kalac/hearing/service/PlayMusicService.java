@@ -48,7 +48,10 @@ public class PlayMusicService extends Service {
     private MusicOperaReceiver mMusicOperaReceiver = new MusicOperaReceiver();
 
     private boolean mIsMusicPause = false;
-
+    /**
+     * 当前歌曲是否处于加载中，防止多次加载
+     */
+    private boolean mIsPreparing = false;
 
     private Context mContext;
     private int mCurrentSongID = -1;
@@ -165,7 +168,7 @@ public class PlayMusicService extends Service {
         //
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
-        HearingApplication.mCurrentPlayPos++;
+        HearingApplication.mCurrentPlayPos ++;
         //获取当前要播放的songid
         Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
 
@@ -175,6 +178,16 @@ public class PlayMusicService extends Service {
 
     private void prev() {
         Log.i(TAG, "prev: ");
+
+        mMediaPlayer.reset();
+
+        sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
+
+        HearingApplication.mCurrentPlayPos --;
+        //获取当前要播放的songid
+        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+
+        loadSongMp3(song.getSongId());
     }
 
     /**
@@ -182,6 +195,10 @@ public class PlayMusicService extends Service {
      * @param songId 歌曲id
      */
     private void loadSongMp3(int songId) {
+        //判断是否当前是否为加载中，加载中其实也是处于暂停状态，再次点击播放会导致崩溃
+        if (mIsPreparing) {
+            return;
+        }
         String url = ApiHelper.getSongMp3Url(songId);
 
         HttpHelper.getInstance().get(url, new HttpCallback<SongMp3ResultBean>() {
@@ -203,10 +220,13 @@ public class PlayMusicService extends Service {
                     }
                     //异步准备
                     mMediaPlayer.prepareAsync();
+                    //正在加载歌曲
+                    mIsPreparing = true;
                     mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
                             Log.i(TAG, "onCompletion: 加载音乐完成，开始播放");
+                            mIsPreparing = false;
                             //使声音有渐变效果
                             ValueAnimator valueAnimator = ValueAnimator.ofFloat(0,1);
                             valueAnimator.setDuration(1000);

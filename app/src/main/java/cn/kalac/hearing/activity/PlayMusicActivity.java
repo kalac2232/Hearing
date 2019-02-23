@@ -214,7 +214,7 @@ public class PlayMusicActivity extends BaseActivity {
             });
             //如果进入播放页的时候已经开始了播放，显示封面，歌曲等信息
             if (mMusicBinder.isStart()){
-                musicComplete();
+                musicPrepareComplete();
             }
         }
 
@@ -282,7 +282,7 @@ public class PlayMusicActivity extends BaseActivity {
     }
 
     @Override
-    protected void musicComplete() {
+    protected void musicPrepareComplete() {
         Log.i(TAG, "musicComplete: ");
         //显示标题栏
         mTitle.setVisibility(View.VISIBLE);
@@ -301,6 +301,15 @@ public class PlayMusicActivity extends BaseActivity {
         mTotalTimeTV.setText(totalTime);
 
 
+    }
+
+    /**
+     * 歌曲播放完成
+     */
+    @Override
+    protected void musicPlayComplete() {
+        Log.i(TAG, "musicPlayComplete: ");
+        mRecordView.nextMusic();
     }
 
     /**

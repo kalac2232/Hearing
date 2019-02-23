@@ -95,7 +95,7 @@ public class MusicBinder extends Binder {
 
         intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PLAY);
         intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PAUSE);
-        intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_COMPLETE);
+        intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PREPARE_COMPLETE);
 
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mMusicStatusReceiver,intentFilter);
     }
@@ -115,7 +115,7 @@ public class MusicBinder extends Binder {
                 case PlayMusicService.ACTION_STATUS_MUSIC_PAUSE:
                     mMusicStatue = MusicStatue.PAUSE;
                     break;
-                case PlayMusicService.ACTION_STATUS_MUSIC_COMPLETE:
+                case PlayMusicService.ACTION_STATUS_MUSIC_PREPARE_COMPLETE:
 
                     break;
             }

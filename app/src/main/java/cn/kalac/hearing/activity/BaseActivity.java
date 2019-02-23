@@ -55,7 +55,8 @@ public abstract class BaseActivity extends Activity {
 
         intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PLAY);
         intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PAUSE);
-        intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_COMPLETE);
+        intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PREPARE_COMPLETE);
+        intentFilter.addAction(PlayMusicService.ACTION_STATUS_MUSIC_PLAY_COMPLETE);
 
         LocalBroadcastManager.getInstance(mContext).registerReceiver(mMusicStatusReceiver,intentFilter);
     }
@@ -120,7 +121,11 @@ public abstract class BaseActivity extends Activity {
 
     }
 
-    protected void musicComplete() {
+    protected void musicPrepareComplete() {
+
+    }
+
+    protected void musicPlayComplete() {
 
     }
     @Override
@@ -154,9 +159,11 @@ public abstract class BaseActivity extends Activity {
                 case PlayMusicService.ACTION_STATUS_MUSIC_PAUSE:
                     musicStatusToPause();
                     break;
-                case PlayMusicService.ACTION_STATUS_MUSIC_COMPLETE:
-
-                    musicComplete();
+                case PlayMusicService.ACTION_STATUS_MUSIC_PREPARE_COMPLETE:
+                    musicPrepareComplete();
+                    break;
+                case PlayMusicService.ACTION_STATUS_MUSIC_PLAY_COMPLETE:
+                    musicPlayComplete();
                     break;
             }
         }

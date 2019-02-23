@@ -38,7 +38,10 @@ public class PlayMusicService extends Service {
     /*状态指令*/
     public static final String ACTION_STATUS_MUSIC_PLAY = "ACTION_STATUS_MUSIC_PLAY";
     public static final String ACTION_STATUS_MUSIC_PAUSE = "ACTION_STATUS_MUSIC_PAUSE";
-    public static final String ACTION_STATUS_MUSIC_COMPLETE = "ACTION_STATUS_MUSIC_COMPLETE";
+    public static final String ACTION_STATUS_MUSIC_PREPARE_COMPLETE = "ACTION_STATUS_MUSIC_PREPARE_COMPLETE";
+    public static final String ACTION_STATUS_MUSIC_PLAY_COMPLETE = "ACTION_STATUS_MUSIC_PLAY_COMPLETE";
+
+    /*播放规则*/
 
 
     //private MusicBinder mBinder ;
@@ -65,7 +68,10 @@ public class PlayMusicService extends Service {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                next();
+                //next();
+                //切换下一首歌的逻辑放到next中，而next具体是循环播放还是怎么播放不在完成监听中控制，在next中控制
+                //而next只在activity中调用
+                sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY_COMPLETE);
             }
         });
     }
@@ -244,7 +250,7 @@ public class PlayMusicService extends Service {
                             //发送状态改变广播
                             sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
                             //完成状态是为了其他页展示出相关信息
-                            sendLocalBroadcast(ACTION_STATUS_MUSIC_COMPLETE);
+                            sendLocalBroadcast(ACTION_STATUS_MUSIC_PREPARE_COMPLETE);
                         }
 
                     });

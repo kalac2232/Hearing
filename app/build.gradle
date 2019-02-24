@@ -34,4 +34,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     //glide 图片变换框架
     implementation 'jp.wasabeef:glide-transformations:4.0.1'
+    //滑动返回
+    implementation 'cn.bingoogolapple:bga-swipebacklayout:1.2.0'
 }

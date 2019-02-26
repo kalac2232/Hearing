@@ -43,4 +43,12 @@ public class ApiHelper {
         String url = Api.HostUrl + "/song/url?id=" + songIds;
         return url;
     }
+
+    /**
+     * 获取banner
+     */
+    public static String getBannerUrl(){
+        String url = Api.HostUrl + "/banner";
+        return url;
+    }
 }

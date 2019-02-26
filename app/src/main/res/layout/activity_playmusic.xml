@@ -57,7 +57,7 @@
                     tools:text="我想念"
                     android:textAlignment="center"
                     android:textColor="#fff"
-                    android:textSize="22sp"/>
+                    android:textSize="20sp"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"

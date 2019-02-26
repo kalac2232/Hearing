@@ -5,10 +5,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.kalac.hearing.R;
@@ -37,6 +46,12 @@ public abstract class BaseActivity extends Activity implements BGASwipeBackHelpe
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         decorView.setSystemUiVisibility(option);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
+        View statusBarView = findViewById(R.id.statusBarView);
+        if (statusBarView != null) {
+            statusBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(mContext));
+            statusBarView.setLayoutParams(layoutParams);
+        }
         initView();
         initData();
         addListener();
@@ -45,6 +60,22 @@ public abstract class BaseActivity extends Activity implements BGASwipeBackHelpe
         if (registerReciver()){
             registerMusicStatusReciver();
         }
+    }
+
+
+    /**
+     * 获取状态栏的高度
+     * @param context
+     * @return
+     */
+    private static int getStatusBarHeight(Context context) {
+        int statusBarHeight = 0;
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = res.getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
     }
 
 

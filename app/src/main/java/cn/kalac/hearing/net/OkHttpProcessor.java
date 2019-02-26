@@ -73,8 +73,15 @@ public class OkHttpProcessor implements IHttpProcessor {
                 .build();
         mOkHttpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                callBack.onFailed(e.toString());
+            public void onFailure(Call call, final IOException e) {
+                myHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        callBack.onFailed(e.toString());
+                    }
+                });
+
             }
 
             @Override
@@ -93,6 +100,7 @@ public class OkHttpProcessor implements IHttpProcessor {
                     myHandler.post(new Runnable() {
                         @Override
                         public void run() {
+
                             callBack.onFailed(response.message().toString());
                         }
                     });

@@ -1,8 +1,10 @@
 package cn.kalac.hearing.activity;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +15,7 @@ import java.util.List;
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
+import cn.kalac.hearing.javabean.BannerBean;
 import cn.kalac.hearing.javabean.LoginResultBean;
 import cn.kalac.hearing.javabean.RecommendSongsBean;
 import cn.kalac.hearing.javabean.song.Song;
@@ -26,6 +29,12 @@ public class MainActivity extends BaseActivity {
     private View mBtnLogin;
     private View mBtnGetList;
     private View mBtnJump;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //fixStatusBarColor();
+    }
 
     @Override
     public boolean registerReciver() {
@@ -42,13 +51,20 @@ public class MainActivity extends BaseActivity {
         refreshLoginState();
         //初始化服务
         initService();
+        //获取banner
+        initBanner();
     }
+
+
 
     @Override
     protected void initView() {
+        //设置滑动返回不可用
+        //mSwipeBackHelper.setSwipeBackEnable(false);
         mBtnLogin = findViewById(R.id.btn_login);
         mBtnGetList = findViewById(R.id.btn_getList);
         mBtnJump = findViewById(R.id.btn_jumpTOPlay);
+        findViewById(R.id.)
     }
 
     @Override
@@ -167,5 +183,20 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void initBanner() {
+        String bannerUrl = ApiHelper.getBannerUrl();
+        HttpHelper.getInstance().get(bannerUrl, new HttpCallback<BannerBean>() {
 
+            @Override
+            public void onSuccess(BannerBean bannerBean) {
+
+            }
+
+            @Override
+            public void onFailed(String string) {
+
+            }
+
+        });
+    }
 }

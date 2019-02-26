@@ -20,6 +20,20 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:src="@drawable/ic_main_menu_btn"/>
+            <LinearLayout
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_actionbar_discover_selected"/>
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_actionbar_music_normal"/>
+            </LinearLayout>
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
@@ -29,34 +43,12 @@
                 android:src="@drawable/ic_main_search_btn"/>
         </RelativeLayout>
         <android.support.v4.view.ViewPager
+            android:id="@+id/vp_mainContent"
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="match_parent">
 
         </android.support.v4.view.ViewPager>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#fff"
-            android:orientation="vertical">
-            <Button
-                android:id="@+id/btn_login"
-                android:layout_marginTop="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="登录"/>
-            <Button
-                android:id="@+id/btn_getList"
-                android:layout_marginTop="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="获取日推列表"/>
-            <Button
-                android:id="@+id/btn_jumpTOPlay"
-                android:layout_marginTop="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="跳转播放页"/>
-        </LinearLayout>
+
     </LinearLayout>
     <include layout="@layout/slidingmenu_layout" />
 </android.support.v4.widget.DrawerLayout>

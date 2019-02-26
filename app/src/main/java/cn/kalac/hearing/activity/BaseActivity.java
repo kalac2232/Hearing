@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Gravity;
 import android.view.View;
@@ -28,7 +29,7 @@ import cn.kalac.hearing.service.PlayMusicService;
  * Created by Kalac on 2019/2/1
  */
 
-public abstract class BaseActivity extends Activity implements BGASwipeBackHelper.Delegate{
+public abstract class BaseActivity extends FragmentActivity implements BGASwipeBackHelper.Delegate{
 
     String TAG = ""+getClass().toString();
     protected Context mContext;

@@ -9,11 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.javabean.BannerBean;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class BannerAdapter extends PagerAdapter {
     Context mContext;
@@ -25,7 +27,7 @@ public class BannerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return mBannersList.size();
+        return Integer.MAX_VALUE / 2;
     }
 
     @Override
@@ -41,9 +43,13 @@ public class BannerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        //计算出当前的位置
+        int realPosition = position % mBannersList.size();
         View view = LayoutInflater.from(mContext).inflate(R.layout.main_banner_layout, container, false);
         ImageView banner = view.findViewById(R.id.iv_main_banner);
-        Glide.with(mContext).load(mBannersList.get(position).getImageUrl()).into(banner);
+        RequestOptions requestOptions = new RequestOptions()
+                .transform(new RoundedCornersTransformation(120,0, RoundedCornersTransformation.CornerType.ALL));
+        Glide.with(mContext).load(mBannersList.get(realPosition).getImageUrl()).into(banner);
         container.addView(view);
         return view;
     }

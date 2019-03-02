@@ -1,12 +1,14 @@
 package cn.kalac.hearing.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -38,6 +40,11 @@ public class DiscoverFragment extends Fragment {
     private View mBtnGetList;
     private View mBtnJump;
     private ViewPager mVpBanner;
+    private Handler mHander = new Handler();
+    private int mDelayMillis = 2500;
+    private BannerAdapter mBannerAdapter;
+    private Thread mInfiniteThread;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -50,6 +57,8 @@ public class DiscoverFragment extends Fragment {
         addListener();
         //获取banner
         initBanner();
+
+        mInfiniteThread = new InfiniteThread();
         return view;
     }
 
@@ -104,6 +113,22 @@ public class DiscoverFragment extends Fragment {
 
             }
         });
+        mVpBanner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        //当按住vp的时候 停止自动滚动
+                        mHander.removeCallbacks(mInfiniteThread);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        //开始自动滚动
+                        mHander.postDelayed(mInfiniteThread,mDelayMillis);
+                        break;
+                }
+                return false;
+            }
+        });
     }
     /**
      * 提取日推列表中歌曲的id方便进行播放
@@ -134,16 +159,30 @@ public class DiscoverFragment extends Fragment {
             public void onSuccess(BannerBean bannerBean) {
                 if (bannerBean.getCode() == 200) {
                     List<BannerBean.BannersBean> banners = bannerBean.getBanners();
-                    BannerAdapter bannerAdapter = new BannerAdapter(getContext(), banners);
-                    mVpBanner.setAdapter(bannerAdapter);
+                    mBannerAdapter = new BannerAdapter(getContext(), banners);
+                    mVpBanner.setAdapter(mBannerAdapter);
+                    //设置到中间位置，防止一开始就向左滑出现滑不动的情况
+                    mVpBanner.setCurrentItem(2 * banners.size());
+                    mHander.postDelayed(mInfiniteThread,mDelayMillis);
                 }
             }
 
             @Override
             public void onFailed(String string) {
-
+                Toast.makeText(getActivity(),"网络错误",Toast.LENGTH_SHORT).show();
             }
 
         });
+    }
+
+    /**
+     * 用于无限轮播图的线程
+     */
+    class InfiniteThread extends Thread{
+        @Override
+        public void run() {
+            mHander.postDelayed(this,mDelayMillis);
+            mVpBanner.setCurrentItem(mVpBanner.getCurrentItem() + 1);
+        }
     }
 }

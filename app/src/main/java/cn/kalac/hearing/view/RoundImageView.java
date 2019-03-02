@@ -14,7 +14,7 @@ import android.widget.ImageView;
 
 public class RoundImageView extends android.support.v7.widget.AppCompatImageView {
 
-    private int radius = 20;
+    private int radius = 120;
 
     public RoundImageView(Context context) {
         this(context, null);

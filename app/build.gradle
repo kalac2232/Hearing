@@ -36,5 +36,8 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:4.0.1'
     //滑动返回
     implementation 'cn.bingoogolapple:bga-swipebacklayout:1.2.0'
-
+    //指示器
+    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
+    //圆角imageview
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 }

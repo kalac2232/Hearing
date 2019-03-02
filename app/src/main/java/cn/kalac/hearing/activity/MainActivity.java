@@ -1,16 +1,32 @@
 package cn.kalac.hearing.activity;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+
+import net.lucode.hackware.magicindicator.MagicIndicator;
+import net.lucode.hackware.magicindicator.ViewPagerHelper;
+import net.lucode.hackware.magicindicator.buildins.UIUtil;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.SimplePagerTitleView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cn.kalac.hearing.HearingApplication;
@@ -31,6 +47,8 @@ public class MainActivity extends BaseActivity {
 
     private ViewPager mVpMainContent;
 
+    private static final String[] CHANNELS = new String[]{"个性推荐", "主播电台","我的音乐"};
+    private List<String> mDataList = Arrays.asList(CHANNELS);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +82,9 @@ public class MainActivity extends BaseActivity {
         mVpMainContent = findViewById(R.id.vp_mainContent);
         MainContentAdapter contentAdapter = new MainContentAdapter(getSupportFragmentManager());
         mVpMainContent.setAdapter(contentAdapter);
+        //初始化Indicator
+        initMagicIndicator();
+
     }
 
     @Override
@@ -114,5 +135,54 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void initMagicIndicator() {
+        MagicIndicator magicIndicator =  findViewById(R.id.magic_indicator);
+        CommonNavigator commonNavigator = new CommonNavigator(this);
+        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+            @Override
+            public int getCount() {
+                return mDataList == null ? 0 : mDataList.size();
+            }
 
+            @Override
+            public IPagerTitleView getTitleView(Context context, final int index) {
+                //设置文字
+                SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
+                simplePagerTitleView.setText(mDataList.get(index));
+                simplePagerTitleView.setNormalColor(Color.parseColor("#88ffffff"));
+                simplePagerTitleView.setSelectedColor(Color.WHITE);
+
+                simplePagerTitleView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mVpMainContent.setCurrentItem(index);
+                    }
+                });
+                return simplePagerTitleView;
+            }
+
+            @Override
+            public IPagerIndicator getIndicator(Context context) {
+                //设置指示器
+                LinePagerIndicator indicator = new LinePagerIndicator(context);
+                indicator.setMode(LinePagerIndicator.MODE_WRAP_CONTENT);
+                indicator.setColors(Color.parseColor("#ffffff"));
+                indicator.setLineHeight(UIUtil.dip2px(context, 2));
+                indicator.setRoundRadius(UIUtil.dip2px(context, 7));
+                return indicator;
+            }
+        });
+        magicIndicator.setNavigator(commonNavigator);
+        LinearLayout titleContainer = commonNavigator.getTitleContainer(); // must after setNavigator
+        titleContainer.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+        titleContainer.setDividerDrawable(new ColorDrawable() {
+            @Override
+            public int getIntrinsicWidth() {
+                //控制指示器的长度
+                return UIUtil.dip2px(mContext, 50);
+            }
+        });
+        ViewPagerHelper.bind(magicIndicator, mVpMainContent);
+
+    }
 }

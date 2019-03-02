@@ -2,8 +2,11 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <ImageView
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.makeramen.roundedimageview.RoundedImageView
+        app:riv_corner_radius="10dp"
+        android:layout_marginHorizontal="10dp"
         android:id="@+id/iv_main_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

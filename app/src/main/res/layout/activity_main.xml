@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <ImageView
+            android:visibility="gone"
             android:layout_centerVertical="true"
             android:layout_marginLeft="13dp"
             android:layout_width="25dp"
@@ -46,12 +47,13 @@
                     android:tint="#EBCCC7"
                     android:src="@drawable/ic_main_search_btn"/>
                 <TextView
+                    android:id="@+id/tv_searchbar_hotword"
                     android:gravity="center"
                     android:textAlignment="center"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:hint="放过 - 崔天琪"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textColorHint="#EBCCC7"/>
             </LinearLayout>
         </RelativeLayout>

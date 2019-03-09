@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
@@ -37,18 +39,25 @@ import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.BannerBean;
 import cn.kalac.hearing.javabean.LoginResultBean;
 import cn.kalac.hearing.javabean.RecommendSongsBean;
+import cn.kalac.hearing.javabean.SearchHotWordBean;
 import cn.kalac.hearing.javabean.song.Song;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.PlayMusicService;
+import cn.kalac.hearing.utils.DataUtil;
+import cn.kalac.hearing.utils.MD5Utils;
+import cn.kalac.hearing.utils.SharedPreUtils;
 
 public class MainActivity extends BaseActivity {
-
-
-    private ViewPager mVpMainContent;
-
+    //数据
     private static final String[] CHANNELS = new String[]{"个性推荐", "主播电台","我的音乐"};
     private List<String> mDataList = Arrays.asList(CHANNELS);
+    //view
+    private ViewPager mVpMainContent;
+    private TextView mTvHotWord;
+    //状态
+    private boolean isFillHotWord = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,9 +79,40 @@ public class MainActivity extends BaseActivity {
         refreshLoginState();
         //初始化服务
         initService();
-
+        //获取热词
+        getSearchHotWord();
     }
 
+    /**
+     * 获取热搜
+     */
+    private void getSearchHotWord() {
+        final String url = ApiHelper.getSearchHot();
+        HttpHelper.getInstance().get(url, new HttpCallback<SearchHotWordBean>() {
+            @Override
+            public void onSuccess(SearchHotWordBean searchHotWordBean) {
+                List<SearchHotWordBean.ResultBean.HotsBean> hotsBeans = searchHotWordBean.getResult().getHots();
+                //如果已经有本地数据在resume时填充，那么就只刷新数据
+                if (!isFillHotWord) {
+                    setSearchHotWords(hotsBeans);
+                }
+                //保存数据
+                String result = getResult();
+                DataUtil.saveJson(url,result);
+
+            }
+            @Override
+            public void onFailed(String string) {
+                SearchHotWordBean searchHotWordBean = DataUtil.loadBeanFormLoacl(url, SearchHotWordBean.class);
+                if (searchHotWordBean == null) {
+                    return;
+                }
+                List<SearchHotWordBean.ResultBean.HotsBean> hotsBeans = searchHotWordBean.getResult().getHots();
+                setSearchHotWords(hotsBeans);
+            }
+
+        });
+    }
 
 
     @Override
@@ -80,11 +120,20 @@ public class MainActivity extends BaseActivity {
         //设置滑动返回不可用
         //mSwipeBackHelper.setSwipeBackEnable(false);
         mVpMainContent = findViewById(R.id.vp_mainContent);
+        //搜索框中的热词
+        mTvHotWord = findViewById(R.id.tv_searchbar_hotword);
         MainContentAdapter contentAdapter = new MainContentAdapter(getSupportFragmentManager());
         mVpMainContent.setAdapter(contentAdapter);
         //初始化Indicator
         initMagicIndicator();
 
+    }
+
+    //设置热词
+    private void setSearchHotWords(List<SearchHotWordBean.ResultBean.HotsBean> hotsBeans) {
+        Random random = new Random();
+        int randomNum = random.nextInt(hotsBeans.size());
+        mTvHotWord.setHint(hotsBeans.get(randomNum).getFirst());
     }
 
     @Override
@@ -98,7 +147,6 @@ public class MainActivity extends BaseActivity {
     private void initService() {
         startService(PlayMusicService.class);
     }
-
 
 
     /**
@@ -184,5 +232,16 @@ public class MainActivity extends BaseActivity {
         });
         ViewPagerHelper.bind(magicIndicator, mVpMainContent);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //从本地获取热词数据
+        SearchHotWordBean searchHotWordBean = DataUtil.loadBeanFormLoacl(ApiHelper.getSearchHot(), SearchHotWordBean.class);
+        if (searchHotWordBean != null) {
+            setSearchHotWords(searchHotWordBean.getResult().getHots());
+            isFillHotWord = true;
+        }
     }
 }

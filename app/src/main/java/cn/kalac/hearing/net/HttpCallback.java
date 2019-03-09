@@ -10,14 +10,15 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 public abstract class HttpCallback<Result> implements ICallBack {
-
+    private String mResult;
     @Override
     public void onSuccess(String result) {
         Gson gson = new Gson();
         Class<?> cls = analysisClzzInfo();
-
+        mResult = result;
         Result objResult = (Result) gson.fromJson(result, cls);
         onSuccess(objResult);
+
     }
 
     public abstract void onSuccess(Result result);
@@ -35,5 +36,8 @@ public abstract class HttpCallback<Result> implements ICallBack {
         return (Class<?>) params[0];
     }
 
+    public String getResult(){
+        return mResult;
+    }
 }
 

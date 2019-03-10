@@ -51,10 +51,7 @@ public class PlayMusicService extends Service {
     private MusicOperaReceiver mMusicOperaReceiver = new MusicOperaReceiver();
 
     private boolean mIsMusicPause = false;
-    /**
-     * 当前歌曲是否处于加载中，防止多次加载
-     */
-    private boolean mIsPreparing = false;
+
 
     private Context mContext;
     private int mCurrentSongID = -1;
@@ -105,8 +102,15 @@ public class PlayMusicService extends Service {
 
     private void play() {
         Log.i(TAG, "play: ");
+        //如果正在播放，无须处理本次操作
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            Log.i(TAG, "play: 1");
+            sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
+            return;
+        }
         //如果当前为暂停状态，直接开始播放即可
         if (mIsMusicPause) {
+            Log.i(TAG, "play: 2");
             //使声音有渐变效果
             ValueAnimator valueAnimator = ValueAnimator.ofFloat(0,1);
             valueAnimator.setDuration(1000);
@@ -123,20 +127,23 @@ public class PlayMusicService extends Service {
             mMediaPlayer.start();
             sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
             mIsMusicPause = false;
-        } else {
+        } else { //从未开始的状态
+            Log.i(TAG, "play: 3");
             //获取当前要播放的songid
             Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
             int songid = song.getSongId();
+            //加载MP3
+            loadSongMp3(songid);
             //如果当前记录的播放id和要播放的id相同，说明是之前已经播放过得，但是暂停了，只需要直接调用start即可
-            if (mCurrentSongID == songid) {
-                mMediaPlayer.start();
-                sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
-            } else {
-                //记录当前播放的songId
-                mCurrentSongID = songid;
-                //加载MP3
-                loadSongMp3(songid);
-            }
+//            if (mCurrentSongID == songid) {
+//                mMediaPlayer.start();
+//                sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
+//            } else {
+//                //记录当前播放的songId
+//                mCurrentSongID = songid;
+//                //加载MP3
+//                loadSongMp3(songid);
+//            }
 
         }
 
@@ -201,10 +208,7 @@ public class PlayMusicService extends Service {
      * @param songId 歌曲id
      */
     private void loadSongMp3(int songId) {
-        //判断是否当前是否为加载中，加载中其实也是处于暂停状态，再次点击播放会导致崩溃
-        if (mIsPreparing) {
-            return;
-        }
+
         String url = ApiHelper.getSongMp3Url(songId);
 
         HttpHelper.getInstance().get(url, new HttpCallback<SongMp3ResultBean>() {
@@ -220,19 +224,17 @@ public class PlayMusicService extends Service {
                     }
                     String mp3Url = dataBean.getUrl();
                     try {
+                        mMediaPlayer.reset();
                         mMediaPlayer.setDataSource(mp3Url);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     //异步准备
                     mMediaPlayer.prepareAsync();
-                    //正在加载歌曲
-                    mIsPreparing = true;
                     mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
                             Log.i(TAG, "onCompletion: 加载音乐完成，开始播放");
-                            mIsPreparing = false;
                             //使声音有渐变效果
                             ValueAnimator valueAnimator = ValueAnimator.ofFloat(0,1);
                             valueAnimator.setDuration(1000);

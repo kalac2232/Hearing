@@ -7,5 +7,13 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
+    <style name="MainDragonballStyle" >
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+    <style name="MainDragonbalTestlStyle" >
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#000</item>
+    </style>
 </resources>

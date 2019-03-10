@@ -1,5 +1,6 @@
 package cn.kalac.hearing.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ import cn.kalac.hearing.javabean.RecommendSongsBean;
 import cn.kalac.hearing.javabean.song.Song;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
+import cn.kalac.hearing.utils.DataUtil;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -41,7 +43,7 @@ public class DiscoverFragment extends Fragment {
     private View mBtnJump;
     private ViewPager mVpBanner;
     private Handler mHander = new Handler();
-    private int mDelayMillis = 2500;
+    private int mDelayMillis = 5000;
     private BannerAdapter mBannerAdapter;
     private Thread mInfiniteThread;
 
@@ -110,7 +112,8 @@ public class DiscoverFragment extends Fragment {
         mBtnJump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getActivity(),PlayMusicActivity.class);
+                startActivity(intent);
             }
         });
         mVpBanner.setOnTouchListener(new View.OnTouchListener() {
@@ -122,6 +125,8 @@ public class DiscoverFragment extends Fragment {
                         mHander.removeCallbacks(mInfiniteThread);
                         break;
                     case MotionEvent.ACTION_UP:
+
+                    case MotionEvent.ACTION_CANCEL:
                         //开始自动滚动
                         mHander.postDelayed(mInfiniteThread,mDelayMillis);
                         break;
@@ -152,7 +157,7 @@ public class DiscoverFragment extends Fragment {
     }
 
     private void initBanner() {
-        String bannerUrl = ApiHelper.getBannerUrl();
+        final String bannerUrl = ApiHelper.getBannerUrl();
         HttpHelper.getInstance().get(bannerUrl, new HttpCallback<BannerBean>() {
 
             @Override
@@ -164,12 +169,26 @@ public class DiscoverFragment extends Fragment {
                     //设置到中间位置，防止一开始就向左滑出现滑不动的情况
                     mVpBanner.setCurrentItem(2 * banners.size());
                     mHander.postDelayed(mInfiniteThread,mDelayMillis);
+
+                    String json = getResult();
+                    DataUtil.saveJson(bannerUrl,json);
                 }
             }
 
             @Override
             public void onFailed(String string) {
                 Toast.makeText(getActivity(),"网络错误",Toast.LENGTH_SHORT).show();
+                BannerBean bannerBean = DataUtil.loadBeanFormLoacl(bannerUrl, BannerBean.class);
+
+                if (bannerBean == null) {
+                    return;
+                }
+                List<BannerBean.BannersBean> banners = bannerBean.getBanners();
+                mBannerAdapter = new BannerAdapter(getContext(), banners);
+                mVpBanner.setAdapter(mBannerAdapter);
+                //设置到中间位置，防止一开始就向左滑出现滑不动的情况
+                mVpBanner.setCurrentItem(2 * banners.size());
+                mHander.postDelayed(mInfiniteThread,mDelayMillis);
             }
 
         });

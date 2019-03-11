@@ -59,4 +59,21 @@ public class ApiHelper {
         String url = HostUrl + "/search/hot";
         return url;
     }
+
+    /**
+     * 获取推荐的歌单
+     * @return
+     */
+    public static String getRecomPlayList(){
+        String url = HostUrl + "/personalized";
+        return url;
+    }
+
+    /**
+     * 获取推荐最新音乐
+     */
+    public static String getRecomNewMusic(){
+        String url = HostUrl + "/personalized/newsong";
+        return url;
+    }
 }

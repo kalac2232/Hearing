@@ -5,20 +5,29 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import cn.kalac.hearing.fragment.DiscoverFragment;
+import cn.kalac.hearing.fragment.MineFragment;
 
 
 /*
  * Created by Kalac on 2019/2/26
  */
 
-public class MainContentAdapter extends FragmentPagerAdapter {
-    public MainContentAdapter(FragmentManager fm) {
+public class MainPagerFragAdapter extends FragmentPagerAdapter {
+    public MainPagerFragAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int position) {
-        return new DiscoverFragment();
+        switch (position) {
+            case 0:
+                return new DiscoverFragment();
+            case 1:
+                return new DiscoverFragment();
+            case 2:
+                return new MineFragment();
+        }
+        return null;
     }
 
     @Override

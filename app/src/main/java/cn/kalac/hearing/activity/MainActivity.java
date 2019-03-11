@@ -1,11 +1,11 @@
 package cn.kalac.hearing.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,27 +26,18 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Simple
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.adapter.BannerAdapter;
-import cn.kalac.hearing.adapter.MainContentAdapter;
+import cn.kalac.hearing.adapter.MainPagerFragAdapter;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.BannerBean;
-import cn.kalac.hearing.javabean.LoginResultBean;
-import cn.kalac.hearing.javabean.RecommendSongsBean;
 import cn.kalac.hearing.javabean.SearchHotWordBean;
-import cn.kalac.hearing.javabean.song.Song;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DataUtil;
-import cn.kalac.hearing.utils.MD5Utils;
-import cn.kalac.hearing.utils.SharedPreUtils;
 
 public class MainActivity extends BaseActivity {
     //数据
@@ -55,6 +46,7 @@ public class MainActivity extends BaseActivity {
     //view
     private ViewPager mVpMainContent;
     private TextView mTvHotWord;
+    private View mBtnJump;
     //状态
     private boolean isFillHotWord = false;
 
@@ -122,8 +114,10 @@ public class MainActivity extends BaseActivity {
         mVpMainContent = findViewById(R.id.vp_mainContent);
         //搜索框中的热词
         mTvHotWord = findViewById(R.id.tv_searchbar_hotword);
-        MainContentAdapter contentAdapter = new MainContentAdapter(getSupportFragmentManager());
+        MainPagerFragAdapter contentAdapter = new MainPagerFragAdapter(getSupportFragmentManager());
         mVpMainContent.setAdapter(contentAdapter);
+        //跳转播放页按钮
+        mBtnJump = findViewById(R.id.btn_jumpTOPlay);
         //初始化Indicator
         initMagicIndicator();
 
@@ -138,7 +132,13 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void addListener() {
-
+        mBtnJump.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,PlayMusicActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**

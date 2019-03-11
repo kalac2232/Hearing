@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp">
+    <RelativeLayout
+        android:layout_width="128dp"
+        android:layout_height="128dp">
+        <com.makeramen.roundedimageview.RoundedImageView
+            app:riv_corner_radius="6dp"
+            android:id="@+id/iv_classify_detailed_img"
+            android:src="@drawable/testfenmian"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/tv_classify_detailed_hot"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_alignParentRight="true"
+            android:text="77421"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_classify_detailed_title"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="一周新歌推荐"
+        android:textColor="#000"/>
+</LinearLayout>

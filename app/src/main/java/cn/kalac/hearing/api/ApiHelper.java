@@ -16,7 +16,7 @@ public class ApiHelper {
     /**
      * 刷新用户状态
      */
-    public static String getRefreshUrl(){
+    public static String getRefreshUserStatesUrl(){
         String url = HostUrl + "/login/refresh";
         return url;
     }

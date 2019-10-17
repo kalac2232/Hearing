@@ -1,11 +1,9 @@
 package cn.kalac.hearing.utils;
 
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.Primitives;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import static cn.kalac.hearing.utils.SharedPreUtils.getPref;
@@ -35,7 +33,8 @@ public class DataUtil {
         }
         Gson gson = new Gson();
         Object object =  gson.fromJson(json, (Type) classOfT);
-        return Primitives.wrap(classOfT).cast(object); //从gson中偷来的
+        //从gson中偷来的 将object转为T类型
+        return Primitives.wrap(classOfT).cast(object);
     }
 
 

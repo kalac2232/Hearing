@@ -34,7 +34,8 @@ import java.security.MessageDigest;
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.javabean.song.Song;
-import cn.kalac.hearing.utils.DisplayUtil;
+import cn.kalac.hearing.utils.DensityUtil;
+import cn.kalac.hearing.utils.TurntableDisplayUtil;
 
 
 /*
@@ -222,8 +223,8 @@ public class RecordViewAdapter extends PagerAdapter {
      * 唱盘图片由空心圆盘及音乐专辑图片“合成”得到
      */
     private Bitmap getDiscBitmap(Bitmap musicPicBitmap) {
-        int discSize = (int) (DisplayUtil.getScreenWidth(mContext) * DisplayUtil.SCALE_DISC_SIZE);
-        int musicPicSize = (int) (DisplayUtil.getScreenWidth(mContext) * DisplayUtil.SCALE_MUSIC_PIC_SIZE);
+        int discSize = (int) (DensityUtil.getScreenWidth(mContext) * TurntableDisplayUtil.SCALE_DISC_SIZE);
+        int musicPicSize = (int) (DensityUtil.getScreenWidth(mContext) * TurntableDisplayUtil.SCALE_MUSIC_PIC_SIZE);
         //获得专辑背景圆环
         Bitmap bitmapDisc = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(), R
                 .drawable.ic_recordview_disc), discSize, discSize, false);
@@ -242,8 +243,8 @@ public class RecordViewAdapter extends PagerAdapter {
         drawables[1] = discDrawable;
 
         LayerDrawable layerDrawable = new LayerDrawable(drawables);
-        int musicPicMargin = (int) ((DisplayUtil.SCALE_DISC_SIZE - DisplayUtil
-                .SCALE_MUSIC_PIC_SIZE) * DisplayUtil.getScreenWidth(mContext) / 2);
+        int musicPicMargin = (int) ((TurntableDisplayUtil.SCALE_DISC_SIZE - TurntableDisplayUtil
+                .SCALE_MUSIC_PIC_SIZE) * DensityUtil.getScreenWidth(mContext) / 2);
         //调整专辑图片的四周边距，让其显示在正中
         layerDrawable.setLayerInset(0, musicPicMargin, musicPicMargin, musicPicMargin,
                 musicPicMargin);

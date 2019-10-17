@@ -70,7 +70,7 @@ public class PlayMusicActivity extends BaseActivity {
     }
 
     @Override
-    public boolean registerReciver() {
+    public boolean bindMusicReceiver() {
         return true;
     }
 

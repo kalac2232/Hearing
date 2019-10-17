@@ -23,8 +23,8 @@ import java.lang.reflect.Field;
 
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.RecordViewAdapter;
-import cn.kalac.hearing.utils.DisplayUtil;
-
+import cn.kalac.hearing.utils.DensityUtil;
+import cn.kalac.hearing.utils.TurntableDisplayUtil;
 
 /**
  *
@@ -76,8 +76,8 @@ public class RecordView extends RelativeLayout {
         // 导入布局
         mRootView = LayoutInflater.from(context).inflate(R.layout.recordview_layout, this, true);
         //获取屏幕的宽高信息
-        mScreenHeigth = DisplayUtil.getScreenHeight(context);
-        mScreenWidth = DisplayUtil.getScreenWidth(context);
+        mScreenHeigth = DensityUtil.getScreenHeight(context);
+        mScreenWidth = DensityUtil.getScreenWidth(context);
         //初始化指针
         initNeedle();
         //初始化背景圆盘
@@ -100,12 +100,12 @@ public class RecordView extends RelativeLayout {
         //获取指针
         mIvNeedle = mRootView.findViewById(R.id.iv_recordview_Needle);
 
-        int needleWidth = (int) (DisplayUtil.SCALE_NEEDLE_WIDTH * mScreenWidth);
-        int needleHeight = (int) (DisplayUtil.SCALE_NEEDLE_HEIGHT * mScreenHeigth);
+        int needleWidth = (int) (TurntableDisplayUtil.SCALE_NEEDLE_WIDTH * mScreenWidth);
+        int needleHeight = (int) (TurntableDisplayUtil.SCALE_NEEDLE_HEIGHT * mScreenHeigth);
 
         /*设置手柄的外边距为负数，让其隐藏一部分*/
-        int marginTop = (int) (DisplayUtil.SCALE_NEEDLE_MARGIN_TOP * mScreenHeigth) * -1;
-        int marginLeft = (int) (DisplayUtil.SCALE_NEEDLE_MARGIN_LEFT * mScreenWidth);
+        int marginTop = (int) (TurntableDisplayUtil.SCALE_NEEDLE_MARGIN_TOP * mScreenHeigth) * -1;
+        int marginLeft = (int) (TurntableDisplayUtil.SCALE_NEEDLE_MARGIN_LEFT * mScreenWidth);
 
         Bitmap originBitmap = BitmapFactory.decodeResource(getResources(), R.drawable
                 .ic_playing_needle);
@@ -114,19 +114,19 @@ public class RecordView extends RelativeLayout {
         RelativeLayout.LayoutParams layoutParams = (LayoutParams) mIvNeedle.getLayoutParams();
         layoutParams.setMargins(marginLeft, marginTop, 0, 0);
 
-        int pivotX = (int) (DisplayUtil.SCALE_NEEDLE_PIVOT_X * mScreenWidth);
-        int pivotY = (int) (DisplayUtil.SCALE_NEEDLE_PIVOT_Y * mScreenWidth);
+        int pivotX = (int) (TurntableDisplayUtil.SCALE_NEEDLE_PIVOT_X * mScreenWidth);
+        int pivotY = (int) (TurntableDisplayUtil.SCALE_NEEDLE_PIVOT_Y * mScreenWidth);
 
         mIvNeedle.setPivotX(pivotX);
         mIvNeedle.setPivotY(pivotY);
-        mIvNeedle.setRotation(DisplayUtil.ROTATION_INIT_NEEDLE);
+        mIvNeedle.setRotation(TurntableDisplayUtil.ROTATION_INIT_NEEDLE);
         mIvNeedle.setImageBitmap(bitmap);
         mIvNeedle.setLayoutParams(layoutParams);
     }
 
     /*得到唱盘背后半透明的圆形背景*/
     private Drawable getDiscBlackgroundDrawable() {
-        int discSize = (int) (mScreenWidth * DisplayUtil.SCALE_DISC_BG_SIZE);
+        int discSize = (int) (mScreenWidth * TurntableDisplayUtil.SCALE_DISC_BG_SIZE);
         Bitmap bitmapDisc = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R
                 .drawable.ic_recordview_disc_blackground), discSize, discSize, false);
         RoundedBitmapDrawable roundDiscDrawable = RoundedBitmapDrawableFactory.create
@@ -141,7 +141,7 @@ public class RecordView extends RelativeLayout {
         ImageView mDiscBlackground = findViewById(R.id.iv_recordview_DiscBlackgound);
         mDiscBlackground.setImageDrawable(getDiscBlackgroundDrawable());
 
-        int marginTop = (int) (DisplayUtil.SCALE_DISC_BG_MARGIN_TOP * mScreenHeigth);
+        int marginTop = (int) (TurntableDisplayUtil.SCALE_DISC_BG_MARGIN_TOP * mScreenHeigth);
         RelativeLayout.LayoutParams layoutParams = (LayoutParams) mDiscBlackground
                 .getLayoutParams();
         layoutParams.setMargins(0, marginTop, 0, 0);
@@ -156,9 +156,9 @@ public class RecordView extends RelativeLayout {
         mVpRecord = findViewById(R.id.vp_recordview_record);
 
         RelativeLayout.LayoutParams layoutParams = (LayoutParams) mVpRecord.getLayoutParams();
-        int marginTop = (int) (DisplayUtil.SCALE_DISC_MARGIN_TOP * mScreenHeigth);
+        int marginTop = (int) (TurntableDisplayUtil.SCALE_DISC_MARGIN_TOP * mScreenHeigth);
         //设置根据屏幕大小动态设置vp的高度
-        layoutParams.height = (int) (DisplayUtil.getScreenWidth(getContext()) * DisplayUtil.SCALE_DISC_SIZE);
+        layoutParams.height = (int) (DensityUtil.getScreenWidth(getContext()) * TurntableDisplayUtil.SCALE_DISC_SIZE);
         layoutParams.setMargins(0, marginTop, 0, 0);
         mVpRecord.setLayoutParams(layoutParams);
 
@@ -260,7 +260,7 @@ public class RecordView extends RelativeLayout {
     private void initObjectAnimation() {
 
         //指针动画
-        mNeedleAnimator = ObjectAnimator.ofFloat(mIvNeedle, View.ROTATION, DisplayUtil
+        mNeedleAnimator = ObjectAnimator.ofFloat(mIvNeedle, View.ROTATION, TurntableDisplayUtil
                 .ROTATION_INIT_NEEDLE, 0);
         mNeedleAnimator.setDuration(DURATION_NEEDLE_ANIAMTOR);
         mNeedleAnimator.setInterpolator(new AccelerateInterpolator());

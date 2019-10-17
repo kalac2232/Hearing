@@ -5,7 +5,7 @@ import android.content.Context;
 /**
  * 唱片尺寸计算类
  */
-public class DisplayUtil {
+public class TurntableDisplayUtil {
 
     /*手柄起始角度*/
     public static final float ROTATION_INIT_NEEDLE = -30;
@@ -33,13 +33,4 @@ public class DisplayUtil {
     /*专辑图片比例*/
     public static final float SCALE_MUSIC_PIC_SIZE = (float) (533.0 / BASE_SCREEN_WIDTH);
 
-    /*设备屏幕宽度*/
-    public static int getScreenWidth(Context context) {
-        return context.getResources().getDisplayMetrics().widthPixels;
-    }
-
-    /*设备屏幕高度*/
-    public static int getScreenHeight(Context context) {
-        return context.getResources().getDisplayMetrics().heightPixels;
-    }
 }

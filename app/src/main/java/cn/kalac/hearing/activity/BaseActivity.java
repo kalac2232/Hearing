@@ -1,24 +1,18 @@
 package cn.kalac.hearing.activity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.kalac.hearing.R;
@@ -46,19 +40,26 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
         int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         decorView.setSystemUiVisibility(option);
+
         getWindow().setStatusBarColor(Color.TRANSPARENT);
-        View statusBarView = findViewById(R.id.statusBarView);
-        if (statusBarView != null) {
-            statusBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(mContext));
-            statusBarView.setLayoutParams(layoutParams);
+//        View statusBarView = findViewById(R.id.statusBarView);
+//        if (statusBarView != null) {
+//            //statusBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+//            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(mContext));
+//            statusBarView.setLayoutParams(layoutParams);
+//        }
+        //android6.0以后可以对状态栏文字颜色和图标进行修改
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //设置状态栏字体颜色为深色
+            getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
+
         initView();
         initData();
         addListener();
         initSwipeBackFinish();
         //判断是否需要注册音乐状态改变广播接收者
-        if (registerReciver()){
+        if (bindMusicReceiver()){
             registerMusicStatusReciver();
         }
     }
@@ -167,13 +168,13 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (registerReciver()) {
+        if (bindMusicReceiver()) {
             //如果注册了广播接收者 那么取消注册
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mMusicStatusReceiver);
         }
     }
 
-    public boolean registerReciver(){
+    public boolean bindMusicReceiver(){
         return false;
     }
     protected abstract int getLayoutResID();

@@ -8,7 +8,7 @@ import cn.kalac.hearing.R;
 
 public class LoginActivity extends BaseActivity {
     @Override
-    public boolean registerReciver() {
+    public boolean bindMusicReceiver() {
         return false;
     }
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -40,7 +41,9 @@ import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DataUtil;
 
 public class MainActivity extends BaseActivity {
-    //数据
+    /**
+     * 数据
+     */
     private static final String[] CHANNELS = new String[]{"个性推荐", "主播电台","我的音乐"};
     private List<String> mDataList = Arrays.asList(CHANNELS);
     //view
@@ -50,6 +53,9 @@ public class MainActivity extends BaseActivity {
     //状态
     private boolean isFillHotWord = false;
 
+    //工具
+
+    private Handler mHandle = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +63,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public boolean registerReciver() {
+    public boolean bindMusicReceiver() {
         return true;
     }
 
@@ -66,6 +72,7 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
+    @Override
     protected void initData() {
         //刷新登录状态
         refreshLoginState();
@@ -84,17 +91,16 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onSuccess(SearchHotWordBean searchHotWordBean) {
                 List<SearchHotWordBean.ResultBean.HotsBean> hotsBeans = searchHotWordBean.getResult().getHots();
-                //如果已经有本地数据在resume时填充，那么就只刷新数据
-                if (!isFillHotWord) {
-                    setSearchHotWords(hotsBeans);
-                }
-                //保存数据
+                //设置最新的热词
+                setSearchHotWords(hotsBeans);
+                //保存数据至本地
                 String result = getResult();
                 DataUtil.saveJson(url,result);
 
             }
             @Override
             public void onFailed(String string) {
+                //连接错误的时候从本地获取
                 SearchHotWordBean searchHotWordBean = DataUtil.loadBeanFormLoacl(url, SearchHotWordBean.class);
                 if (searchHotWordBean == null) {
                     return;
@@ -118,8 +124,6 @@ public class MainActivity extends BaseActivity {
         mVpMainContent.setAdapter(contentAdapter);
         //跳转播放页按钮
         mBtnJump = findViewById(R.id.btn_jumpTOPlay);
-        //初始化Indicator
-        initMagicIndicator();
 
     }
 
@@ -127,7 +131,8 @@ public class MainActivity extends BaseActivity {
     private void setSearchHotWords(List<SearchHotWordBean.ResultBean.HotsBean> hotsBeans) {
         Random random = new Random();
         int randomNum = random.nextInt(hotsBeans.size());
-        mTvHotWord.setHint(hotsBeans.get(randomNum).getFirst());
+        mTvHotWord.setText(hotsBeans.get(randomNum).getFirst());
+        //mHandle
     }
 
     @Override
@@ -153,7 +158,7 @@ public class MainActivity extends BaseActivity {
      * 刷新登录状态
      */
     private void refreshLoginState() {
-        String url = ApiHelper.getRefreshUrl();
+        String url = ApiHelper.getRefreshUserStatesUrl();
 
         HttpHelper.getInstance().get(url, new HttpCallback<String>() {
 
@@ -183,65 +188,10 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void initMagicIndicator() {
-        MagicIndicator magicIndicator =  findViewById(R.id.magic_indicator);
-        CommonNavigator commonNavigator = new CommonNavigator(this);
-        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
-            @Override
-            public int getCount() {
-                return mDataList == null ? 0 : mDataList.size();
-            }
-
-            @Override
-            public IPagerTitleView getTitleView(Context context, final int index) {
-                //设置文字
-                SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
-                simplePagerTitleView.setText(mDataList.get(index));
-                simplePagerTitleView.setNormalColor(Color.parseColor("#88ffffff"));
-                simplePagerTitleView.setSelectedColor(Color.WHITE);
-
-                simplePagerTitleView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mVpMainContent.setCurrentItem(index);
-                    }
-                });
-                return simplePagerTitleView;
-            }
-
-            @Override
-            public IPagerIndicator getIndicator(Context context) {
-                //设置指示器
-                LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setMode(LinePagerIndicator.MODE_WRAP_CONTENT);
-                indicator.setColors(Color.parseColor("#ffffff"));
-                indicator.setLineHeight(UIUtil.dip2px(context, 2));
-                indicator.setRoundRadius(UIUtil.dip2px(context, 7));
-                return indicator;
-            }
-        });
-        magicIndicator.setNavigator(commonNavigator);
-        LinearLayout titleContainer = commonNavigator.getTitleContainer(); // must after setNavigator
-        titleContainer.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-        titleContainer.setDividerDrawable(new ColorDrawable() {
-            @Override
-            public int getIntrinsicWidth() {
-                //控制指示器的长度
-                return UIUtil.dip2px(mContext, 50);
-            }
-        });
-        ViewPagerHelper.bind(magicIndicator, mVpMainContent);
-
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //从本地获取热词数据
-        SearchHotWordBean searchHotWordBean = DataUtil.loadBeanFormLoacl(ApiHelper.getSearchHot(), SearchHotWordBean.class);
-        if (searchHotWordBean != null) {
-            setSearchHotWords(searchHotWordBean.getResult().getHots());
-            isFillHotWord = true;
-        }
+
     }
 }

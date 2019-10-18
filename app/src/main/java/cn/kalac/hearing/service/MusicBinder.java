@@ -10,9 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Binder;
-import android.support.v4.content.LocalBroadcastManager;
-
-import cn.kalac.hearing.activity.BaseActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 
 public class MusicBinder extends Binder {

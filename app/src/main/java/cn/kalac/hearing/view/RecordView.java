@@ -6,9 +6,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v4.view.ViewPager;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,7 +57,7 @@ public class RecordView extends RelativeLayout {
     }
     //指针当前的状态
     public enum NeedleStatus {
-        PLAY, PAUSE, TOPLAY, TOPAUSE //move为滑动唱片的状态
+        PLAY, PAUSE, TOPLAY, TOPAUSE
     }
     public RecordView(Context context) {
         this(context,null);

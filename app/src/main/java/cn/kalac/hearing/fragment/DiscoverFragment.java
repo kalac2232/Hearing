@@ -1,41 +1,19 @@
 package cn.kalac.hearing.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.activity.PlayMusicActivity;
-import cn.kalac.hearing.adapter.BannerAdapter;
 import cn.kalac.hearing.adapter.MainContentClassifyAdapter;
-import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.BannerBean;
-import cn.kalac.hearing.javabean.LoginResultBean;
-import cn.kalac.hearing.javabean.RecommendSongsBean;
-import cn.kalac.hearing.javabean.song.Song;
-import cn.kalac.hearing.net.HttpCallback;
-import cn.kalac.hearing.net.HttpHelper;
-import cn.kalac.hearing.utils.DataUtil;
-import cn.kalac.hearing.utils.TimeUtil;
-
-import static android.support.constraint.Constraints.TAG;
 
 
 /*

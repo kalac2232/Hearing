@@ -1,28 +1,12 @@
 package cn.kalac.hearing.activity;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import net.lucode.hackware.magicindicator.MagicIndicator;
-import net.lucode.hackware.magicindicator.ViewPagerHelper;
-import net.lucode.hackware.magicindicator.buildins.UIUtil;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.SimplePagerTitleView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +23,7 @@ import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DataUtil;
+import cn.kalac.hearing.view.MiniSoundWave;
 
 public class MainActivity extends BaseActivity {
     /**
@@ -49,7 +34,7 @@ public class MainActivity extends BaseActivity {
     //view
     private ViewPager mVpMainContent;
     private TextView mTvHotWord;
-    private View mBtnJump;
+    private MiniSoundWave mBtnJump;
     //状态
     private boolean isFillHotWord = false;
 
@@ -125,6 +110,7 @@ public class MainActivity extends BaseActivity {
         //跳转播放页按钮
         mBtnJump = findViewById(R.id.btn_jumpTOPlay);
 
+
     }
 
     //设置热词
@@ -140,8 +126,9 @@ public class MainActivity extends BaseActivity {
         mBtnJump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext,PlayMusicActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(mContext,PlayMusicActivity.class);
+//                startActivity(intent);
+                mBtnJump.start();
             }
         });
     }

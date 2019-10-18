@@ -8,9 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="80dp" />
         <cn.kalac.hearing.view.WrapContentHeightViewPager
             android:id="@+id/vp_main_banner"
             android:layout_width="match_parent"

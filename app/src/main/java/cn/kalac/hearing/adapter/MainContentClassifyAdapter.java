@@ -2,9 +2,9 @@ package cn.kalac.hearing.adapter;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -258,7 +260,8 @@ public class MainContentClassifyAdapter extends RecyclerView.Adapter<MainContent
 
             @Override
             public void onFailed(String string) {
-                Toast.makeText(mContext,"网络错误",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,"网络错误：" + string,Toast.LENGTH_SHORT).show();
+                Logger.e(string);
                 BannerBean bannerBean = DataUtil.loadBeanFormLoacl(bannerUrl, BannerBean.class);
 
                 if (bannerBean == null) {

@@ -29,9 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="65dp"
-            android:background="@drawable/shape_main_search"
-
-            >
+            android:background="@drawable/shape_main_search">
             <LinearLayout
                 android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
@@ -51,7 +49,6 @@
                     android:textAlignment="center"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="放过 - 崔天琪"
                     android:includeFontPadding="false"
                     android:textSize="14sp"
                     android:textColor="#C6C6C6"/>
@@ -61,13 +58,13 @@
 
     </RelativeLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
 
         android:id="@+id/vp_mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never">
 
-    </android.support.v4.view.ViewPager>
+    </androidx.viewpager.widget.ViewPager>
 
 </LinearLayout>

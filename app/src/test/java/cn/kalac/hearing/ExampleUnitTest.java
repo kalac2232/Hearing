@@ -14,4 +14,19 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+    @Test
+    public void arrLength() {
+        int[][] arr = new int[4][7];
+        System.out.println(arr[1].length);
+    }
+
+    @Test
+    public void arrClone() {
+        int[] arr = new int[4];
+        arr[0] = 5;
+        int[] clone = arr.clone();
+        clone[1] = 6;
+        System.out.println(arr[1]);
+        System.out.println(clone[1]);
+    }
 }

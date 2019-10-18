@@ -47,8 +47,7 @@ public class BannerAdapter extends PagerAdapter {
         int realPosition = position % mBannersList.size();
         View view = LayoutInflater.from(mContext).inflate(R.layout.main_banner_layout, container, false);
         ImageView banner = view.findViewById(R.id.iv_main_banner);
-        RequestOptions requestOptions = new RequestOptions()
-                .transform(new RoundedCornersTransformation(120,0, RoundedCornersTransformation.CornerType.ALL));
+        //此处使用Glide进行圆角转换虚拟机会异常的卡顿
         Glide.with(mContext).load(mBannersList.get(realPosition).getImageUrl()).into(banner);
         container.addView(view);
         return view;

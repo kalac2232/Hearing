@@ -101,6 +101,11 @@ public class PlayMusicService extends Service {
 
 
     private void play() {
+
+        if (HearingApplication.mPlayingSongList == null || HearingApplication.mPlayingSongList.isEmpty()) {
+            return;
+        }
+
         Log.i(TAG, "play: ");
         //如果正在播放，无须处理本次操作
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {

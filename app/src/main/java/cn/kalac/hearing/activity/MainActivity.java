@@ -1,5 +1,6 @@
 package cn.kalac.hearing.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.viewpager.widget.ViewPager;
@@ -126,9 +127,8 @@ public class MainActivity extends BaseActivity {
         mBtnJump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(mContext,PlayMusicActivity.class);
-//                startActivity(intent);
-                mBtnJump.start();
+                Intent intent = new Intent(mContext,PlayMusicActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -180,5 +180,15 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
+    }
+
+    @Override
+    protected void musicStatusToPlay() {
+        mBtnJump.start();
+    }
+
+    @Override
+    protected void musicStatusToPause() {
+        mBtnJump.pause();
     }
 }

@@ -5,7 +5,7 @@ package cn.kalac.hearing.api;
  */
 
 public class ApiHelper {
-    public static final String HostUrl = "http://59.110.213.97:3000";
+    public static final String HostUrl = "http://www.kalac.cn:3000";
     /**
      * 手机登录
      */

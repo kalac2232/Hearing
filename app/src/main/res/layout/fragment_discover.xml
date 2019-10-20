@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,18 +9,18 @@
         android:layout_height="wrap_content"
         android:descendantFocusability="blocksDescendants">
 
-        <androidx.viewpager.widget.ViewPager
+        <cn.kalac.hearing.view.LoopViewPager
             android:id="@+id/vp_main_banner"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1080:400"
+            app:layout_constraintDimensionRatio="1080:381"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
         <ImageView
             android:id="@+id/iv_main_daily"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="14dp"
             style="@style/MainDragonballStyle"
             app:layout_constraintHorizontal_bias="0.085"
             app:layout_constraintTop_toBottomOf="@id/vp_main_banner"
@@ -129,4 +129,4 @@
 
         </androidx.recyclerview.widget.RecyclerView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

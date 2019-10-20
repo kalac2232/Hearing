@@ -36,6 +36,7 @@ import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.utils.TimeUtil;
+import cn.kalac.hearing.view.LoopViewPager;
 
 
 /**
@@ -45,16 +46,13 @@ import cn.kalac.hearing.utils.TimeUtil;
 
 public class DiscoverFragment extends Fragment {
 
-    private ViewPager mVpBanner;
+    private LoopViewPager mVpBanner;
     private RecyclerView mRecyclerView;
     private TextView mTvDaily;
     private View mIvDaily;
 
-    private Handler mHander = new Handler();
-
     private BannerAdapter mBannerAdapter;
-    private Thread mInfiniteThread;
-    private int mDelayMillis = 5000;
+
     private Context mContext;
 
     @Nullable
@@ -75,35 +73,11 @@ public class DiscoverFragment extends Fragment {
 
     private void initView(View view) {
         mVpBanner = view.findViewById(R.id.vp_main_banner);
-
         mRecyclerView = view.findViewById(R.id.rcv_main_content);
 
         mTvDaily = view.findViewById(R.id.tv_main_daily);
         mIvDaily = view.findViewById(R.id.iv_main_daily);
 
-        //无限轮播的thread
-        mInfiniteThread = new InfiniteThread();
-
-//        mVpBanner.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        //当按住vp的时候 停止自动滚动
-//                        mHander.removeCallbacks(mInfiniteThread);
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//
-//                    case MotionEvent.ACTION_CANCEL:
-//                        //开始自动滚动
-//                        mHander.postDelayed(mInfiniteThread, mDelayMillis);
-//                        break;
-//                    default:
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
     }
 
     private void initData() {
@@ -114,6 +88,7 @@ public class DiscoverFragment extends Fragment {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new MainContentClassifyAdapter(getContext()));
+        mRecyclerView.setNestedScrollingEnabled(false);
     }
 
     protected void addListener() {
@@ -156,11 +131,6 @@ public class DiscoverFragment extends Fragment {
 
                     setAdapterData(banners);
 
-
-                    //设置到中间位置，防止一开始就向左滑出现滑不动的情况
-                    mVpBanner.setCurrentItem(2 * banners.size());
-                    //mHander.postDelayed(mInfiniteThread, mDelayMillis);
-
                     String json = getResult();
                     DataUtil.saveJson(bannerUrl, json);
                 }
@@ -176,9 +146,7 @@ public class DiscoverFragment extends Fragment {
                     return;
                 }
                 setAdapterData(bannerBean.getBanners());
-                //设置到中间位置，防止一开始就向左滑出现滑不动的情况
-                mVpBanner.setCurrentItem(2 * bannerBean.getBanners().size());
-                //mHander.postDelayed(mInfiniteThread, mDelayMillis);
+
             }
 
         });
@@ -187,18 +155,10 @@ public class DiscoverFragment extends Fragment {
     private void setAdapterData(List<BannerBean.BannersBean> banners) {
         mBannerAdapter = new BannerAdapter(mContext, banners);
         mVpBanner.setAdapter(mBannerAdapter);
+        mVpBanner.start();
     }
 
-    /**
-     * 用于无限轮播图的线程
-     */
-    class InfiniteThread extends Thread {
-        @Override
-        public void run() {
-            mHander.postDelayed(this, mDelayMillis);
-            mVpBanner.setCurrentItem(mVpBanner.getCurrentItem() + 1);
-        }
-    }
+
 
     /**
      * 提取日推列表中歌曲的id方便进行播放

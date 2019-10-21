@@ -56,7 +56,7 @@ public class MiniSoundWave extends View {
 
     private void init(Context context) {
 
-        mLintStrokeWidth = DensityUtil.dip2px(context,2);
+        mLintStrokeWidth = DensityUtil.dip2px(context,1);
 
         mPaint = initPaint();
 

@@ -37,6 +37,7 @@ import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.utils.TimeUtil;
 import cn.kalac.hearing.view.LoopViewPager;
+import cn.kalac.hearing.view.PunctuateIndicator;
 
 
 /**
@@ -54,6 +55,7 @@ public class DiscoverFragment extends Fragment {
     private BannerAdapter mBannerAdapter;
 
     private Context mContext;
+    private PunctuateIndicator mIndicator;
 
     @Nullable
     @Override
@@ -74,6 +76,8 @@ public class DiscoverFragment extends Fragment {
     private void initView(View view) {
         mVpBanner = view.findViewById(R.id.vp_main_banner);
         mRecyclerView = view.findViewById(R.id.rcv_main_content);
+        //指示器
+        mIndicator = view.findViewById(R.id.punctuateIndicator);
 
         mTvDaily = view.findViewById(R.id.tv_main_daily);
         mIvDaily = view.findViewById(R.id.iv_main_daily);
@@ -84,7 +88,7 @@ public class DiscoverFragment extends Fragment {
         //获取banner
         initBanner();
         //设置日推的每日时间
-        mTvDaily.setText(TimeUtil.getTime(System.currentTimeMillis(),"dd"));
+        mTvDaily.setText(TimeUtil.getTime(System.currentTimeMillis(), "dd"));
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new MainContentClassifyAdapter(getContext()));
@@ -102,7 +106,7 @@ public class DiscoverFragment extends Fragment {
                     @Override
                     public void onSuccess(RecommendSongsBean recommendSongsBean) {
                         List<RecommendSongsBean.RecommendBean> recommendSongBeanList = recommendSongsBean.getRecommend();
-                        Toast.makeText(mContext,"获取了"+recommendSongBeanList.size()+"个数据",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "获取了" + recommendSongBeanList.size() + "个数据", Toast.LENGTH_SHORT).show();
                         //Log.i(TAG, "onSuccess: "+recommendSongsBean);
                         //提取日推列表中歌曲的id方便进行播放
                         extractSongIdFromRecommendList(recommendSongBeanList);
@@ -112,7 +116,7 @@ public class DiscoverFragment extends Fragment {
 
                     @Override
                     public void onFailed(String string) {
-                        Toast.makeText(mContext,"获取失败"+string,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "获取失败" + string, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -155,13 +159,14 @@ public class DiscoverFragment extends Fragment {
     private void setAdapterData(List<BannerBean.BannersBean> banners) {
         mBannerAdapter = new BannerAdapter(mContext, banners);
         mVpBanner.setAdapter(mBannerAdapter);
+        mIndicator.bindViewPager(mVpBanner);
         mVpBanner.start();
     }
 
 
-
     /**
      * 提取日推列表中歌曲的id方便进行播放
+     *
      * @param recommendSongBeanList 日推列表
      */
     private void extractSongIdFromRecommendList(List<RecommendSongsBean.RecommendBean> recommendSongBeanList) {
@@ -171,7 +176,7 @@ public class DiscoverFragment extends Fragment {
             String songName = bean.getName();
             String singerName = bean.getArtists().get(0).getName();
             String picUrl = bean.getAlbum().getPicUrl();
-            list.add(new Song(songId,songName,singerName,picUrl));
+            list.add(new Song(songId, songName, singerName, picUrl));
         }
         if (list.size() > 0) {
             //将数据存放到application中用于全局使用

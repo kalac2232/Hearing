@@ -21,6 +21,7 @@
             android:id="@+id/punctuateIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             app:layout_constraintLeft_toLeftOf="@id/vp_main_banner"
             app:layout_constraintRight_toRightOf="@id/vp_main_banner"
             app:layout_constraintBottom_toBottomOf="@id/vp_main_banner"/>
@@ -125,8 +126,8 @@
             android:background="#DFDCDC"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="4dp"
             android:id="@+id/rcv_main_content"
-            android:layout_marginTop="8dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_width="match_parent"

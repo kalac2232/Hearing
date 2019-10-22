@@ -1,7 +1,9 @@
 package cn.kalac.hearing.adapter;
 
 import android.content.Context;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -20,7 +23,7 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
 
     private final Context mContext;
 
-    private  List<RecomPLayListBean.ResultBean> mPlayList;
+    private List<RecomPLayListBean.ResultBean> mPlayList;
     private List<RecomNewMusic.ResultBean> mNewMusic;
 
     private static final int TYPE_RECOM_PLAYLIST = 1;
@@ -28,7 +31,8 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
     private static final int TYPE_RECOM_FM = 3;
 
     private int mType;
-    public MainClassifyDetailedAdapter(Context context, Object result,int type) {
+
+    public MainClassifyDetailedAdapter(Context context, Object result, int type) {
         mContext = context;
         mType = type;
         if (type == TYPE_RECOM_PLAYLIST) {
@@ -56,11 +60,16 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
             case TYPE_RECOM_PLAYLIST:
                 RecomPLayListBean.ResultBean bean = mPlayList.get(position);
                 Glide.with(mContext).load(bean.getPicUrl()).into(holder.ivImage);
+
+
                 int i = (int) (bean.getPlayCount() / 10000);
-                if (i > 1) {
+                Logger.i("i:%d" , i);
+                if (i > 10000) {
+                    holder.tvHot.setText(i / 10000 + "亿");
+                } else if (i > 1){
                     holder.tvHot.setText(i + "万");
                 } else {
-                    holder.tvHot.setText((int)bean.getPlayCount() + "");
+                    holder.tvHot.setText((int) bean.getPlayCount() + "");
                 }
                 holder.tvTitle.setText(bean.getName());
                 break;
@@ -72,6 +81,8 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
                 break;
             case TYPE_RECOM_FM:
                 break;
+            default:
+                break;
         }
 
     }
@@ -82,7 +93,7 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
         return 6;
     }
 
-    public class VH extends RecyclerView.ViewHolder{
+    public class VH extends RecyclerView.ViewHolder {
 
 
         private final ImageView ivImage;

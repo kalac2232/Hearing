@@ -1,38 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp">
-    <RelativeLayout
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/iv_classify_detailed_img"
         android:layout_width="118dp"
-        android:layout_height="118dp">
-        <com.makeramen.roundedimageview.RoundedImageView
-            app:riv_corner_radius="6dp"
-            android:id="@+id/iv_classify_detailed_img"
-            android:src="@drawable/testfenmian"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/tv_classify_detailed_hot"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="3dp"
-            android:layout_alignParentRight="true"
-            android:text="77421"
-            android:textColor="#fff"
-            android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
+        android:layout_height="118dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/testfenmian"
+        app:riv_corner_radius="6dp" />
+
+    <TextView
+        android:id="@+id/tv_classify_detailed_hot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="@id/iv_classify_detailed_img"
+        app:layout_constraintTop_toTopOf="@id/iv_classify_detailed_img"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="6dp"
+        android:text="77421"
+        android:textColor="#fff"
+        android:textSize="13sp" />
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="2dp"
+        android:src="@mipmap/ic_play_list_triangle"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="@id/tv_classify_detailed_hot"
+        app:layout_constraintBottom_toBottomOf="@id/tv_classify_detailed_hot"
+        app:layout_constraintRight_toLeftOf="@id/tv_classify_detailed_hot"/>
 
     <TextView
         android:id="@+id/tv_classify_detailed_title"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="7dp"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="一周新歌推荐"
-        android:textColor="#000"/>
-</LinearLayout>
+        tools:text="一周新歌推荐一周新歌推荐"
+        android:textColor="#000"
+        android:maxLines="2"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/iv_classify_detailed_img"
+        app:layout_constraintRight_toRightOf="@+id/iv_classify_detailed_img"
+        app:layout_constraintLeft_toLeftOf="@+id/iv_classify_detailed_img" />
+</androidx.constraintlayout.widget.ConstraintLayout>

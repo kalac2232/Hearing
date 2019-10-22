@@ -68,7 +68,7 @@ public class RecomPLayListBean
         private String copywriter;
         private String picUrl;
         private boolean canDislike;
-        private double playCount;
+        private int playCount;
         private int trackCount;
         private boolean highQuality;
         private String alg;
@@ -125,7 +125,7 @@ public class RecomPLayListBean
             return playCount;
         }
 
-        public void setPlayCount(double playCount) {
+        public void setPlayCount(int playCount) {
             this.playCount = playCount;
         }
 

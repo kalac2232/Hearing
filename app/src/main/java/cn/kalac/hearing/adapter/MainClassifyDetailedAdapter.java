@@ -28,7 +28,7 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
 
     private static final int TYPE_RECOM_PLAYLIST = 1;
     private static final int TYPE_NEW_MUSIC = 2;
-    private static final int TYPE_RECOM_FM = 3;
+    //private static final int TYPE_RECOM_FM = 3;
 
     private int mType;
 
@@ -79,8 +79,8 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
                 holder.tvHot.setVisibility(View.GONE);
                 holder.tvTitle.setText(resultBean.getName());
                 break;
-            case TYPE_RECOM_FM:
-                break;
+//            case TYPE_RECOM_FM:
+//                break;
             default:
                 break;
         }

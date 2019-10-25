@@ -18,6 +18,7 @@ import java.util.List;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.javabean.mainRecom.RecomNewMusic;
 import cn.kalac.hearing.javabean.mainRecom.RecomPLayListBean;
+import cn.kalac.hearing.utils.DensityUtil;
 
 public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassifyDetailedAdapter.VH> {
 
@@ -51,6 +52,11 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_main_classify_detailed, parent, false);
+        //动态计算item的大小
+        int width = parent.getWidth() - DensityUtil.dip2px(parent.getContext(),25);
+
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(width / 3, ViewGroup.LayoutParams.WRAP_CONTENT);
+        view.setLayoutParams(layoutParams);
         return new VH(view);
     }
 

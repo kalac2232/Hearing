@@ -19,8 +19,7 @@ import cn.kalac.hearing.net.OkHttpProcessor;
  */
 
 public class HearingApplication extends Application {
-    public static List<Song> mPlayingSongList = new ArrayList<>();
-    public static int mCurrentPlayPos = -1;
+
     public static HearingApplication mApplication;
     @Override
     public void onCreate() {

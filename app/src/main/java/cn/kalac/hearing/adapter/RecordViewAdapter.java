@@ -34,6 +34,7 @@ import java.security.MessageDigest;
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.javabean.song.Song;
+import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DensityUtil;
 import cn.kalac.hearing.utils.TurntableDisplayUtil;
 
@@ -56,12 +57,12 @@ public class RecordViewAdapter extends PagerAdapter {
     public RecordViewAdapter(Context context) {
         mContext = context;
         //获取第一首播放的歌曲的位置
-        mFristSongPosition = HearingApplication.mCurrentPlayPos;
+        mFristSongPosition = PlayMusicService.mCurrentPlayPos;
     }
 
     @Override
     public int getCount() {
-        return HearingApplication.mPlayingSongList.size();
+        return PlayMusicService.mPlayingSongList.size();
     }
 
     @Override
@@ -76,7 +77,7 @@ public class RecordViewAdapter extends PagerAdapter {
         mCoverImageView = view.findViewById(R.id.iv_recordview_Album);
 
         //获取当前播放的歌曲id
-        Song song = HearingApplication.mPlayingSongList.get(mFristSongPosition + position);
+        Song song = PlayMusicService.mPlayingSongList.get(mFristSongPosition + position);
 
         RequestOptions requestOptions = new RequestOptions()
                 .transform(new CompositeCoverTransformation());

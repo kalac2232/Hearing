@@ -80,6 +80,7 @@ public class PlayMusicActivity extends BaseActivity {
     }
 
 
+    @Override
     protected void initView() {
         //返回按钮
         mBackBtn = findViewById(R.id.ib_goback_btn);
@@ -287,7 +288,7 @@ public class PlayMusicActivity extends BaseActivity {
         //显示标题栏
         mTitle.setVisibility(View.VISIBLE);
         //获取当前播放的歌曲id
-        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+        Song song = PlayMusicService.mPlayingSongList.get(PlayMusicService.mCurrentPlayPos);
         //设置歌曲详情
         showSongDetail(song);
         //设置seekbar总时长

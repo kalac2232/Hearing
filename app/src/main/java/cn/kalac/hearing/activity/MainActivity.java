@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.viewpager.widget.ViewPager;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.github.mmin18.widget.RealtimeBlurView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +45,8 @@ public class MainActivity extends BaseActivity {
     //工具
 
     private Handler mHandle = new Handler();
+    private View llBottomBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +116,7 @@ public class MainActivity extends BaseActivity {
         //跳转播放页按钮
         mBtnJump = findViewById(R.id.btn_jumpTOPlay);
 
+        llBottomBar = findViewById(R.id.ll_bottom_bar);
 
     }
 

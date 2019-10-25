@@ -32,6 +32,7 @@ import cn.kalac.hearing.javabean.song.Song;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.utils.DataUtil;
+import cn.kalac.hearing.utils.DensityUtil;
 import cn.kalac.hearing.utils.TimeUtil;
 import cn.kalac.hearing.widget.GridDividerItem;
 
@@ -71,6 +72,8 @@ public class MainContentClassifyAdapter extends RecyclerView.Adapter<MainContent
                 //获取最新音乐
                 initRecomNewMusic(holder.rcvDetailed);
                 break;
+            default:
+                break;
 //            case TYPE_RECOM_FM:
 //                holder.tvTitle.setText("主播电台");
 //                holder.tvMore.setVisibility(View.INVISIBLE);
@@ -108,7 +111,7 @@ public class MainContentClassifyAdapter extends RecyclerView.Adapter<MainContent
             rcvDetailed = itemView.findViewById(R.id.rcv_item_classify_detailed);
             //设置网格布局
             rcvDetailed.setLayoutManager(new GridLayoutManager(mContext, 3));
-            rcvDetailed.addItemDecoration(new GridDividerItem());
+            rcvDetailed.addItemDecoration(new GridDividerItem(DensityUtil.dip2px(mContext,25)));
 
         }
     }

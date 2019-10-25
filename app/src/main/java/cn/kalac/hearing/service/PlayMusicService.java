@@ -12,6 +12,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.api.ApiHelper;
@@ -56,6 +58,9 @@ public class PlayMusicService extends Service {
     private Context mContext;
     private int mCurrentSongID = -1;
     private MusicBinder mMusicBinder;
+
+    public static List<Song> mPlayingSongList = new ArrayList<>();
+    public static int mCurrentPlayPos = -1;
 
     @Override
     public void onCreate() {
@@ -102,7 +107,7 @@ public class PlayMusicService extends Service {
 
     private void play() {
 
-        if (HearingApplication.mPlayingSongList == null || HearingApplication.mPlayingSongList.isEmpty()) {
+        if (mPlayingSongList == null || mPlayingSongList.isEmpty()) {
             return;
         }
 
@@ -135,7 +140,7 @@ public class PlayMusicService extends Service {
         } else { //从未开始的状态
             Log.i(TAG, "play: 3");
             //获取当前要播放的songid
-            Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+            Song song = mPlayingSongList.get(mCurrentPlayPos);
             int songid = song.getSongId();
             //加载MP3
             loadSongMp3(songid);
@@ -186,9 +191,9 @@ public class PlayMusicService extends Service {
         //
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
-        HearingApplication.mCurrentPlayPos ++;
+        mCurrentPlayPos ++;
         //获取当前要播放的songid
-        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+        Song song = mPlayingSongList.get(mCurrentPlayPos);
 
         loadSongMp3(song.getSongId());
 
@@ -201,9 +206,9 @@ public class PlayMusicService extends Service {
 
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
-        HearingApplication.mCurrentPlayPos --;
+        mCurrentPlayPos --;
         //获取当前要播放的songid
-        Song song = HearingApplication.mPlayingSongList.get(HearingApplication.mCurrentPlayPos);
+        Song song = mPlayingSongList.get(mCurrentPlayPos);
 
         loadSongMp3(song.getSongId());
     }

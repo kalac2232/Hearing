@@ -34,6 +34,7 @@ import cn.kalac.hearing.javabean.RecommendSongsBean;
 import cn.kalac.hearing.javabean.song.Song;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
+import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.utils.TimeUtil;
 import cn.kalac.hearing.view.LoopViewPager;
@@ -111,7 +112,7 @@ public class DiscoverFragment extends Fragment {
                         //提取日推列表中歌曲的id方便进行播放
                         extractSongIdFromRecommendList(recommendSongBeanList);
                         //设置将从第一个开始播放
-                        HearingApplication.mCurrentPlayPos = 0;
+                        PlayMusicService.mCurrentPlayPos = 0;
                     }
 
                     @Override
@@ -179,9 +180,9 @@ public class DiscoverFragment extends Fragment {
             list.add(new Song(songId, songName, singerName, picUrl));
         }
         if (list.size() > 0) {
-            //将数据存放到application中用于全局使用
-            HearingApplication.mPlayingSongList.clear();
-            HearingApplication.mPlayingSongList.addAll(list);
+
+            PlayMusicService.mPlayingSongList.clear();
+            PlayMusicService.mPlayingSongList.addAll(list);
 
         }
     }

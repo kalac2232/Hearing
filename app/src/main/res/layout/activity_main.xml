@@ -70,13 +70,29 @@
         android:overScrollMode="never">
 
     </androidx.viewpager.widget.ViewPager>
-    <com.github.mmin18.widget.RealtimeBlurView
+    <LinearLayout
         android:id="@+id/ll_bottom_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
-        android:orientation="horizontal"
-        app:realtimeBlurRadius="50dp"
-        app:realtimeOverlayColor="#efff"
-        android:layout_height="50dp">
-    </com.github.mmin18.widget.RealtimeBlurView>
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:orientation="horizontal">
+        <cn.kalac.hearing.view.BottomNavigationView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <cn.kalac.hearing.view.BottomNavigationView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <cn.kalac.hearing.view.BottomNavigationView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <cn.kalac.hearing.view.BottomNavigationView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

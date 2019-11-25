@@ -53,9 +53,9 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_main_classify_detailed, parent, false);
         //动态计算item的大小
-        int width = parent.getWidth() - DensityUtil.dip2px(parent.getContext(),25);
+        int width = (parent.getWidth() - DensityUtil.dip2px(parent.getContext(),25)) / 3;
 
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(width / 3, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(width, (int) (width * 1.45));
         view.setLayoutParams(layoutParams);
         return new VH(view);
     }

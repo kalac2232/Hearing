@@ -10,8 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.github.mmin18.widget.RealtimeBlurView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -117,6 +115,8 @@ public class MainActivity extends BaseActivity {
         mBtnJump = findViewById(R.id.btn_jumpTOPlay);
 
         llBottomBar = findViewById(R.id.ll_bottom_bar);
+        //BlurDrawable blurDrawable = new BlurDrawable();
+        //llBottomBar.setBackgroundDrawable();
 
     }
 

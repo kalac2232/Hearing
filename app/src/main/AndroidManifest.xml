@@ -27,8 +27,11 @@
         <activity android:name=".activity.PlayMusicActivity">
         </activity>
         <activity android:name=".activity.LoginActivity">
-        </activity>
 
+        </activity>
+        <activity android:name=".activity.RecomDailyActivity">
+
+        </activity>
         <service android:name=".service.PlayMusicService"/>
     </application>
 

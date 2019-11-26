@@ -11,7 +11,9 @@ import android.os.Bundle;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.view.View;
+import android.view.ViewGroup;
 
+import butterknife.ButterKnife;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.service.PlayMusicService;
@@ -33,6 +35,7 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
         super.onCreate(savedInstanceState);
         mContext = this;
         setContentView(getLayoutResID());
+        ButterKnife.bind(this);
         //实现状态栏透明
         View decorView = getWindow().getDecorView();
         int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -40,12 +43,13 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
         decorView.setSystemUiVisibility(option);
 
         getWindow().setStatusBarColor(Color.TRANSPARENT);
-//        View statusBarView = findViewById(R.id.statusBarView);
-//        if (statusBarView != null) {
-//            //statusBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-//            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight(mContext));
-//            statusBarView.setLayoutParams(layoutParams);
-//        }
+        View statusBarView = findViewById(R.id.statusBarView);
+        if (statusBarView != null) {
+            //statusBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            ViewGroup.LayoutParams layoutParams = statusBarView.getLayoutParams();
+            layoutParams.height = getStatusBarHeight(mContext);
+            statusBarView.setLayoutParams(layoutParams);
+        }
         //android6.0以后可以对状态栏文字颜色和图标进行修改
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //设置状态栏字体颜色为深色

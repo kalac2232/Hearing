@@ -26,6 +26,7 @@ import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.view.MiniSoundWave;
+import cn.kalac.hearing.widget.IntentUtil;
 
 public class MainActivity extends BaseActivity {
     /**
@@ -133,8 +134,8 @@ public class MainActivity extends BaseActivity {
         mBtnJump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext,PlayMusicActivity.class);
-                startActivity(intent);
+                //跳转播放界面
+                IntentUtil.get().goActivity(mContext,PlayMusicActivity.class);
             }
         });
     }

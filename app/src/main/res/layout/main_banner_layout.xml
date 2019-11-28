@@ -6,8 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.makeramen.roundedimageview.RoundedImageView
         app:riv_corner_radius="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="13dp"
+        android:layout_marginRight="13dp"
         android:id="@+id/iv_main_banner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

@@ -12,7 +12,7 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:background">@drawable/shape_dragonball_bg</item>
         <item name="android:layout_marginBottom">8dp</item>
-        <item name="layout_constraintWidth_percent">0.10</item>
+        <item name="layout_constraintWidth_percent">0.12</item>
         <item name="layout_constraintDimensionRatio">1:1</item>
 <!--        <item name="layout_constraintLeft_toLeftOf">parent</item>-->
 <!--        <item name="layout_constraintRight_toRightOf">parent</item>-->

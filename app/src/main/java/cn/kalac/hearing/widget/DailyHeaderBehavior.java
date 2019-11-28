@@ -1,35 +1,39 @@
-package cn.kalac.hearing;
+package cn.kalac.hearing.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import cn.kalac.hearing.utils.DensityUtil;
+import cn.kalac.hearing.view.DailyPagerTopView;
 
 /**
  * @author ghn
  * @date 2019/11/28 11:13
  */
-public class SampleHeaderBehavior extends CoordinatorLayout.Behavior<TextView> {
+public class DailyHeaderBehavior extends CoordinatorLayout.Behavior<DailyPagerTopView> {
 
 
     private float actionBarHeight;
 
-    public SampleHeaderBehavior() {
+    public DailyHeaderBehavior() {
     }
 
-    public SampleHeaderBehavior(Context context, AttributeSet attrs) {
+    public DailyHeaderBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
 
     @Override
-    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull TextView child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
+    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull DailyPagerTopView child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
         return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
@@ -43,7 +47,7 @@ public class SampleHeaderBehavior extends CoordinatorLayout.Behavior<TextView> {
      * @param type
      */
     @Override
-    public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull TextView child, @NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
+    public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull DailyPagerTopView child, @NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type);
         if (target instanceof RecyclerView) {
             RecyclerView list = (RecyclerView) target;
@@ -54,26 +58,38 @@ public class SampleHeaderBehavior extends CoordinatorLayout.Behavior<TextView> {
             if (canScroll(child, dy) && pos == 0) {
                 //Log.i("---", "onNestedPreScroll: dy" + dy);
                 //Log.i("---", "child.getTranslationY()" + child.getTranslationY());
+                //计算当前滑动的距离
                 float finalY = child.getTranslationY() - dy;
-                if (finalY < -child.getHeight() + actionBarHeight) {
-                    finalY = -child.getHeight() + actionBarHeight;
+                //判断是否超出了最大滑动范围
+                if (finalY < -getOffsetLimited(child)) {
+                    finalY = -getOffsetLimited(child);
                 } else if (finalY > 0) {
                     finalY = 0;
                 }
                 child.setTranslationY(finalY);
+                child.setDisplacementPercent(Math.abs(finalY) / getOffsetLimited(child));
                 // 让CoordinatorLayout消费滑动事件
                 consumed[1] = dy;
             }
         }
     }
 
-    private boolean canScroll(View child, float scrollY) {
+    /**
+     * 滑动最大限制
+     * @param child
+     * @return
+     */
+    private float getOffsetLimited(DailyPagerTopView child) {
+        return child.getHeight() - child.getUpOcclusionDistance() - actionBarHeight - DensityUtil.getStatusBarHeight(child.getContext());
+    }
+
+    private boolean canScroll(DailyPagerTopView child, float scrollY) {
 
         TypedArray actionbarSizeTypedArray = child.getContext().obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
         actionBarHeight = actionbarSizeTypedArray.getDimension(0, 0);
         actionbarSizeTypedArray.recycle();
 
-        if (scrollY > 0 && Math.abs(child.getTranslationY()) == child.getHeight() - actionBarHeight) {
+        if (scrollY > 0 && Math.abs(child.getTranslationY()) == getOffsetLimited(child)) {
             return false;
         }
 

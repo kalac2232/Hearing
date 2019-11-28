@@ -1,11 +1,15 @@
-package cn.kalac.hearing;
+package cn.kalac.hearing.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import cn.kalac.hearing.utils.DensityUtil;
+import cn.kalac.hearing.view.DailyPagerTopView;
 
 /**
  * @author ghn
@@ -13,27 +17,29 @@ import android.widget.TextView;
  */
 public class RecyclerViewBehavior extends CoordinatorLayout.Behavior<View> {
 
+    private float mActionBarHeight;
+
     public RecyclerViewBehavior() {
     }
 
     public RecyclerViewBehavior(Context context, AttributeSet attrs) {
+
         super(context, attrs);
+        mActionBarHeight = DensityUtil.getActionBarHeight(context);
     }
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
-        return dependency instanceof TextView;
+        return dependency instanceof DailyPagerTopView;
     }
 
     @Override
     public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
-        //计算列表y坐标，最小为0
-        TypedArray actionbarSizeTypedArray = parent.getContext().obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
-        float actionBarHeight = actionbarSizeTypedArray.getDimension(0, 0);
-        actionbarSizeTypedArray.recycle();
-        float y = dependency.getHeight() + dependency.getTranslationY();
-        if (y < actionBarHeight) {
-            y = actionBarHeight;
+        DailyPagerTopView dailyPagerTopView = (DailyPagerTopView) dependency;
+
+        float y = dependency.getHeight() - dailyPagerTopView.getUpOcclusionDistance() + dependency.getTranslationY();
+        if (y < mActionBarHeight + DensityUtil.getStatusBarHeight(parent.getContext())) {
+            y = mActionBarHeight + DensityUtil.getStatusBarHeight(parent.getContext());
         }
         child.setY(y);
         return true;

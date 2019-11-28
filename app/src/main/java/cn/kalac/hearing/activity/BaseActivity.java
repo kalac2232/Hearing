@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.service.PlayMusicService;
+import cn.kalac.hearing.utils.DensityUtil;
 
 
 /*
@@ -47,7 +48,7 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
         if (statusBarView != null) {
             //statusBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             ViewGroup.LayoutParams layoutParams = statusBarView.getLayoutParams();
-            layoutParams.height = getStatusBarHeight(mContext);
+            layoutParams.height = DensityUtil.getStatusBarHeight(mContext);
             statusBarView.setLayoutParams(layoutParams);
         }
         //android6.0以后可以对状态栏文字颜色和图标进行修改
@@ -65,23 +66,6 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
             registerMusicStatusReciver();
         }
     }
-
-
-    /**
-     * 获取状态栏的高度
-     * @param context
-     * @return
-     */
-    private static int getStatusBarHeight(Context context) {
-        int statusBarHeight = 0;
-        Resources res = context.getResources();
-        int resourceId = res.getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            statusBarHeight = res.getDimensionPixelSize(resourceId);
-        }
-        return statusBarHeight;
-    }
-
 
 
     /**

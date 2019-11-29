@@ -7,11 +7,10 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +31,8 @@ public class DailyPagerTopView extends ConstraintLayout {
     TextView tvDividingLine;
     @BindView(R.id.tv_current_month)
     TextView tvCurrentMonth;
+    @BindView(R.id.ll_history_recom)
+    LinearLayout llHistoryRecom;
     /**
      * 当前已经位移量百分比
      */
@@ -93,15 +94,17 @@ public class DailyPagerTopView extends ConstraintLayout {
 
     private void updateView() {
         //设置文字
-        tvCurrentDay.setAlpha(1- mDisplacementPercent);
-        tvDividingLine.setAlpha(1- mDisplacementPercent);
-        tvCurrentMonth.setAlpha(1- mDisplacementPercent);
+        tvCurrentDay.setAlpha(mDisplacementPercent > 0.5f ? 0 : 1 - 2 * mDisplacementPercent);
+        tvDividingLine.setAlpha(mDisplacementPercent > 0.5f ? 0 : 1 - 2 * mDisplacementPercent);
+        tvCurrentMonth.setAlpha(mDisplacementPercent > 0.5f ? 0 : 1 - 2 * mDisplacementPercent);
+        //设置日推历史
+        llHistoryRecom.setAlpha(mDisplacementPercent > 0.5f ? 0 : 1 - 2 * mDisplacementPercent);
 
         if (Math.abs(mDisplacementPercent - mLastBlurDisplacementPercent) > 0.03f) {
             Blurry.with(getContext())
                     .radius((int) (1 + 10 * mDisplacementPercent))
                     .sampling(8)
-                    .color(Color.argb((int)(35 * mDisplacementPercent), 0, 0, 0))
+                    .color(Color.argb((int) (35 * mDisplacementPercent), 0, 0, 0))
                     //.async()
                     .from(mBgBitmap)
                     .into(ivBg);

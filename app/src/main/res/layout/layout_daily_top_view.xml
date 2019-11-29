@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -16,24 +17,23 @@
         android:id="@+id/tv_current_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:includeFontPadding="false"
         android:text="29"
         android:textColor="#fff"
-        android:textSize="35sp"
+        android:textSize="40sp"
         android:textStyle="bold"
-        android:includeFontPadding="false"
+        android:layout_marginLeft="18dp"
         app:layout_constraintBottom_toBottomOf="@id/iv_bg"
-        app:layout_constraintHorizontal_bias="0.07"
         app:layout_constraintLeft_toLeftOf="@id/iv_bg"
-        app:layout_constraintRight_toRightOf="@id/iv_bg"
         app:layout_constraintTop_toTopOf="@id/iv_bg"
-        app:layout_constraintVertical_bias="0.737" />
+        app:layout_constraintVertical_bias="0.471" />
 
     <TextView
         android:id="@+id/tv_dividing_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
-        android:layout_marginBottom="3.9dp"
+        android:layout_marginBottom="5dp"
         android:includeFontPadding="false"
         android:text="/"
         android:textColor="#fff"
@@ -53,4 +53,32 @@
         app:layout_constraintBottom_toBottomOf="@id/tv_dividing_line"
         app:layout_constraintLeft_toRightOf="@id/tv_dividing_line"
         app:layout_constraintVertical_bias="0.79" />
+
+    <LinearLayout
+        android:id="@+id/ll_history_recom"
+        android:layout_marginTop="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tv_current_day"
+        app:layout_constraintLeft_toLeftOf="@id/tv_current_day"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        app:bl_solid_color="#cfffffff"
+        app:bl_corners_radius="40dp"
+        tools:ignore="MissingPrefix">
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="历史日推"
+            android:textSize="13sp"
+            android:textColor="#000"/>
+        <ImageView
+            android:layout_marginLeft="4dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:src="@mipmap/ic_vip_icon"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

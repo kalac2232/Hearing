@@ -263,4 +263,7 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
         mSwipeBackHelper.backward();
     }
 
+    public void onBackBtnClick(View view) {
+        finish();
+    }
 }

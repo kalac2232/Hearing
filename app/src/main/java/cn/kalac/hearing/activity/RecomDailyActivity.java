@@ -3,7 +3,6 @@ package cn.kalac.hearing.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,8 +40,8 @@ public class RecomDailyActivity extends BaseActivity {
     RecyclerView rvDailyList;
     @BindView(R.id.cl_daily_list_core)
     ConstraintLayout clDailyListCore;
-    @BindView(R.id.action_bar)
-    TextView actionBar;
+    @BindView(R.id.tv_bar_title)
+    TextView tvTitle;
 
     @Override
     protected int getLayoutResID() {
@@ -87,7 +86,7 @@ public class RecomDailyActivity extends BaseActivity {
 
         ViewGroup.LayoutParams layoutParams = clDailyListCore.getLayoutParams();
         layoutParams.height = (int) (DensityUtil.getScreenHeight(this) - DensityUtil.getActionBarHeight(this));
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) actionBar.getLayoutParams();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) tvTitle.getLayoutParams();
         params.topMargin = DensityUtil.getStatusBarHeight(mContext);
 
         calculateRingX();

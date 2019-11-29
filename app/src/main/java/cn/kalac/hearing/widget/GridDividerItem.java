@@ -31,7 +31,7 @@ public class GridDividerItem extends RecyclerView.ItemDecoration {
         //这个是当没有空隙的时候view的大小
         int realWidth = parent.getWidth() / 3;
 
-        Logger.wtf("---%s",outRect.toString());
+        //Logger.wtf("---%s",outRect.toString());
 
         if (parent.getChildAdapterPosition(view) % 3 == 0) {
             outRect.left = 0;

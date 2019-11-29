@@ -1,8 +1,10 @@
-package cn.kalac.hearing.widget;
+package cn.kalac.hearing.widget.behavier;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
@@ -13,14 +15,14 @@ import cn.kalac.hearing.view.DailyPagerTopView;
  * @author ghn
  * @date 2019/11/28 11:11
  */
-public class RingViewBehavior extends CoordinatorLayout.Behavior<View> {
+public class RecyclerViewBehavior extends CoordinatorLayout.Behavior<View> {
 
     private float mActionBarHeight;
 
-    public RingViewBehavior() {
+    public RecyclerViewBehavior() {
     }
 
-    public RingViewBehavior(Context context, AttributeSet attrs) {
+    public RecyclerViewBehavior(Context context, AttributeSet attrs) {
 
         super(context, attrs);
         mActionBarHeight = DensityUtil.getActionBarHeight(context);
@@ -34,15 +36,12 @@ public class RingViewBehavior extends CoordinatorLayout.Behavior<View> {
     @Override
     public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
         DailyPagerTopView dailyPagerTopView = (DailyPagerTopView) dependency;
-        //计算圆环的位置，当getTranslationY()为0时为初始位置
-        float y = dependency.getHeight() - dailyPagerTopView.getUpOcclusionDistance() - child.getHeight() * 0.47f + dependency.getTranslationY();
-        if (y < mActionBarHeight) {
-            y = mActionBarHeight;
+
+        float y = dependency.getHeight() - dailyPagerTopView.getUpOcclusionDistance() + dependency.getTranslationY();
+        if (y < mActionBarHeight + DensityUtil.getStatusBarHeight(parent.getContext())) {
+            y = mActionBarHeight + DensityUtil.getStatusBarHeight(parent.getContext());
         }
         child.setY(y);
-
-        child.setAlpha(1 - dailyPagerTopView.getDisplacementPercent());
-
         return true;
     }
 }

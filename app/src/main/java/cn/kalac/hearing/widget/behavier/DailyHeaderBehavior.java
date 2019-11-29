@@ -1,4 +1,4 @@
-package cn.kalac.hearing.widget;
+package cn.kalac.hearing.widget.behavier;
 
 import android.content.Context;
 import android.content.res.TypedArray;

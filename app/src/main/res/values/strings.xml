@@ -7,4 +7,5 @@
     <string name="rank">排行榜</string>
     <string name="radio">电台</string>
     <string name="live">直播</string>
+    <string name="recom_daily">每日推荐</string>
 </resources>

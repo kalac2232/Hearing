@@ -3,6 +3,7 @@ package cn.kalac.hearing.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.util.Log;
 
 public class DensityUtil {
 
@@ -46,9 +47,9 @@ public class DensityUtil {
     public static int getScreenHeight(Context context,boolean includeStatueBar) {
 
         if (includeStatueBar) {
-            return context.getResources().getDisplayMetrics().heightPixels - getStatusBarHeight(context);
-        } else {
             return context.getResources().getDisplayMetrics().heightPixels;
+        } else {
+            return context.getResources().getDisplayMetrics().heightPixels - getStatusBarHeight(context);
         }
 
     }
@@ -72,6 +73,7 @@ public class DensityUtil {
         if (resourceId > 0) {
             statusBarHeight = res.getDimensionPixelSize(resourceId);
         }
+        Log.i("----", "getStatusBarHeight: " + statusBarHeight);
         return statusBarHeight;
     }
 }

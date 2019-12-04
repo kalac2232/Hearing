@@ -1,6 +1,5 @@
 package cn.kalac.hearing.activity;
 
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -15,16 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.DailyListAdapter;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.RecommendSongsBean;
-import cn.kalac.hearing.javabean.song.Song;
+import cn.kalac.hearing.javabean.local.MusicBean;
+import cn.kalac.hearing.javabean.net.NetRecommendSongsBean;
+import cn.kalac.hearing.javabean.local.Song;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.PlayMusicService;
+import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.utils.DensityUtil;
+import cn.kalac.hearing.utils.JavaBeanConvertUtil;
+import cn.kalac.hearing.utils.TimeUtil;
 import cn.kalac.hearing.widget.CalendarRingDrawable;
 
 /**
@@ -55,25 +57,38 @@ public class RecomDailyActivity extends BaseActivity {
 
     private void getDailyListData() {
         String url = ApiHelper.getRecommendSongsUrl();
+        //判断今天是否已经获取过了，获取过的话直接使用
+//        ArrayList<MusicBean> musicBeans = DataUtil.loadBeanFormLoacl(url +
+//                TimeUtil.getTime(System.currentTimeMillis(), "yy/MM/dd"), ArrayList.class);
 
-        HttpHelper.getInstance().get(url, new HttpCallback<RecommendSongsBean>() {
+        List<MusicBean> musicBeans = DataUtil.l(url +
+                TimeUtil.getTime(System.currentTimeMillis(), "yy/MM/dd"), MusicBean[].class);
 
-            @Override
-            public void onSuccess(RecommendSongsBean recommendSongsBean) {
-                List<RecommendSongsBean.RecommendBean> recommendSongBeanList = recommendSongsBean.getRecommend();
-                Toast.makeText(mContext, "获取了" + recommendSongBeanList.size() + "个数据", Toast.LENGTH_SHORT).show();
-                //Log.i(TAG, "onSuccess: "+recommendSongsBean);
-                //提取日推列表中歌曲的id方便进行播放
-                extractSongIdFromRecommendList(recommendSongBeanList);
-                //设置将从第一个开始播放
-                PlayMusicService.mCurrentPlayPos = 0;
-            }
+        if (musicBeans == null) {
+            HttpHelper.getInstance().get(url, new HttpCallback<NetRecommendSongsBean>() {
 
-            @Override
-            public void onFailed(String string) {
-                Toast.makeText(mContext, "获取失败" + string, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onSuccess(NetRecommendSongsBean netRecommendSongsBean) {
+
+                    List<MusicBean> musicBeans = JavaBeanConvertUtil.recomDailyListConvert(netRecommendSongsBean);
+
+                    Toast.makeText(mContext, "获取了" + musicBeans.size() + "个数据", Toast.LENGTH_SHORT).show();
+
+                    DataUtil.saveObject(url + TimeUtil.getTime(System.currentTimeMillis(),"yy/MM/dd"), musicBeans);
+                    rvDailyList.setAdapter(new DailyListAdapter(musicBeans));
+                }
+
+                @Override
+                public void onFailed(String string) {
+                    Toast.makeText(mContext, "获取失败" + string, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(mContext, "本地获取了" + musicBeans.size() + "个数据", Toast.LENGTH_SHORT).show();
+            rvDailyList.setAdapter(new DailyListAdapter(musicBeans));
+        }
+
+
     }
 
     @Override
@@ -82,7 +97,6 @@ public class RecomDailyActivity extends BaseActivity {
         vRingRight.setBackground(new CalendarRingDrawable());
 
         rvDailyList.setLayoutManager(new LinearLayoutManager(this));
-        rvDailyList.setAdapter(new DailyListAdapter());
 
         ViewGroup.LayoutParams layoutParams = clDailyListCore.getLayoutParams();
         layoutParams.height = (int) (DensityUtil.getScreenHeight(this) - DensityUtil.getActionBarHeight(this));
@@ -93,7 +107,7 @@ public class RecomDailyActivity extends BaseActivity {
     }
 
     /**
-     * 计算背景上的挂件的位置
+     * 计算背景上的挂件的X坐标
      */
     private void calculateRingX() {
         int screenWidth = DensityUtil.getScreenWidth(this);
@@ -112,9 +126,9 @@ public class RecomDailyActivity extends BaseActivity {
      *
      * @param recommendSongBeanList 日推列表
      */
-    private void extractSongIdFromRecommendList(List<RecommendSongsBean.RecommendBean> recommendSongBeanList) {
+    private void extractSongIdFromRecommendList(List<NetRecommendSongsBean.RecommendBean> recommendSongBeanList) {
         ArrayList<Song> list = new ArrayList<>();
-        for (RecommendSongsBean.RecommendBean bean : recommendSongBeanList) {
+        for (NetRecommendSongsBean.RecommendBean bean : recommendSongBeanList) {
             int songId = bean.getId();
             String songName = bean.getName();
             String singerName = bean.getArtists().get(0).getName();
@@ -127,12 +141,5 @@ public class RecomDailyActivity extends BaseActivity {
             PlayMusicService.mPlayingSongList.addAll(list);
 
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
     }
 }

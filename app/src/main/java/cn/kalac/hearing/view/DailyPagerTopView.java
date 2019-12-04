@@ -15,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.kalac.hearing.R;
+import cn.kalac.hearing.utils.TimeUtil;
 import jp.wasabeef.blurry.Blurry;
 
 /**
@@ -65,7 +66,13 @@ public class DailyPagerTopView extends ConstraintLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.layout_daily_top_view, this);
         ButterKnife.bind(this);
+        setDate();
         mBgBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_daily_top_view_bg);
+    }
+
+    private void setDate() {
+        tvCurrentMonth.setText(TimeUtil.getTime(System.currentTimeMillis(),"M"));
+        tvCurrentDay.setText(TimeUtil.getTime(System.currentTimeMillis(),"d"));
     }
 
     @Override

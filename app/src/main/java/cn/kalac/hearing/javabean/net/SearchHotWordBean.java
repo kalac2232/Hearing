@@ -1,4 +1,4 @@
-package cn.kalac.hearing.javabean;
+package cn.kalac.hearing.javabean.net;
 
 import java.util.List;
 

@@ -44,7 +44,7 @@ dependencies {
     //glide 图片变换框架
     implementation 'jp.wasabeef:glide-transformations:4.0.1'
     //滑动返回
-    implementation 'cn.bingoogolapple:bga-swipebacklayout:1.2.0'
+    implementation 'cn.bingoogolapple:bga-swipebacklayout:2.0.1'
     //指示器(无法构建成功)
 //    implementation 'com.github.hackware1993:MagicIndicator:1.6.0'
     //圆角imageview

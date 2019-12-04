@@ -25,8 +25,7 @@
             android:layout_height="26dp"
             android:layout_marginRight="13dp"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:tint="#999" />
+            android:layout_alignParentRight="true" />
         <RelativeLayout
             android:layout_centerInParent="true"
             android:layout_width="match_parent"

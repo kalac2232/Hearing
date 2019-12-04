@@ -1,4 +1,4 @@
-package cn.kalac.hearing.javabean;
+package cn.kalac.hearing.javabean.net;
 
 /*
  * Created by Kalac on 2019/2/15

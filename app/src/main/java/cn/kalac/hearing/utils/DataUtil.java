@@ -3,31 +3,42 @@ package cn.kalac.hearing.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.Primitives;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 
 import static cn.kalac.hearing.utils.SharedPreUtils.getPref;
 import static cn.kalac.hearing.utils.SharedPreUtils.savePref;
 
 public class DataUtil {
 
-    public static void saveJson(String url,String json) {
+    public static void saveJson(String key,String json) {
         if("".equals(json)) {
             return;
         }
         //用url经过md5转换后做为key保存数据方便断网时候取
-        savePref(MD5Utils.convert(url),json);
+        savePref(MD5Utils.convert(key),json);
+    }
+
+    public static void saveObject(String key,Object o) {
+        if(o == null) {
+            return;
+        }
+        //用url经过md5转换后做为key保存数据方便断网时候取
+        savePref(MD5Utils.convert(key),new Gson().toJson(o));
     }
 
     /**
      * 从本地读取数据并返回javabean对象
-     * @param url
+     * @param key
      * @param classOfT
      * @param <T>
      * @return
      */
-    public static <T> T loadBeanFormLoacl(String url, Class<T> classOfT) {
-        String json = getPref(MD5Utils.convert(url), "");
+    public static <T> T loadBeanFormLoacl(String key, Class<T> classOfT) {
+        String json = getPref(MD5Utils.convert(key), "");
         if ("".equals(json)) {
             return null;
         }
@@ -37,5 +48,15 @@ public class DataUtil {
         return Primitives.wrap(classOfT).cast(object);
     }
 
+    public static <T> List<T> l(String key, Class<T[]> clazz) {
+        String json = getPref(MD5Utils.convert(key), "");
+        if ("".equals(json)) {
+            return null;
+        }
+        T[] arr = new Gson().fromJson(json, clazz);
+        return Arrays.asList(arr);
+
+        //return gson.fromJson(json, new TypeToken<List<T>>() {}.getType());
+    }
 
 }

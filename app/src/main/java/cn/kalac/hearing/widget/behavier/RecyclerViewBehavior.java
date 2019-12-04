@@ -18,6 +18,7 @@ import cn.kalac.hearing.view.DailyPagerTopView;
 public class RecyclerViewBehavior extends CoordinatorLayout.Behavior<View> {
 
     private float mActionBarHeight;
+    private int statusBarHeight = -1;
 
     public RecyclerViewBehavior() {
     }
@@ -38,8 +39,11 @@ public class RecyclerViewBehavior extends CoordinatorLayout.Behavior<View> {
         DailyPagerTopView dailyPagerTopView = (DailyPagerTopView) dependency;
 
         float y = dependency.getHeight() - dailyPagerTopView.getUpOcclusionDistance() + dependency.getTranslationY();
-        if (y < mActionBarHeight + DensityUtil.getStatusBarHeight(parent.getContext())) {
-            y = mActionBarHeight + DensityUtil.getStatusBarHeight(parent.getContext());
+        if (statusBarHeight == -1) {
+            statusBarHeight = DensityUtil.getStatusBarHeight(parent.getContext());
+        }
+        if (y < mActionBarHeight + statusBarHeight) {
+            y = mActionBarHeight + statusBarHeight;
         }
         child.setY(y);
         return true;

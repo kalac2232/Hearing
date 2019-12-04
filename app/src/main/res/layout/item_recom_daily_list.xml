@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ImageView
+        android:id="@+id/iv_music_cover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.13"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/tv_music_name"
+        android:text="Vever Over"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintLeft_toRightOf="@id/iv_music_cover"
+        app:layout_constraintTop_toTopOf="@id/iv_music_cover"
+        app:layout_constraintBottom_toTopOf="@id/tv_music_singer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_music_singer"
+        android:text="王巨星-太阳（完整版）"
+        android:textColor="#ccc"
+        android:textSize="10sp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintLeft_toLeftOf="@id/tv_music_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_music_name"
+        app:layout_constraintBottom_toBottomOf="@id/iv_music_cover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,8 @@
-package cn.kalac.hearing.javabean.mainRecom;
+package cn.kalac.hearing.javabean.net.mainRecom;
 
 import java.util.List;
 
-public class RecomNewMusic {
+public class NetRecomNewMusic {
 
     /**
      * code : 200

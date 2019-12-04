@@ -11,16 +11,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.text.SimpleDateFormat;
 
-import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.javabean.song.Song;
+import cn.kalac.hearing.javabean.local.Song;
 import cn.kalac.hearing.service.MusicBinder;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.view.RecordView;

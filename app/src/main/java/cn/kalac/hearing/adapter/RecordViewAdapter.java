@@ -31,9 +31,8 @@ import com.bumptech.glide.request.RequestOptions;
 
 import java.security.MessageDigest;
 
-import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.javabean.song.Song;
+import cn.kalac.hearing.javabean.local.Song;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DensityUtil;
 import cn.kalac.hearing.utils.TurntableDisplayUtil;

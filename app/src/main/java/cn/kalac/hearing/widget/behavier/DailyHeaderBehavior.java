@@ -23,6 +23,7 @@ public class DailyHeaderBehavior extends CoordinatorLayout.Behavior<DailyPagerTo
 
 
     private float actionBarHeight;
+    private int statusBarHeight = -1;
 
     public DailyHeaderBehavior() {
     }
@@ -80,7 +81,10 @@ public class DailyHeaderBehavior extends CoordinatorLayout.Behavior<DailyPagerTo
      * @return
      */
     private float getOffsetLimited(DailyPagerTopView child) {
-        return child.getHeight() - child.getUpOcclusionDistance() - actionBarHeight - DensityUtil.getStatusBarHeight(child.getContext());
+        if (statusBarHeight == -1) {
+            statusBarHeight = DensityUtil.getStatusBarHeight(child.getContext());
+        }
+        return child.getHeight() - child.getUpOcclusionDistance() - actionBarHeight - statusBarHeight;
     }
 
     private boolean canScroll(DailyPagerTopView child, float scrollY) {

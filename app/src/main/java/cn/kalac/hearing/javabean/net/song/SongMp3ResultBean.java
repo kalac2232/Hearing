@@ -1,4 +1,4 @@
-package cn.kalac.hearing.javabean.song;
+package cn.kalac.hearing.javabean.net.song;
 
 /*
  * Created by Kalac on 2019/2/2

@@ -5,11 +5,7 @@ import android.app.Application;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
-import cn.kalac.hearing.javabean.song.Song;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.net.OkHttpProcessor;
 

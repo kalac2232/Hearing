@@ -2,4 +2,7 @@
 <resources>
 
 
+    <declare-styleable name="MiniSoundWave">
+        <attr name="lineColor" format="color"/>
+    </declare-styleable>
 </resources>

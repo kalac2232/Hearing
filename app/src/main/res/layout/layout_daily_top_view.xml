@@ -22,11 +22,11 @@
         android:textColor="#fff"
         android:textSize="40sp"
         android:textStyle="bold"
-        android:layout_marginLeft="18dp"
+        android:layout_marginLeft="@dimen/content_distance"
         app:layout_constraintBottom_toBottomOf="@id/iv_bg"
         app:layout_constraintLeft_toLeftOf="@id/iv_bg"
         app:layout_constraintTop_toTopOf="@id/iv_bg"
-        app:layout_constraintVertical_bias="0.471" />
+        app:layout_constraintVertical_bias="0.555" />
 
     <TextView
         android:id="@+id/tv_dividing_line"

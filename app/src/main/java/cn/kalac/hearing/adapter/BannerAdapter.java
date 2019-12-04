@@ -2,23 +2,18 @@ package cn.kalac.hearing.adapter;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.javabean.BannerBean;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import cn.kalac.hearing.javabean.net.BannerBean;
 
 public class BannerAdapter extends LoopPagerAdapter {
     Context mContext;

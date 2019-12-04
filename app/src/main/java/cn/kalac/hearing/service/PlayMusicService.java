@@ -15,10 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.song.Song;
-import cn.kalac.hearing.javabean.song.SongMp3ResultBean;
+import cn.kalac.hearing.javabean.local.Song;
+import cn.kalac.hearing.javabean.net.song.SongMp3ResultBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 

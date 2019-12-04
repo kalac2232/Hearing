@@ -16,16 +16,16 @@ import com.orhanobut.logger.Logger;
 import java.util.List;
 
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.javabean.mainRecom.RecomNewMusic;
-import cn.kalac.hearing.javabean.mainRecom.RecomPLayListBean;
+import cn.kalac.hearing.javabean.net.mainRecom.NetRecomNewMusic;
+import cn.kalac.hearing.javabean.net.mainRecom.NetRecomPLayListBean;
 import cn.kalac.hearing.utils.DensityUtil;
 
 public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassifyDetailedAdapter.VH> {
 
     private final Context mContext;
 
-    private List<RecomPLayListBean.ResultBean> mPlayList;
-    private List<RecomNewMusic.ResultBean> mNewMusic;
+    private List<NetRecomPLayListBean.ResultBean> mPlayList;
+    private List<NetRecomNewMusic.ResultBean> mNewMusic;
 
     private static final int TYPE_RECOM_PLAYLIST = 1;
     private static final int TYPE_NEW_MUSIC = 2;
@@ -37,13 +37,13 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
         mContext = context;
         mType = type;
         if (type == TYPE_RECOM_PLAYLIST) {
-            if (result instanceof RecomPLayListBean) {
-                RecomPLayListBean bean = (RecomPLayListBean) result;
+            if (result instanceof NetRecomPLayListBean) {
+                NetRecomPLayListBean bean = (NetRecomPLayListBean) result;
                 mPlayList = bean.getResult();
             }
         } else if (type == TYPE_NEW_MUSIC) {
-            if (result instanceof RecomNewMusic) {
-                RecomNewMusic bean = (RecomNewMusic) result;
+            if (result instanceof NetRecomNewMusic) {
+                NetRecomNewMusic bean = (NetRecomNewMusic) result;
                 mNewMusic = bean.getResult();
             }
         }
@@ -64,7 +64,7 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
     public void onBindViewHolder(VH holder, int position) {
         switch (mType) {
             case TYPE_RECOM_PLAYLIST:
-                RecomPLayListBean.ResultBean bean = mPlayList.get(position);
+                NetRecomPLayListBean.ResultBean bean = mPlayList.get(position);
                 Glide.with(mContext).load(bean.getPicUrl()).into(holder.ivImage);
 
 
@@ -80,7 +80,7 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
                 holder.tvTitle.setText(bean.getName());
                 break;
             case TYPE_NEW_MUSIC:
-                RecomNewMusic.ResultBean resultBean = mNewMusic.get(position);
+                NetRecomNewMusic.ResultBean resultBean = mNewMusic.get(position);
                 Glide.with(mContext).load(resultBean.getSong().getAlbum().getPicUrl()).into(holder.ivImage);
                 holder.tvHot.setVisibility(View.GONE);
                 holder.tvTitle.setText(resultBean.getName());

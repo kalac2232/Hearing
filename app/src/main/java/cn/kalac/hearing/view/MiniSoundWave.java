@@ -2,6 +2,7 @@ package cn.kalac.hearing.view;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,6 +17,7 @@ import com.orhanobut.logger.Logger;
 
 import java.util.Arrays;
 
+import cn.kalac.hearing.R;
 import cn.kalac.hearing.utils.DensityUtil;
 
 /**
@@ -52,6 +54,15 @@ public class MiniSoundWave extends View {
         super(context, attrs, defStyleAttr);
         mContext = context;
         init(context);
+        setLineColor(attrs);
+    }
+
+    private void setLineColor(AttributeSet attrs) {
+        //取出attrs中我们为View设置的相关值
+        TypedArray tArray = mContext.obtainStyledAttributes(attrs, R.styleable.MiniSoundWave);
+        int color = tArray.getColor(R.styleable.MiniSoundWave_lineColor, Color.BLACK);
+        mPaint.setColor(color);
+        tArray.recycle();
     }
 
     private void init(Context context) {
@@ -60,7 +71,7 @@ public class MiniSoundWave extends View {
 
         mPaint = initPaint();
 
-        mLinesInitPercent = new float[]{80/160f,150/160f,100/160f,120/160f};
+        mLinesInitPercent = initLinesData();
 
         getViewTreeObserver().addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
             @Override
@@ -72,15 +83,19 @@ public class MiniSoundWave extends View {
 
     }
 
+    private float[] initLinesData() {
+        return new float[]{80/160f,150/160f,100/160f,120/160f};
+    }
+
     private void changePlayStates(boolean hasFocus) {
         if (!isRunning()) {
             return;
         }
 
         if (hasFocus) {
-            mValueAnimator.start();
+            start();
         } else {
-            mValueAnimator.pause();
+            pause();
         }
 
     }
@@ -99,7 +114,7 @@ public class MiniSoundWave extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mHeightValue = (int) animation.getAnimatedValue();
-                Logger.i("value:%d", mHeightValue);
+                //Logger.i("value:%d", mHeightValue);
                 postInvalidate();
             }
         });
@@ -124,7 +139,6 @@ public class MiniSoundWave extends View {
     private Paint initPaint() {
         Paint paint = new Paint();
         paint.setStrokeWidth(mLintStrokeWidth);
-        paint.setColor(Color.BLACK);
         paint.setAntiAlias(true);
         paint.setStrokeCap(Paint.Cap.ROUND);
         return paint;
@@ -169,13 +183,16 @@ public class MiniSoundWave extends View {
     public void start() {
         if (mValueAnimator != null) {
             mValueAnimator.start();
+            postInvalidate();
             isRunning = true;
         }
     }
 
     public void pause() {
         if (mValueAnimator != null) {
-            mValueAnimator.pause();
+            mValueAnimator.cancel();
+            mLinesInitPercent = initLinesData();
+            postInvalidate();
             isRunning = false;
         }
     }

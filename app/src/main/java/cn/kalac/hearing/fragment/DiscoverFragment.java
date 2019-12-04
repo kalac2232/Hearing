@@ -8,12 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,21 +17,16 @@ import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.activity.RecomDailyActivity;
 import cn.kalac.hearing.adapter.BannerAdapter;
 import cn.kalac.hearing.adapter.MainContentClassifyAdapter;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.BannerBean;
-import cn.kalac.hearing.javabean.RecommendSongsBean;
-import cn.kalac.hearing.javabean.song.Song;
+import cn.kalac.hearing.javabean.net.BannerBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
-import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.utils.TimeUtil;
 import cn.kalac.hearing.view.LoopViewPager;
@@ -91,7 +82,7 @@ public class DiscoverFragment extends Fragment {
         //获取banner
         initBanner();
         //设置日推的每日时间
-        mTvDaily.setText(TimeUtil.getTime(System.currentTimeMillis(), "dd"));
+        mTvDaily.setText(TimeUtil.getTime(System.currentTimeMillis(), "d"));
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new MainContentClassifyAdapter(getContext()));

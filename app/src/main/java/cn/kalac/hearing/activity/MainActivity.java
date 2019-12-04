@@ -1,11 +1,9 @@
 package cn.kalac.hearing.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.viewpager.widget.ViewPager;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +18,7 @@ import java.util.Random;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.MainPagerFragAdapter;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.SearchHotWordBean;
+import cn.kalac.hearing.javabean.net.SearchHotWordBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.PlayMusicService;

@@ -1,4 +1,4 @@
-package cn.kalac.hearing.javabean;
+package cn.kalac.hearing.javabean.net;
 
 /**
  * 日推javabean
@@ -7,7 +7,7 @@ package cn.kalac.hearing.javabean;
 
 import java.util.List;
 
-public class RecommendSongsBean {
+public class NetRecommendSongsBean {
 
     /**
      * code : 200

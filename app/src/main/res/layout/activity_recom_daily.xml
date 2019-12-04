@@ -28,8 +28,8 @@
         app:bl_solid_color="#fff"
         app:bl_corners_topRightRadius="25dp"
         app:bl_corners_topLeftRadius="25dp"
-        android:paddingLeft="18dp"
-        android:paddingRight="18dp"
+        android:paddingLeft="@dimen/content_distance"
+        android:paddingRight="@dimen/content_distance"
         android:paddingTop="18dp"
         app:layout_behavior=".widget.behavier.RecyclerViewBehavior"
         >
@@ -41,14 +41,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:src="@mipmap/ic_daily_play_all_btn"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintWidth_percent="0.070"/>
+            app:layout_constraintWidth_percent="0.065"/>
         <TextView
             android:layout_marginLeft="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="播放全部"
-            android:textStyle="bold"
-            android:textSize="18sp"
+            android:textSize="17sp"
             app:layout_constraintTop_toTopOf="@id/iv_play_all"
             app:layout_constraintBottom_toBottomOf="@id/iv_play_all"
             app:layout_constraintLeft_toRightOf="@id/iv_play_all"
@@ -62,7 +61,7 @@
             app:layout_constraintRight_toLeftOf="@id/tv_play_multi_option"
             android:src="@mipmap/ic_daily_list_multi_btn"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintWidth_percent="0.05"/>
+            app:layout_constraintWidth_percent="0.055"/>
         <TextView
             android:id="@+id/tv_play_multi_option"
             android:layout_width="wrap_content"
@@ -70,8 +69,8 @@
             app:layout_constraintTop_toTopOf="@id/iv_play_multi_option"
             app:layout_constraintBottom_toBottomOf="@id/iv_play_multi_option"
             app:layout_constraintRight_toRightOf="parent"
-            android:textSize="14sp"
-            android:textColor="#000"
+            android:textSize="13sp"
+            android:textColor="#111"
             android:text="多选"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_daily_list"
@@ -100,16 +99,29 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <include layout="@layout/statusbarview_layout"/>
-        <FrameLayout
-            android:layout_marginLeft="18dp"
-            android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize">
-            <ImageView
-                android:onClick="onBackBtnClick"
-                android:layout_width="10dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:src="@mipmap/ic_back_btn"/>
-        </FrameLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:layout_marginLeft="@dimen/content_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/actionBarSize">
+                <ImageView
+                    android:onClick="onBackBtnClick"
+                    android:layout_width="10dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/ic_back_btn"/>
+            </FrameLayout>
+            <cn.kalac.hearing.view.MiniSoundWave
+                android:id="@+id/btn_jumpTOPlay"
+                app:lineColor="#ffffff"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginRight="13dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

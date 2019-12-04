@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.LoginResultBean;
+import cn.kalac.hearing.javabean.net.LoginResultBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 

@@ -36,7 +36,7 @@ public class MineFragment extends Fragment {
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = ApiHelper.getPhoneLoginUrl("17684721017","GHN,.155070");
+                String url = ApiHelper.getPhoneLoginUrl("17684721017","qweasdzxc");
 
                 HttpHelper.getInstance().get(url, new HttpCallback<LoginResultBean>() {
 

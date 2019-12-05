@@ -2,10 +2,15 @@ package cn.kalac.hearing.utils;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.internal.Primitives;
 import com.google.gson.reflect.TypeToken;
+import com.orhanobut.logger.Logger;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,12 +27,16 @@ public class DataUtil {
         savePref(MD5Utils.convert(key),json);
     }
 
-    public static void saveObject(String key,Object o) {
-        if(o == null) {
+    public static <T> void saveList(String key,List<T> list) {
+        if(list == null) {
             return;
         }
+        Type type = new TypeToken<ArrayList<T>>(){}.getType();
+
+        String toJson = new Gson().toJson(list, type);
+
         //用url经过md5转换后做为key保存数据方便断网时候取
-        savePref(MD5Utils.convert(key),new Gson().toJson(o));
+        savePref(MD5Utils.convert(key),toJson);
     }
 
     /**
@@ -48,15 +57,20 @@ public class DataUtil {
         return Primitives.wrap(classOfT).cast(object);
     }
 
-    public static <T> List<T> l(String key, Class<T[]> clazz) {
+    public static <T> List<T> loadListFormLoacl(String key, Class<T> classOfT) {
         String json = getPref(MD5Utils.convert(key), "");
         if ("".equals(json)) {
             return null;
         }
-        T[] arr = new Gson().fromJson(json, clazz);
-        return Arrays.asList(arr);
-
-        //return gson.fromJson(json, new TypeToken<List<T>>() {}.getType());
+        List<T> lst = new ArrayList<>();
+        try {
+            JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+            for (final JsonElement elem : array) {
+                lst.add(new Gson().fromJson(elem, classOfT));
+            }
+        } catch (Exception e) {
+        }
+        return lst;
     }
 
 }

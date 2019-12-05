@@ -17,12 +17,22 @@ public class JavaBeanConvertUtil {
         ArrayList<MusicBean> musicBeans = new ArrayList<>();
         for (NetRecommendSongsBean.RecommendBean recommendBean : netRecommendSongsBean.getRecommend()) {
             NetRecommendSongsBean.RecommendBean.AlbumBean netAlbum = recommendBean.getAlbum();
-            AlbumBean albumBean = new AlbumBean(netAlbum.getId(), netAlbum.getName(), netAlbum.getType(), netAlbum.getBlurPicUrl(), netAlbum.getCompany());
+            //专辑
+            AlbumBean albumBean = new AlbumBean(netAlbum.getId(), netAlbum.getName(), netAlbum.getType(),
+                    netAlbum.getBlurPicUrl(), netAlbum.getCompany(),recommendBean.getPrivilege().getMaxbr() >= 999000);
+            //设置是否为《独家》
+            albumBean.setFlag(recommendBean.getPrivilege().getFlag() == 64 ? AlbumBean.Flag.sole : null);
 
             NetRecommendSongsBean.RecommendBean.ArtistsBeanX artistsBeanX = recommendBean.getArtists().get(0);
+            //歌手
             ArtistBean artistBean = new ArtistBean(artistsBeanX.getId(), artistsBeanX.getName(), artistsBeanX.getPicUrl());
 
-            musicBeans.add(new MusicBean(recommendBean.getId(),recommendBean.getName(),artistBean,albumBean));
+            MusicBean musicBean = new MusicBean(recommendBean.getId(), recommendBean.getName(), artistBean, albumBean);
+            //设置别名
+            musicBean.setAlias(recommendBean.getAlias());
+            //设置mvid
+            musicBean.setMvid(recommendBean.getMvid());
+            musicBeans.add(musicBean);
         }
 
         return musicBeans;

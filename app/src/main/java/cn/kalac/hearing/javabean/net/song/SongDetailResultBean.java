@@ -9,7 +9,7 @@ import java.util.List;
 public class SongDetailResultBean {
 
     /**
-     * songs : [{"name":"第几个一百天","id":108401,"pst":0,"t":0,"ar":[{"id":3684,"name":"林俊杰","tns":[],"alias":[]}],"alia":[],"pop":100,"st":0,"rt":"","fee":8,"v":45,"crbt":"5fb47d3d6b8cecd4b73d1537dc2538c6","cf":"","al":{"id":10766,"name":"100天","picUrl":"https://p1.music.126.net/oALpJH1SwQE9eLaYQHLQHw==/109951163071285497.jpg","tns":[],"pic_str":"109951163071285497","pic":109951163071285500},"dt":280907,"h":{"br":320000,"fid":0,"size":11238966,"vd":-1.9},"m":{"br":160000,"fid":0,"size":5619506,"vd":-1.46},"l":{"br":96000,"fid":0,"size":3371721,"vd":-1.5},"a":null,"cd":"1","no":2,"rtUrl":null,"ftype":0,"rtUrls":[],"djId":0,"copyright":1,"s_id":0,"rtype":0,"rurl":null,"mst":9,"cp":14026,"mv":58695,"publishTime":1261065600000}]
+     * songs : [{"name":"第几个一百天","id":108401,"pst":0,"t":0,"ar":[{"id":3684,"name":"林俊杰","tns":[],"alias":[]}],"alia":[],"pop":100,"st":0,"rt":"","fee":8,"v":45,"crbt":"5fb47d3d6b8cecd4b73d1537dc2538c6","cf":"","al":{"id":10766,"name":"100天","picUrl":"https://p1.music.126.net/oALpJH1SwQE9eLaYQHLQHw==/109951163071285497.jpg","tns":[],"pic_str":"109951163071285497","pic":109951163071285500},"dt":280907,"h":{"br":320000,"fid":0,"size":11238966,"vd":-1.9},"m":{"br":160000,"fid":0,"size":5619506,"vd":-1.46},"loadListFormLoacl":{"br":96000,"fid":0,"size":3371721,"vd":-1.5},"a":null,"cd":"1","no":2,"rtUrl":null,"ftype":0,"rtUrls":[],"djId":0,"copyright":1,"s_id":0,"rtype":0,"rurl":null,"mst":9,"cp":14026,"mv":58695,"publishTime":1261065600000}]
      * privileges : [{"id":108401,"fee":8,"payed":0,"st":0,"pl":128000,"dl":0,"sp":7,"cp":1,"subp":1,"cs":false,"maxbr":999000,"fl":128000,"toast":false,"flag":0,"preSell":false}]
      * code : 200
      */
@@ -61,7 +61,7 @@ public class SongDetailResultBean {
          * dt : 280907
          * h : {"br":320000,"fid":0,"size":11238966,"vd":-1.9}
          * m : {"br":160000,"fid":0,"size":5619506,"vd":-1.46}
-         * l : {"br":96000,"fid":0,"size":3371721,"vd":-1.5}
+         * loadListFormLoacl : {"br":96000,"fid":0,"size":3371721,"vd":-1.5}
          * a : null
          * cd : 1
          * no : 2

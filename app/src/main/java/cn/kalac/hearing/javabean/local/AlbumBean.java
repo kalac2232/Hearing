@@ -18,12 +18,20 @@ public class AlbumBean {
      */
     private String company;
 
-    public AlbumBean(int id, String name, String type, String picUrl, String company) {
+    /**
+     * 是否为SQ音质
+     */
+    private boolean isSQ;
+
+    private Flag flag;
+
+    public AlbumBean(int id, String name, String type, String picUrl, String company, boolean isSQ) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.picUrl = picUrl;
         this.company = company;
+        this.isSQ = isSQ;
     }
 
     public int getId() {
@@ -64,5 +72,28 @@ public class AlbumBean {
 
     public void setCompany(String company) {
         this.company = company;
+    }
+
+    public boolean isSQ() {
+        return isSQ;
+    }
+
+    public void setSQ(boolean SQ) {
+        isSQ = SQ;
+    }
+
+    public Flag getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Flag flag) {
+        this.flag = flag;
+    }
+
+    public enum Flag{
+        /**
+         * 独家
+         */
+        sole
     }
 }

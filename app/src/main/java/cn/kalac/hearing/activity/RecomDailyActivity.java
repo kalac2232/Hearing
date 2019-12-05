@@ -58,11 +58,8 @@ public class RecomDailyActivity extends BaseActivity {
     private void getDailyListData() {
         String url = ApiHelper.getRecommendSongsUrl();
         //判断今天是否已经获取过了，获取过的话直接使用
-//        ArrayList<MusicBean> musicBeans = DataUtil.loadBeanFormLoacl(url +
-//                TimeUtil.getTime(System.currentTimeMillis(), "yy/MM/dd"), ArrayList.class);
 
-        List<MusicBean> musicBeans = DataUtil.l(url +
-                TimeUtil.getTime(System.currentTimeMillis(), "yy/MM/dd"), MusicBean[].class);
+        List<MusicBean> musicBeans = DataUtil.loadListFormLoacl(url + TimeUtil.getTime(System.currentTimeMillis(), "yy/MM/dd"),MusicBean.class);
 
         if (musicBeans == null) {
             HttpHelper.getInstance().get(url, new HttpCallback<NetRecommendSongsBean>() {
@@ -74,7 +71,7 @@ public class RecomDailyActivity extends BaseActivity {
 
                     Toast.makeText(mContext, "获取了" + musicBeans.size() + "个数据", Toast.LENGTH_SHORT).show();
 
-                    DataUtil.saveObject(url + TimeUtil.getTime(System.currentTimeMillis(),"yy/MM/dd"), musicBeans);
+                    DataUtil.saveList(url + TimeUtil.getTime(System.currentTimeMillis(),"yy/MM/dd"), musicBeans);
                     rvDailyList.setAdapter(new DailyListAdapter(musicBeans));
                 }
 

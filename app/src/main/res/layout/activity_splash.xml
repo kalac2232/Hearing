@@ -8,11 +8,12 @@
     tools:context=".activity.SplashActivity">
 
     <ImageView
+        android:fitsSystemWindows="true"
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:src="@drawable/ic_splash_bg"/>
+        android:background="#DB2C1F"/>
 
     <ImageView
         android:layout_width="0dp"
@@ -24,5 +25,20 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.26"
-        app:layout_constraintWidth_percent="0.7"/>
+        app:layout_constraintWidth_percent="0.6"/>
+
+    <ImageView
+        android:visibility="invisible"
+        android:id="@+id/iv_splash_logo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@mipmap/ic_splash_cloud_music"
+        android:tint="#ffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="282:54"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.924"
+        app:layout_constraintWidth_percent="0.31" />
 </androidx.constraintlayout.widget.ConstraintLayout>

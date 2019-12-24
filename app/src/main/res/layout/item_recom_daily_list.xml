@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         app:layout_constraintWidth_percent="0.6"
-        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintLeft_toRightOf="@id/iv_music_cover"
         app:layout_constraintTop_toTopOf="@id/iv_music_cover"
         app:layout_constraintBottom_toTopOf="@id/ll_other_content"
@@ -49,8 +49,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="@id/ll_music_name"
         app:layout_constraintTop_toBottomOf="@id/ll_music_name"
+        app:layout_constraintBottom_toBottomOf="@id/iv_music_cover"
         app:layout_constraintWidth_percent="0.6"
-        android:layout_marginTop="6dp">
+        android:layout_marginTop="8dp">
         <ImageView
             android:id="@+id/iv_sole_icon"
             android:layout_width="16dp"
@@ -80,5 +81,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-
+    <ImageView
+        android:id="@+id/iv_daily_list_tag_mv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintWidth_percent="0.1"
+        android:layout_marginRight="6dp"
+        android:src="@mipmap/ic_daily_list_tag_mv"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/iv_daily_list_icn_more"/>
+    <ImageView
+        android:id="@+id/iv_daily_list_icn_more"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintWidth_percent="0.08"
+        android:src="@mipmap/ic_daily_list_more"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

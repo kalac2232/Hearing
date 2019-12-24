@@ -9,7 +9,7 @@
     <cn.kalac.hearing.view.DailyPagerTopView
         app:layout_behavior=".widget.behavier.DailyHeaderBehavior"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/tv_bar_title"
         android:text="@string/recom_daily"

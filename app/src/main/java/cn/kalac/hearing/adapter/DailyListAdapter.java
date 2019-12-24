@@ -1,5 +1,6 @@
 package cn.kalac.hearing.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,12 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.VH> 
         MusicBean musicBean = musicBeans.get(position);
         holder.name.setText(musicBean.getName());
         holder.singer.setText(musicBean.getArtistBean().getName() + " - " + musicBean.getAlbumBean().getName());
-        Glide.with(holder.img.getContext()).load(musicBean.getAlbumBean().getPicUrl())
+
+        String picUrl = musicBean.getAlbumBean().getPicUrl() + "?param=200y200";
+
+        Log.i("---", "onBindViewHolder: " +holder.img.getWidth());
+
+        Glide.with(holder.img.getContext()).load(picUrl)
                 .apply(RequestOptions.bitmapTransform(new RoundedCornersTransformation(10,0))).into(holder.img);
         //设置<SQ>
         if (musicBean.getAlbumBean().isSQ()) {
@@ -64,6 +70,13 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.VH> 
         } else {
             holder.alias.setVisibility(View.GONE);
         }
+
+        //设置mv图标
+        if (musicBean.getMvid() != 0) {
+            holder.mvIcon.setVisibility(View.VISIBLE);
+        } else {
+            holder.mvIcon.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -78,6 +91,7 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.VH> 
         ImageView sq;
         ImageView sole;
         TextView alias;
+        ImageView mvIcon;
 
         public VH(@NonNull View itemView) {
             super(itemView);
@@ -87,6 +101,7 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.VH> 
             sq = itemView.findViewById(R.id.iv_sq_icon);
             sole = itemView.findViewById(R.id.iv_sole_icon);
             alias = itemView.findViewById(R.id.tv_music_alias);
+            mvIcon = itemView.findViewById(R.id.iv_daily_list_tag_mv);
         }
     }
 }

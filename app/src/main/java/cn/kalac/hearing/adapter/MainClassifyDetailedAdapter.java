@@ -69,7 +69,6 @@ public class MainClassifyDetailedAdapter extends RecyclerView.Adapter<MainClassi
 
 
                 int i = (int) (bean.getPlayCount() / 10000);
-                Logger.i("i:%d" , i);
                 if (i > 10000) {
                     holder.tvHot.setText(i / 10000 + "亿");
                 } else if (i > 1){

@@ -4,6 +4,7 @@ package cn.kalac.hearing.javabean.local;
  * Created by Kalac on 2019/2/19
  */
 
+@Deprecated
 public class Song {
     private int songId;
     private String songName;

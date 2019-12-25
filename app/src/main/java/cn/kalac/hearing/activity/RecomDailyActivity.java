@@ -10,7 +10,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -19,10 +18,10 @@ import cn.kalac.hearing.adapter.DailyListAdapter;
 import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.local.MusicBean;
 import cn.kalac.hearing.javabean.net.NetRecommendSongsBean;
-import cn.kalac.hearing.javabean.local.Song;
+import cn.kalac.hearing.mvp.presenter.RecomDailyPresenterImpl;
+import cn.kalac.hearing.mvp.view.RecomDailyView;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
-import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.utils.DensityUtil;
 import cn.kalac.hearing.utils.JavaBeanConvertUtil;
@@ -33,7 +32,7 @@ import cn.kalac.hearing.widget.CalendarRingDrawable;
  * @author kalac.
  * @date 2019/11/26 21:38
  */
-public class RecomDailyActivity extends BaseActivity {
+public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterImpl> implements RecomDailyView{
     @BindView(R.id.v_ring_left)
     View vRingLeft;
     @BindView(R.id.v_ring_right)
@@ -44,6 +43,11 @@ public class RecomDailyActivity extends BaseActivity {
     ConstraintLayout clDailyListCore;
     @BindView(R.id.tv_bar_title)
     TextView tvTitle;
+
+    @Override
+    public RecomDailyPresenterImpl initPresenter() {
+        return new RecomDailyPresenterImpl(this);
+    }
 
     @Override
     protected int getLayoutResID() {
@@ -118,25 +122,5 @@ public class RecomDailyActivity extends BaseActivity {
 
     }
 
-    /**
-     * 提取日推列表中歌曲的id方便进行播放
-     *
-     * @param recommendSongBeanList 日推列表
-     */
-    private void extractSongIdFromRecommendList(List<NetRecommendSongsBean.RecommendBean> recommendSongBeanList) {
-        ArrayList<Song> list = new ArrayList<>();
-        for (NetRecommendSongsBean.RecommendBean bean : recommendSongBeanList) {
-            int songId = bean.getId();
-            String songName = bean.getName();
-            String singerName = bean.getArtists().get(0).getName();
-            String picUrl = bean.getAlbum().getPicUrl();
-            list.add(new Song(songId, songName, singerName, picUrl));
-        }
-        if (list.size() > 0) {
 
-            PlayMusicService.mPlayingSongList.clear();
-            PlayMusicService.mPlayingSongList.addAll(list);
-
-        }
-    }
 }

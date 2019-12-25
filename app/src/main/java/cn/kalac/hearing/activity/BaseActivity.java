@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.kalac.hearing.R;
+import cn.kalac.hearing.mvp.presenter.BasePresenter;
+import cn.kalac.hearing.mvp.view.BaseView;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DensityUtil;
 
@@ -24,12 +26,14 @@ import cn.kalac.hearing.utils.DensityUtil;
  * Created by Kalac on 2019/2/1
  */
 
-public abstract class BaseActivity extends FragmentActivity implements BGASwipeBackHelper.Delegate{
+public abstract class BaseActivity extends FragmentActivity implements BGASwipeBackHelper.Delegate {
 
-    String TAG = ""+getClass().toString();
+    public final String TAG = this.getClass().getSimpleName();
+
     protected Context mContext;
     private MusicStatusReceiver mMusicStatusReceiver;
     protected BGASwipeBackHelper mSwipeBackHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
         mContext = this;
         setContentView(getLayoutResID());
         ButterKnife.bind(this);
+
         //实现状态栏透明
         View decorView = getWindow().getDecorView();
         int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -134,8 +139,6 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
     }
 
 
-
-
     protected void musicStatusToPause() {
 
     }
@@ -159,6 +162,7 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mMusicStatusReceiver);
         }
     }
+
 
     public boolean bindMusicReceiver(){
         return false;

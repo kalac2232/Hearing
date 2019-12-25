@@ -16,6 +16,7 @@ import java.util.Arrays;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.net.OkHttpProcessor;
+import cn.kalac.hearing.utils.ShortcutUtil;
 
 
 /*
@@ -39,40 +40,8 @@ public class HearingApplication extends Application {
         BGASwipeBackHelper.init(this, null);
 
         Logger.addLogAdapter(new AndroidLogAdapter());
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-            ShortcutInfo shortcut1 = new ShortcutInfo.Builder(this, "id1")
-                    .setShortLabel("Web site")
-                    .setLongLabel("播放本地音乐")
-                    .setIcon(Icon.createWithResource(this, R.mipmap.shortcut_local_music))
-                    .setIntent(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://www.mysite.example.com/")))
-                    .build();
-            ShortcutInfo shortcut2 = new ShortcutInfo.Builder(this, "id2")
-                    .setShortLabel("Web site")
-                    .setLongLabel("搜索")
-                    .setIcon(Icon.createWithResource(this, R.mipmap.shortcut_search))
-                    .setIntent(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://www.mysite.example.com/")))
-                    .build();
-            ShortcutInfo shortcut3 = new ShortcutInfo.Builder(this, "id3")
-                    .setShortLabel("Web site")
-                    .setLongLabel("私人FM")
-                    .setIcon(Icon.createWithResource(this, R.mipmap.shortcut_fm))
-                    .setIntent(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://www.mysite.example.com/")))
-                    .build();
-            ShortcutInfo shortcut4 = new ShortcutInfo.Builder(this, "id4")
-                    .setShortLabel("Web site")
-                    .setLongLabel("听歌识曲")
-                    .setIcon(Icon.createWithResource(this, R.mipmap.shortcut_identify))
-                    .setIntent(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://www.mysite.example.com/")))
-                    .build();
-            shortcutManager.setDynamicShortcuts(Arrays.asList(shortcut1,shortcut2,shortcut3,shortcut4));
-        }
+        //添加类3dtouch功能
+        ShortcutUtil.addShortcut(this);
 
 
     }

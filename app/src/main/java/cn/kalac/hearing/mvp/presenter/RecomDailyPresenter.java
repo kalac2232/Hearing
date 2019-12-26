@@ -16,4 +16,6 @@ public interface RecomDailyPresenter extends BasePresenter {
     void requstDataSuccess(String url,NetRecommendSongsBean musicBeans);
 
     void requstDataFailed(String msg);
+
+    void playAllMusic();
 }

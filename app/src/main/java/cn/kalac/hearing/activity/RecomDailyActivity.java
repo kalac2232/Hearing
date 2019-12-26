@@ -1,9 +1,10 @@
 package cn.kalac.hearing.activity;
 
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -13,27 +14,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import butterknife.BindView;
-import cn.kalac.easymediaplayer.EasyMediaPlayer;
+import butterknife.ButterKnife;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.DailyListAdapter;
-import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.local.MusicBean;
-import cn.kalac.hearing.javabean.net.NetRecommendSongsBean;
 import cn.kalac.hearing.mvp.presenter.RecomDailyPresenterHelperImpl;
 import cn.kalac.hearing.mvp.view.RecomDailyView;
-import cn.kalac.hearing.net.HttpCallback;
-import cn.kalac.hearing.net.HttpHelper;
-import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.utils.DensityUtil;
-import cn.kalac.hearing.utils.JavaBeanConvertUtil;
-import cn.kalac.hearing.utils.TimeUtil;
+import cn.kalac.hearing.view.MiniSoundWave;
 import cn.kalac.hearing.widget.CalendarRingDrawable;
 
 /**
  * @author kalac.
  * @date 2019/11/26 21:38
  */
-public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterHelperImpl> implements RecomDailyView{
+public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterHelperImpl> implements RecomDailyView, View.OnClickListener {
     @BindView(R.id.v_ring_left)
     View vRingLeft;
     @BindView(R.id.v_ring_right)
@@ -44,6 +39,14 @@ public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterHelpe
     ConstraintLayout clDailyListCore;
     @BindView(R.id.tv_bar_title)
     TextView tvTitle;
+    @BindView(R.id.iv_play_all)
+    ImageView ivPlayAll;
+    @BindView(R.id.statusBarView)
+    View statusBarView;
+    @BindView(R.id.btn_jumpTOPlay)
+    MiniSoundWave btnJumpTOPlay;
+    @BindView(R.id.tv_play_all)
+    TextView tvPlayAll;
 
     @Override
     public RecomDailyPresenterHelperImpl initPresenter() {
@@ -61,9 +64,9 @@ public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterHelpe
     }
 
 
-
     @Override
     protected void initView() {
+        //设置环状图形为背景
         vRingLeft.setBackground(new CalendarRingDrawable());
         vRingRight.setBackground(new CalendarRingDrawable());
 
@@ -75,6 +78,7 @@ public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterHelpe
         params.topMargin = DensityUtil.getStatusBarHeight(mContext);
 
         calculateRingX();
+
     }
 
     /**
@@ -89,12 +93,30 @@ public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterHelpe
 
     @Override
     protected void addListener() {
-
+        ivPlayAll.setOnClickListener(this);
+        tvPlayAll.setOnClickListener(this);
     }
 
 
     @Override
     public void setAdapterData(List<MusicBean> musicBeans) {
         rvDailyList.setAdapter(new DailyListAdapter(musicBeans));
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_play_all:
+            case R.id.tv_play_all:
+                mPresenter.playAllMusic();
+                break;
+            default:
+                break;
+        }
     }
 }

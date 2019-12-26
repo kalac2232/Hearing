@@ -12,14 +12,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import cn.kalac.hearing.api.ApiHelper;
-import cn.kalac.hearing.javabean.local.Song;
+import cn.kalac.hearing.javabean.local.MusicBean;
 import cn.kalac.hearing.javabean.net.song.SongMp3ResultBean;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
+import cn.kalac.hearing.widget.PlayListManager;
 
 
 /*
@@ -55,11 +54,9 @@ public class PlayMusicService extends Service {
 
 
     private Context mContext;
-    private int mCurrentSongID = -1;
+
     private MusicBinder mMusicBinder;
 
-    public static List<Song> mPlayingSongList = new ArrayList<>();
-    public static int mCurrentPlayPos = -1;
 
     @Override
     public void onCreate() {
@@ -106,7 +103,7 @@ public class PlayMusicService extends Service {
 
     private void play() {
 
-        if (mPlayingSongList == null || mPlayingSongList.isEmpty()) {
+        if (PlayListManager.getInstance().isEmpty()) {
             return;
         }
 
@@ -139,8 +136,8 @@ public class PlayMusicService extends Service {
         } else { //从未开始的状态
             Log.i(TAG, "play: 3");
             //获取当前要播放的songid
-            Song song = mPlayingSongList.get(mCurrentPlayPos);
-            int songid = song.getSongId();
+            MusicBean music = PlayListManager.getInstance().getCurrentMusic();
+            int songid = music.getId();
             //加载MP3
             loadSongMp3(songid);
             //如果当前记录的播放id和要播放的id相同，说明是之前已经播放过得，但是暂停了，只需要直接调用start即可
@@ -190,11 +187,11 @@ public class PlayMusicService extends Service {
         //
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
-        mCurrentPlayPos ++;
+        PlayListManager.getInstance().next();
         //获取当前要播放的songid
-        Song song = mPlayingSongList.get(mCurrentPlayPos);
+        MusicBean music = PlayListManager.getInstance().getCurrentMusic();
 
-        loadSongMp3(song.getSongId());
+        loadSongMp3(music.getId());
 
     }
 
@@ -205,11 +202,11 @@ public class PlayMusicService extends Service {
 
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
-        mCurrentPlayPos --;
+        PlayListManager.getInstance().pre();
         //获取当前要播放的songid
-        Song song = mPlayingSongList.get(mCurrentPlayPos);
+        MusicBean music = PlayListManager.getInstance().getCurrentMusic();
 
-        loadSongMp3(song.getSongId());
+        loadSongMp3(music.getId());
     }
 
     /**

@@ -43,6 +43,7 @@
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintWidth_percent="0.065"/>
         <TextView
+            android:id="@+id/tv_play_all"
             android:layout_marginLeft="13dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

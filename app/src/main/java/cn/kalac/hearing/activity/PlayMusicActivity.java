@@ -18,10 +18,12 @@ import com.bumptech.glide.request.RequestOptions;
 import java.text.SimpleDateFormat;
 
 import cn.kalac.hearing.R;
+import cn.kalac.hearing.javabean.local.MusicBean;
 import cn.kalac.hearing.javabean.local.Song;
 import cn.kalac.hearing.service.MusicBinder;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.view.RecordView;
+import cn.kalac.hearing.widget.PlayListManager;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 
@@ -227,17 +229,17 @@ public class PlayMusicActivity extends BaseActivity {
 
     /**
      * 显示获取到的面，歌曲名，歌手信息
-     * @param song 歌曲
+     * @param musicBean 歌曲
      */
-    private void showSongDetail(Song song) {
+    private void showSongDetail(MusicBean musicBean) {
         //获取歌曲名称
-        String name = song.getSongName();
+        String name = musicBean.getName();
         mSongName.setText(name);
         //获取歌曲作者
-        String author = song.getSingerName();
+        String author = musicBean.getArtistBean().getName();
         mSongAuthor.setText(author);
         //获取封面地址
-        String picUrl = song.getPicUrl();
+        String picUrl = musicBean.getAlbumBean().getPicUrl();
         //设置gilde的设置
         RequestOptions requestOptions = new RequestOptions()
                 .transform(new BlurTransformation(25,3))//设置模糊效果
@@ -286,9 +288,9 @@ public class PlayMusicActivity extends BaseActivity {
         //显示标题栏
         mTitle.setVisibility(View.VISIBLE);
         //获取当前播放的歌曲id
-        Song song = PlayMusicService.mPlayingSongList.get(PlayMusicService.mCurrentPlayPos);
+        MusicBean music = PlayListManager.getInstance().getCurrentMusic();
         //设置歌曲详情
-        showSongDetail(song);
+        showSongDetail(music);
         //设置seekbar总时长
         int duration = mMusicBinder.getDuration();
         mPlayProgressSB.setMax(duration);

@@ -23,7 +23,7 @@ public class MainPagerFragAdapter extends FragmentPagerAdapter {
             case 0:
                 return new DiscoverFragment();
             case 1:
-                return new DiscoverFragment();
+                return new MineFragment();
             case 2:
                 return new MineFragment();
         }

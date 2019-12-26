@@ -1,1 +1,2 @@
-include ':app'
+include ':app',':easymediaplayer'
+project(':easymediaplayer').projectDir = new File('D:\\AndroidStudioProjects\\EasyMediaPlayer\\easymediaplayer')

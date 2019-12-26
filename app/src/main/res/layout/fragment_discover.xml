@@ -22,7 +22,7 @@
             android:id="@+id/punctuateIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintLeft_toLeftOf="@id/vp_main_banner"
             app:layout_constraintRight_toRightOf="@id/vp_main_banner"
             app:layout_constraintBottom_toBottomOf="@id/vp_main_banner"/>

@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import butterknife.BindView;
+import cn.kalac.easymediaplayer.EasyMediaPlayer;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.DailyListAdapter;
 import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.local.MusicBean;
 import cn.kalac.hearing.javabean.net.NetRecommendSongsBean;
-import cn.kalac.hearing.mvp.presenter.RecomDailyPresenterImpl;
+import cn.kalac.hearing.mvp.presenter.RecomDailyPresenterHelperImpl;
 import cn.kalac.hearing.mvp.view.RecomDailyView;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
@@ -32,7 +33,7 @@ import cn.kalac.hearing.widget.CalendarRingDrawable;
  * @author kalac.
  * @date 2019/11/26 21:38
  */
-public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterImpl> implements RecomDailyView{
+public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterHelperImpl> implements RecomDailyView{
     @BindView(R.id.v_ring_left)
     View vRingLeft;
     @BindView(R.id.v_ring_right)
@@ -45,8 +46,8 @@ public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterImpl>
     TextView tvTitle;
 
     @Override
-    public RecomDailyPresenterImpl initPresenter() {
-        return new RecomDailyPresenterImpl(this);
+    public RecomDailyPresenterHelperImpl initPresenter() {
+        return new RecomDailyPresenterHelperImpl(this);
     }
 
     @Override
@@ -56,41 +57,10 @@ public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterImpl>
 
     @Override
     protected void initData() {
-        getDailyListData();
+        mPresenter.getDailyListData();
     }
 
-    private void getDailyListData() {
-        String url = ApiHelper.getRecommendSongsUrl();
-        //判断今天是否已经获取过了，获取过的话直接使用
 
-        List<MusicBean> musicBeans = DataUtil.loadListFormLoacl(url + TimeUtil.getTime(System.currentTimeMillis(), "yy/MM/dd"),MusicBean.class);
-
-        if (musicBeans == null) {
-            HttpHelper.getInstance().get(url, new HttpCallback<NetRecommendSongsBean>() {
-
-                @Override
-                public void onSuccess(NetRecommendSongsBean netRecommendSongsBean) {
-
-                    List<MusicBean> musicBeans = JavaBeanConvertUtil.recomDailyListConvert(netRecommendSongsBean);
-
-                    Toast.makeText(mContext, "获取了" + musicBeans.size() + "个数据", Toast.LENGTH_SHORT).show();
-
-                    DataUtil.saveList(url + TimeUtil.getTime(System.currentTimeMillis(),"yy/MM/dd"), musicBeans);
-                    rvDailyList.setAdapter(new DailyListAdapter(musicBeans));
-                }
-
-                @Override
-                public void onFailed(String string) {
-                    Toast.makeText(mContext, "获取失败" + string, Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Toast.makeText(mContext, "本地获取了" + musicBeans.size() + "个数据", Toast.LENGTH_SHORT).show();
-            rvDailyList.setAdapter(new DailyListAdapter(musicBeans));
-        }
-
-
-    }
 
     @Override
     protected void initView() {
@@ -123,4 +93,8 @@ public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterImpl>
     }
 
 
+    @Override
+    public void setAdapterData(List<MusicBean> musicBeans) {
+        rvDailyList.setAdapter(new DailyListAdapter(musicBeans));
+    }
 }

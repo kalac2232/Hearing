@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,8 +15,6 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.kalac.hearing.R;
-import cn.kalac.hearing.mvp.presenter.BasePresenter;
-import cn.kalac.hearing.mvp.view.BaseView;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DensityUtil;
 

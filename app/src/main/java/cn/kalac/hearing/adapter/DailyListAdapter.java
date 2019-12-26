@@ -46,17 +46,17 @@ public class DailyListAdapter extends RecyclerView.Adapter<DailyListAdapter.VH> 
 
         String picUrl = musicBean.getAlbumBean().getPicUrl() + "?param=200y200";
 
-        Log.i("---", "onBindViewHolder: " +holder.img.getWidth());
+        //Log.i("---", "onBindViewHolder: " +holder.img.getWidth());
 
         Glide.with(holder.img.getContext()).load(picUrl)
                 .apply(RequestOptions.bitmapTransform(new RoundedCornersTransformation(10,0))).into(holder.img);
-        //设置<SQ>
+        //设置<SQ>标签
         if (musicBean.getAlbumBean().isSQ()) {
             holder.sq.setVisibility(View.VISIBLE);
         } else {
             holder.sq.setVisibility(View.GONE);
         }
-        //设置《翻唱》
+        //设置《翻唱》标签
         if (musicBean.getAlbumBean().getFlag() == AlbumBean.Flag.sole) {
             holder.sole.setVisibility(View.VISIBLE);
             Glide.with(holder.img.getContext()).load(R.mipmap.ic_sole_small_icon).into(holder.sole);

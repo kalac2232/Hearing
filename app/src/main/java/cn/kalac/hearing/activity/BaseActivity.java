@@ -7,10 +7,16 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import butterknife.ButterKnife;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
@@ -25,7 +31,7 @@ import cn.kalac.hearing.utils.DensityUtil;
 
 public abstract class BaseActivity extends FragmentActivity implements BGASwipeBackHelper.Delegate {
 
-    public final String TAG = this.getClass().getSimpleName();
+    protected final String TAG = this.getClass().getSimpleName();
 
     protected Context mContext;
     private MusicStatusReceiver mMusicStatusReceiver;
@@ -41,23 +47,13 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
 
         //实现状态栏透明
         View decorView = getWindow().getDecorView();
-        int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         decorView.setSystemUiVisibility(option);
 
         getWindow().setStatusBarColor(Color.TRANSPARENT);
-        View statusBarView = findViewById(R.id.statusBarView);
-        if (statusBarView != null) {
-            //statusBarView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            ViewGroup.LayoutParams layoutParams = statusBarView.getLayoutParams();
-            layoutParams.height = DensityUtil.getStatusBarHeight(mContext);
-            statusBarView.setLayoutParams(layoutParams);
-        }
-        //android6.0以后可以对状态栏文字颜色和图标进行修改
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //设置状态栏字体颜色为深色
-            getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        //将核心内容进行向下平移状态栏的位置，防止与状态栏重叠
+        setViewMarginTop();
+
 
         initView();
         initData();
@@ -66,6 +62,25 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
         //判断是否需要注册音乐状态改变广播接收者
         if (bindMusicReceiver()){
             registerMusicStatusReciver();
+        }
+    }
+
+    private void setViewMarginTop() {
+        View view = findViewById(R.id.need_margin_top_content);
+        if (view != null) {
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            if (layoutParams instanceof FrameLayout.LayoutParams) {
+                ((FrameLayout.LayoutParams) layoutParams).topMargin = DensityUtil.getStatusBarHeight(mContext);
+            } else if (layoutParams instanceof RelativeLayout.LayoutParams) {
+                ((RelativeLayout.LayoutParams) layoutParams).topMargin = DensityUtil.getStatusBarHeight(mContext);
+            } else if (layoutParams instanceof ConstraintLayout.LayoutParams) {
+                ((ConstraintLayout.LayoutParams) layoutParams).topMargin = DensityUtil.getStatusBarHeight(mContext);
+            } else if (layoutParams instanceof CoordinatorLayout.LayoutParams) {
+                ((CoordinatorLayout.LayoutParams) layoutParams).topMargin = DensityUtil.getStatusBarHeight(mContext);
+            }
+
+
+            view.setLayoutParams(layoutParams);
         }
     }
 
@@ -90,24 +105,46 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
      * 设置状态栏颜色
      * @param isGray
      */
-    public void setStatueTextColor(boolean isGray) {
+    protected void setStatueTextColor(boolean isGray) {
         if (isGray) {
             // 灰色
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            //android6.0以后可以对状态栏文字颜色和图标进行修改
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                //设置状态栏字体颜色为深色
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
         } else {
             // 白色
             getWindow().getDecorView().setSystemUiVisibility(0);
         }
     }
 
-    /**
-     * 启动一个activity
-     * @param activityClass 目标activity
-     */
-    protected void startActivty(Class activityClass){
-        Intent intent = new Intent(mContext, activityClass);
-        startActivity(intent);
+
+    protected void hideBottomUIMenu() {
+
+        //隐藏虚拟按键，并且全屏
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) {
+            // lower api
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
+        //透明状态栏
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        //设置使用刘海旁边的耳朵区
+        if (Build.VERSION.SDK_INT >= 28) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            getWindow().setAttributes(lp);
+        }
     }
+
     /**
      * 启动一个service
      * @param serviceClass 目标service

@@ -103,8 +103,6 @@ public class RecordView extends RelativeLayout {
         int needleWidth = (int) (TurntableDisplayUtil.SCALE_NEEDLE_WIDTH * mScreenWidth);
         int needleHeight = (int) (TurntableDisplayUtil.SCALE_NEEDLE_HEIGHT * mScreenHeigth);
 
-        /*设置手柄的外边距为负数，让其隐藏一部分*/
-        int marginTop = (int) (TurntableDisplayUtil.SCALE_NEEDLE_MARGIN_TOP * mScreenHeigth) * -1;
         int marginLeft = (int) (TurntableDisplayUtil.SCALE_NEEDLE_MARGIN_LEFT * mScreenWidth);
 
         Bitmap originBitmap = BitmapFactory.decodeResource(getResources(), R.drawable
@@ -112,7 +110,7 @@ public class RecordView extends RelativeLayout {
         Bitmap bitmap = Bitmap.createScaledBitmap(originBitmap, needleWidth, needleHeight, false);
 
         RelativeLayout.LayoutParams layoutParams = (LayoutParams) mIvNeedle.getLayoutParams();
-        layoutParams.setMargins(marginLeft, marginTop, 0, 0);
+        layoutParams.setMargins(marginLeft, 0, 0, 0);
 
         int pivotX = (int) (TurntableDisplayUtil.SCALE_NEEDLE_PIVOT_X * mScreenWidth);
         int pivotY = (int) (TurntableDisplayUtil.SCALE_NEEDLE_PIVOT_Y * mScreenWidth);

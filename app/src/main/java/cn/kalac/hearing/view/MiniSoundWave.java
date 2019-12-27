@@ -10,12 +10,7 @@ import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
-
-import com.orhanobut.logger.Logger;
-
-import java.util.Arrays;
 
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.utils.DensityUtil;
@@ -36,7 +31,7 @@ public class MiniSoundWave extends View {
     /**
      * 线段占整个高度的百分比
      */
-    private float[] mLinesInitPercent;
+    private float[] mLinesInitHeightPercent;
     private Context mContext;
     private ValueAnimator mValueAnimator;
     private int mHeightValue;
@@ -71,7 +66,7 @@ public class MiniSoundWave extends View {
 
         mPaint = initPaint();
 
-        mLinesInitPercent = initLinesData();
+        mLinesInitHeightPercent = initLinesHeightData();
 
         getViewTreeObserver().addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
             @Override
@@ -83,7 +78,7 @@ public class MiniSoundWave extends View {
 
     }
 
-    private float[] initLinesData() {
+    private float[] initLinesHeightData() {
         return new float[]{80/160f,150/160f,100/160f,120/160f};
     }
 
@@ -121,16 +116,16 @@ public class MiniSoundWave extends View {
     }
 
     private void initLinesPoint() {
-        //第一位为第几条线，第二位为这个线的4个数值
+        //第一位为第几条线，第二位为这个线的l-t-r-b 4个数值
         mLines = new float[4][4];
         //第一条线 (mLintStrokeWidth/ 2f是为了让圆弧的显现出来，绘制直线时的xy是包含圆弧的xy)
 
         int measuredWidth = getMeasuredWidth();
         int interval = (measuredWidth - 4 * mLintStrokeWidth) / 3;
         for (int i = 0; i < mLines.length; i++) {
-            mLines[i][0] = mLintStrokeWidth / 2f + interval * i;
-            mLines[i][1] = getMeasuredHeight() * (1 - mLinesInitPercent[i]) + mLintStrokeWidth / 2f;
-            mLines[i][2] = mLintStrokeWidth / 2f + interval * i;
+            mLines[i][0] = mLintStrokeWidth / 2f + (interval + mLintStrokeWidth) * i;
+            mLines[i][1] = getMeasuredHeight() * (1 - mLinesInitHeightPercent[i]) + mLintStrokeWidth / 2f;
+            mLines[i][2] = mLintStrokeWidth / 2f + (interval + mLintStrokeWidth) * i;
             mLines[i][3] = getMeasuredHeight() - mLintStrokeWidth / 2f;
         }
 
@@ -148,6 +143,8 @@ public class MiniSoundWave extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        setMeasuredDimension(DensityUtil.dip2px(mContext,21),DensityUtil.dip2px(mContext,23));
     }
 
 
@@ -191,7 +188,7 @@ public class MiniSoundWave extends View {
     public void pause() {
         if (mValueAnimator != null) {
             mValueAnimator.cancel();
-            mLinesInitPercent = initLinesData();
+            mLinesInitHeightPercent = initLinesHeightData();
             postInvalidate();
             isRunning = false;
         }

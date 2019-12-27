@@ -1,9 +1,8 @@
-package cn.kalac.hearing.widget;
+package cn.kalac.hearing.utils;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 
 /**
  * @author kalac.

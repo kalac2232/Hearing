@@ -31,7 +31,7 @@ import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.utils.TimeUtil;
 import cn.kalac.hearing.view.LoopViewPager;
 import cn.kalac.hearing.view.PunctuateIndicator;
-import cn.kalac.hearing.widget.IntentUtil;
+import cn.kalac.hearing.utils.IntentUtil;
 
 
 /**

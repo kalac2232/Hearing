@@ -24,7 +24,7 @@ import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.DataUtil;
 import cn.kalac.hearing.view.MiniSoundWave;
-import cn.kalac.hearing.widget.IntentUtil;
+import cn.kalac.hearing.utils.IntentUtil;
 
 public class MainActivity extends BaseActivity {
     /**
@@ -48,6 +48,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //fixStatusBarColor();
+        setStatueTextColor(true);
     }
 
     @Override

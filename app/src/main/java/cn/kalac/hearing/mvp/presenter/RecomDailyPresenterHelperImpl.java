@@ -15,9 +15,9 @@ import cn.kalac.hearing.mvp.view.RecomDailyView;
 import cn.kalac.hearing.net.HttpCallback;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.utils.DataUtil;
+import cn.kalac.hearing.utils.IntentUtil;
 import cn.kalac.hearing.utils.JavaBeanConvertUtil;
 import cn.kalac.hearing.utils.TimeUtil;
-import cn.kalac.hearing.widget.IntentUtil;
 import cn.kalac.hearing.widget.PlayListManager;
 
 /**

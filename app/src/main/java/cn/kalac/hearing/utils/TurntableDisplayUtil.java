@@ -20,7 +20,6 @@ public class TurntableDisplayUtil {
     public static final float SCALE_NEEDLE_PIVOT_X = (float) (43.0 / BASE_SCREEN_WIDTH);
     public static final float SCALE_NEEDLE_PIVOT_Y = (float) (43.0 / BASE_SCREEN_WIDTH);
     public static final float SCALE_NEEDLE_HEIGHT = (float) (413.0 / BASE_SCREEN_HEIGHT);
-    public static final float SCALE_NEEDLE_MARGIN_TOP = (float) (43.0 / BASE_SCREEN_HEIGHT);
 
     /*唱盘比例*/
     public static final float SCALE_DISC_SIZE = (float) (807.0 / BASE_SCREEN_WIDTH);

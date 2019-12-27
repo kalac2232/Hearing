@@ -1,46 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/iv_playmusic_cover_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_playmusic_bg_default"/>
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="#9ccc"/>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#5000"/>
-    <LinearLayout
-        android:fitsSystemWindows="true"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:src="#000"
+        android:tint="#5ccc"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/need_margin_top_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
         <RelativeLayout
-
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             >
-
             <ImageView
                 android:id="@+id/ib_goback_btn"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:onClick="onBackBtnClick"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:src="@drawable/ic_back_btn"/>
+                android:layout_marginLeft="@dimen/content_distance"
+                android:src="@mipmap/ic_back_btn"/>
 
             <LinearLayout
                 android:id="@+id/ll_playmusic_title"
@@ -48,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:orientation="vertical"
-                android:visibility="invisible">
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/tv_playmusic_songName"
@@ -82,21 +73,19 @@
 
             </LinearLayout>
         </RelativeLayout>
-        <ImageView
-            android:src="@drawable/center_white_view_liner_gradient"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"/>
         <cn.kalac.hearing.view.RecordView
             android:id="@+id/Rv_playmusic_RecordView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         </cn.kalac.hearing.view.RecordView>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_alignParentBottom="true">
         <LinearLayout
             android:layout_width="wrap_content"
@@ -197,4 +186,4 @@
                 android:src="@drawable/ic_playing_bar_list_selector"/>
         </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -96,34 +96,24 @@
         android:layout_height="22dp"
         app:layout_behavior=".widget.behavier.RingViewBehavior" />
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/need_margin_top_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <include layout="@layout/statusbarview_layout"/>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <FrameLayout
-                android:layout_marginLeft="@dimen/content_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="?attr/actionBarSize">
-                <ImageView
-                    android:onClick="onBackBtnClick"
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@mipmap/ic_back_btn"/>
-            </FrameLayout>
-            <cn.kalac.hearing.view.MiniSoundWave
-                android:id="@+id/btn_jumpTOPlay"
-                app:lineColor="#ffffff"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:layout_marginRight="13dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true" />
-        </RelativeLayout>
-
-    </LinearLayout>
+        android:layout_height="?attr/actionBarSize">
+        <ImageView
+            android:layout_marginLeft="@dimen/content_distance"
+            android:onClick="onBackBtnClick"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_back_btn"/>
+        <cn.kalac.hearing.view.MiniSoundWave
+            android:id="@+id/btn_jumpTOPlay"
+            app:lineColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/content_distance"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

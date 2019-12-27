@@ -41,8 +41,6 @@ public class RecomDailyActivity extends MVPBaseActivity<RecomDailyPresenterHelpe
     TextView tvTitle;
     @BindView(R.id.iv_play_all)
     ImageView ivPlayAll;
-    @BindView(R.id.statusBarView)
-    View statusBarView;
     @BindView(R.id.btn_jumpTOPlay)
     MiniSoundWave btnJumpTOPlay;
     @BindView(R.id.tv_play_all)

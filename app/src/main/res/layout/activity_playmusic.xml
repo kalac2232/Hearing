@@ -4,76 +4,80 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    <ImageSwitcher
+        android:id="@+id/imageSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <ImageView
+        android:visibility="visible"
         android:id="@+id/iv_playmusic_cover_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="#000"
-        android:tint="#5ccc"/>
+        android:background="#5000"/>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/need_margin_top_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <RelativeLayout
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/actionBarLine"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintGuide_begin="?attr/actionBarSize"/>
+        <ImageView
+            android:id="@+id/ib_goback_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:onClick="onBackBtnClick"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            >
-            <ImageView
-                android:id="@+id/ib_goback_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="23dp"
-                android:onClick="onBackBtnClick"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/content_distance"
-                android:src="@mipmap/ic_back_btn"/>
-
-            <LinearLayout
-                android:id="@+id/ll_playmusic_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/tv_playmusic_songName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="我想念"
-                    android:textAlignment="center"
-                    android:textColor="#fff"
-                    android:textSize="20sp"/>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/tv_playmusic_songAuthor"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:textColor="#ccc"
-                        android:textAlignment="center"
-                        tools:text="金志文"/>
-                    <ImageView
-
-                        android:layout_width="10dp"
-                        android:layout_height="match_parent"
-                        android:alpha="0.9"
-                        android:src="@drawable/ic_playing_author_more"
-                        />
-                </LinearLayout>
-
-            </LinearLayout>
-        </RelativeLayout>
+            app:layout_constraintBottom_toBottomOf="@id/actionBarLine"
+            android:layout_marginLeft="@dimen/content_distance"
+            android:src="@mipmap/ic_back_btn"/>
+        <TextView
+            android:id="@+id/tv_playmusic_songName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="我想念"
+            android:textAlignment="center"
+            android:textColor="#fff"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintBottom_toTopOf="@id/tv_playmusic_songAuthor"
+            android:textSize="18sp"/>
+        <TextView
+            android:id="@+id/tv_playmusic_songAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@id/tv_playmusic_songName"
+            app:layout_constraintRight_toRightOf="@id/tv_playmusic_songName"
+            app:layout_constraintTop_toBottomOf="@id/tv_playmusic_songName"
+            app:layout_constraintBottom_toBottomOf="@id/actionBarLine"
+            android:textColor="#dcdcdc"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            tools:text="金志文"/>
+        <ImageView
+            android:id="@+id/iv_arrow"
+            app:layout_constraintLeft_toRightOf="@id/tv_playmusic_songAuthor"
+            app:layout_constraintTop_toTopOf="@id/tv_playmusic_songAuthor"
+            app:layout_constraintBottom_toBottomOf="@id/tv_playmusic_songAuthor"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:alpha="0.9"
+            android:src="@drawable/ic_playing_author_more"
+            />
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/g_playmusic_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="tv_playmusic_songAuthor,tv_playmusic_songName,iv_arrow"/>
         <cn.kalac.hearing.view.RecordView
+            app:layout_constraintTop_toBottomOf="@id/actionBarLine"
             android:id="@+id/Rv_playmusic_RecordView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

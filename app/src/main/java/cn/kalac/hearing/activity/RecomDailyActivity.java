@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.DailyListAdapter;
 import cn.kalac.hearing.javabean.local.MusicBean;

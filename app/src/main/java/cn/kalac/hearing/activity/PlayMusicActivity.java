@@ -3,23 +3,38 @@ package cn.kalac.hearing.activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
+import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.text.SimpleDateFormat;
 
+import butterknife.BindView;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.javabean.local.MusicBean;
-import cn.kalac.hearing.javabean.local.Song;
 import cn.kalac.hearing.service.MusicBinder;
 import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.view.RecordView;
@@ -35,11 +50,9 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 public class PlayMusicActivity extends BaseActivity {
 
     private static final String TAG = "PlayMusicActivity";
+    @BindView(R.id.imageSwitcher)
+    ImageSwitcher imageSwitcher;
 
-
-    private ImageView mBgCoverIV;
-
-    //private ImageView mCoverIV;
     private TextView mCurrentTimeTV;
     private TextView mTotalTimeTV;
     private SeekBar mPlayProgressSB;
@@ -57,9 +70,9 @@ public class PlayMusicActivity extends BaseActivity {
 
     private boolean isMusicPlaying = false;
     private View mTitle;
-    private View mBackBtn;
     private RecordView mRecordView;
     private View mPrevbtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +94,8 @@ public class PlayMusicActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        //返回按钮
-        mBackBtn = findViewById(R.id.ib_goback_btn);
         //标题
-        mTitle = findViewById(R.id.ll_playmusic_title);
-        //封面背景
-        mBgCoverIV = findViewById(R.id.iv_playmusic_cover_bg);
+        mTitle = findViewById(R.id.g_playmusic_title);
         //唱片
         mRecordView = findViewById(R.id.Rv_playmusic_RecordView);
         //音乐名称
@@ -106,16 +115,25 @@ public class PlayMusicActivity extends BaseActivity {
         //上一首
         mPrevbtn = findViewById(R.id.iv_playmusic_prevbtn);
 
+        imageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
+            @Override
+            public View makeView() {
+                ImageView imageView = new ImageView(mContext);
+                FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                imageView.setLayoutParams(layoutParams);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                return imageView;
+            }
+        });
+
+        imageSwitcher.setInAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_in));
+        imageSwitcher.setOutAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_out));
+
     }
 
     @Override
     protected void addListener() {
-        mBackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
         mPlaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,7 +150,7 @@ public class PlayMusicActivity extends BaseActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 //如果是人主动的拖拽
-                if (fromUser){
+                if (fromUser) {
                     mMusicBinder.seekto(progress);
                     //刷新当前时间显示
 
@@ -213,7 +231,7 @@ public class PlayMusicActivity extends BaseActivity {
                 }
             });
             //如果进入播放页的时候已经开始了播放，显示封面，歌曲等信息
-            if (mMusicBinder.isStart()){
+            if (mMusicBinder.isStart()) {
                 musicPrepareComplete();
             }
         }
@@ -225,9 +243,9 @@ public class PlayMusicActivity extends BaseActivity {
     };
 
 
-
     /**
      * 显示获取到的面，歌曲名，歌手信息
+     *
      * @param musicBean 歌曲
      */
     private void showSongDetail(MusicBean musicBean) {
@@ -239,15 +257,24 @@ public class PlayMusicActivity extends BaseActivity {
         mSongAuthor.setText(author);
         //获取封面地址
         String picUrl = musicBean.getAlbumBean().getPicUrl();
+        ImageView currentView = (ImageView) (imageSwitcher.getCurrentView());
         //设置gilde的设置
         RequestOptions requestOptions = new RequestOptions()
-                .transform(new BlurTransformation(25,3))//设置模糊效果
-                .placeholder(R.drawable.ic_playmusic_bg_default)//图片加载出来前，显示的图片
-                .fallback( R.drawable.ic_playmusic_bg_default) //url为空的时候,显示的图片
+                .transform(new BlurTransformation(25,6))//设置模糊效果
+                .placeholder(currentView.getDrawable())//图片加载出来前，显示的图片
+                .fallback(R.drawable.ic_playmusic_bg_default) //url为空的时候,显示的图片
                 .error(R.drawable.ic_playmusic_bg_default);//图片加载失败后，显示的图片
 
+        
+
         //设置背景封面
-        Glide.with(mContext).load(picUrl).apply(requestOptions).into(mBgCoverIV);
+        Glide.with(mContext).load(picUrl).apply(requestOptions).into(new SimpleTarget<Drawable>() {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                imageSwitcher.setImageDrawable(resource);
+            }
+        });
+
     }
 
     /**
@@ -261,7 +288,7 @@ public class PlayMusicActivity extends BaseActivity {
         //更改状态
         isMusicPlaying = true;
         //开始刷新时间
-        mHandler.postDelayed(mReFreshTime,1000);
+        mHandler.postDelayed(mReFreshTime, 1000);
         //使唱片的动画开始播放
         mRecordView.play();
     }
@@ -315,11 +342,11 @@ public class PlayMusicActivity extends BaseActivity {
     /**
      * 用于刷新当前运行时间
      */
-    Runnable mReFreshTime = new Runnable(){
+    Runnable mReFreshTime = new Runnable() {
 
         @Override
         public void run() {
-            mHandler.postDelayed(this,1000);
+            mHandler.postDelayed(this, 1000);
             //获取当前播放的时长
             int playPosition = mMusicBinder.getCurrentPosition();
             //设置给seekbar

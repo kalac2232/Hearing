@@ -5,7 +5,10 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.viewpager.widget.ViewPager;
@@ -13,6 +16,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
@@ -31,7 +35,7 @@ import cn.kalac.hearing.utils.TurntableDisplayUtil;
  * Created by Kalac on 2019/2/7
  */
 
-public class RecordView extends RelativeLayout {
+public class RecordView extends ConstraintLayout {
 
     private static final String TAG = "RecordView";
 
@@ -75,23 +79,28 @@ public class RecordView extends RelativeLayout {
     private void initView(Context context) {
         // 导入布局
         mRootView = LayoutInflater.from(context).inflate(R.layout.recordview_layout, this, true);
+
         //获取屏幕的宽高信息
         mScreenHeigth = DensityUtil.getScreenHeight(context);
         mScreenWidth = DensityUtil.getScreenWidth(context);
+
         //初始化指针
         initNeedle();
-        //初始化背景圆盘
-        initDiscBlackground();
         //初始化ViewPager
         initViewPager();
         //更改Viewpager的滑动速度
         fixViewPager();
         //初始化动画
         initObjectAnimation();
+        //setBackgroundColor(Color.RED);
 
     }
 
-
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(mScreenWidth, (int) (mScreenWidth ));
+    }
 
     /**
      * 初始化指针
@@ -100,65 +109,23 @@ public class RecordView extends RelativeLayout {
         //获取指针
         mIvNeedle = mRootView.findViewById(R.id.iv_recordview_Needle);
 
-        int needleWidth = (int) (TurntableDisplayUtil.SCALE_NEEDLE_WIDTH * mScreenWidth);
-        int needleHeight = (int) (TurntableDisplayUtil.SCALE_NEEDLE_HEIGHT * mScreenHeigth);
-
-        int marginLeft = (int) (TurntableDisplayUtil.SCALE_NEEDLE_MARGIN_LEFT * mScreenWidth);
-
-        Bitmap originBitmap = BitmapFactory.decodeResource(getResources(), R.drawable
-                .ic_playing_needle);
-        Bitmap bitmap = Bitmap.createScaledBitmap(originBitmap, needleWidth, needleHeight, false);
-
-        RelativeLayout.LayoutParams layoutParams = (LayoutParams) mIvNeedle.getLayoutParams();
-        layoutParams.setMargins(marginLeft, 0, 0, 0);
+        Log.i(TAG, "initView: " +mIvNeedle.getWidth());
+        Log.i(TAG, "initView: " +mIvNeedle.getHeight());
 
         int pivotX = (int) (TurntableDisplayUtil.SCALE_NEEDLE_PIVOT_X * mScreenWidth);
         int pivotY = (int) (TurntableDisplayUtil.SCALE_NEEDLE_PIVOT_Y * mScreenWidth);
-
+        //设置旋转点
         mIvNeedle.setPivotX(pivotX);
         mIvNeedle.setPivotY(pivotY);
         mIvNeedle.setRotation(TurntableDisplayUtil.ROTATION_INIT_NEEDLE);
-        mIvNeedle.setImageBitmap(bitmap);
-        mIvNeedle.setLayoutParams(layoutParams);
     }
 
-    /*得到唱盘背后半透明的圆形背景*/
-    private Drawable getDiscBlackgroundDrawable() {
-        int discSize = (int) (mScreenWidth * TurntableDisplayUtil.SCALE_DISC_BG_SIZE);
-        Bitmap bitmapDisc = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R
-                .drawable.ic_recordview_disc_blackground), discSize, discSize, false);
-        RoundedBitmapDrawable roundDiscDrawable = RoundedBitmapDrawableFactory.create
-                (getResources(), bitmapDisc);
-        return roundDiscDrawable;
-    }
-
-    /**
-     * 初始化背景圆盘
-     */
-    private void initDiscBlackground() {
-        ImageView mDiscBlackground = findViewById(R.id.iv_recordview_DiscBlackgound);
-        mDiscBlackground.setImageDrawable(getDiscBlackgroundDrawable());
-
-        int marginTop = (int) (TurntableDisplayUtil.SCALE_DISC_BG_MARGIN_TOP * mScreenHeigth);
-        RelativeLayout.LayoutParams layoutParams = (LayoutParams) mDiscBlackground
-                .getLayoutParams();
-        layoutParams.setMargins(0, marginTop, 0, 0);
-
-        mDiscBlackground.setLayoutParams(layoutParams);
-    }
 
     /**
      * 初始化Viewpager
      */
     private void initViewPager() {
         mVpRecord = findViewById(R.id.vp_recordview_record);
-
-        RelativeLayout.LayoutParams layoutParams = (LayoutParams) mVpRecord.getLayoutParams();
-        int marginTop = (int) (TurntableDisplayUtil.SCALE_DISC_MARGIN_TOP * mScreenHeigth);
-        //设置根据屏幕大小动态设置vp的高度
-        layoutParams.height = (int) (DensityUtil.getScreenWidth(getContext()) * TurntableDisplayUtil.SCALE_DISC_SIZE);
-        layoutParams.setMargins(0, marginTop, 0, 0);
-        mVpRecord.setLayoutParams(layoutParams);
 
         //设置适配器
         mRecordViewAdapter = new RecordViewAdapter(getContext());

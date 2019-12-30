@@ -38,9 +38,11 @@
             android:src="@mipmap/ic_back_btn"/>
         <TextView
             android:id="@+id/tv_playmusic_songName"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             tools:text="我想念"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textAlignment="center"
             android:textColor="#fff"
             app:layout_constraintLeft_toLeftOf="parent"

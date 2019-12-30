@@ -40,6 +40,16 @@ public class PlayListManager {
         return mList.get(mCurrentPlayPos);
     }
 
+    public MusicBean getMusic(int position) {
+
+        if (position >= mList.size()) {
+            return null;
+        }
+
+
+        return mList.get(position);
+    }
+
     public void next() {
         mCurrentPlayPos ++;
     }

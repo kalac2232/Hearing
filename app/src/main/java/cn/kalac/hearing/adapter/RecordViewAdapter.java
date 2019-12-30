@@ -4,16 +4,9 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
+
 import androidx.annotation.NonNull;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+
 import androidx.viewpager.widget.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,19 +17,11 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.bumptech.glide.request.RequestOptions;
 
-import java.security.MessageDigest;
 
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.javabean.local.MusicBean;
-import cn.kalac.hearing.javabean.local.Song;
-import cn.kalac.hearing.service.PlayMusicService;
-import cn.kalac.hearing.utils.DensityUtil;
-import cn.kalac.hearing.utils.TurntableDisplayUtil;
+
 import cn.kalac.hearing.widget.PlayListManager;
 
 
@@ -53,12 +38,9 @@ public class RecordViewAdapter extends PagerAdapter {
 
     private View mCurrentView;
     private  ObjectAnimator mDiscObjectAnimator;
-    private final int mFristSongPosition;
 
     public RecordViewAdapter(Context context) {
         mContext = context;
-        //获取第一首播放的歌曲的位置
-        mFristSongPosition = PlayListManager.getInstance().getCurrentPlayPos();
     }
 
     @Override
@@ -78,17 +60,10 @@ public class RecordViewAdapter extends PagerAdapter {
         mCoverImageView = view.findViewById(R.id.iv_recordview_Album);
 
         //获取当前播放的歌曲id
-        MusicBean music = PlayListManager.getInstance().getCurrentMusic();
-
-        RequestOptions requestOptions = new RequestOptions()
-                .transform(new CompositeCoverTransformation());
-
-        RequestBuilder<Drawable> requestBuilder = Glide.with(mContext).load(R.mipmap.ic_recordview_album_default).apply(requestOptions);
+        MusicBean music = PlayListManager.getInstance().getMusic(position);
 
         Glide.with(mContext)
                 .load(music.getAlbumBean().getPicUrl())
-                .apply(requestOptions)
-                .thumbnail(requestBuilder)
                 .into(mCoverImageView);
         container.addView(view);
 
@@ -207,68 +182,7 @@ public class RecordViewAdapter extends PagerAdapter {
             return 1 - delegate.getInterpolation(input);
         }
     }
-    class CompositeCoverTransformation extends BitmapTransformation{
-
-        @Override
-        protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
-            return getDiscBitmap(toTransform);
-        }
-
-        @Override
-        public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
-
-        }
-    }
-
-    /**
-     * 得到唱盘图片
-     * 唱盘图片由空心圆盘及音乐专辑图片“合成”得到
-     */
-    private Bitmap getDiscBitmap(Bitmap musicPicBitmap) {
-        int discSize = (int) (DensityUtil.getScreenWidth(mContext) * TurntableDisplayUtil.SCALE_DISC_SIZE);
-        int musicPicSize = (int) (DensityUtil.getScreenWidth(mContext) * TurntableDisplayUtil.SCALE_MUSIC_PIC_SIZE);
-        //获得专辑背景圆环
-        Bitmap bitmapDisc = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(mContext.getResources(), R
-                .drawable.ic_recordview_disc), discSize, discSize, false);
-        //缩放专辑图片
-        Bitmap bitmapMusicPic = Bitmap.createScaledBitmap(musicPicBitmap, musicPicSize, musicPicSize, true);
-        BitmapDrawable discDrawable = new BitmapDrawable(bitmapDisc);
-        RoundedBitmapDrawable roundMusicDrawable = RoundedBitmapDrawableFactory.create
-                (mContext.getResources(), bitmapMusicPic);
-
-        //抗锯齿
-        discDrawable.setAntiAlias(true);
-        roundMusicDrawable.setAntiAlias(true);
-
-        Drawable[] drawables = new Drawable[2];
-        drawables[0] = roundMusicDrawable;
-        drawables[1] = discDrawable;
-
-        LayerDrawable layerDrawable = new LayerDrawable(drawables);
-        int musicPicMargin = (int) ((TurntableDisplayUtil.SCALE_DISC_SIZE - TurntableDisplayUtil
-                .SCALE_MUSIC_PIC_SIZE) * DensityUtil.getScreenWidth(mContext) / 2);
-        //调整专辑图片的四周边距，让其显示在正中
-        layerDrawable.setLayerInset(0, musicPicMargin, musicPicMargin, musicPicMargin,
-                musicPicMargin);
-
-        return drawableToBitmap(layerDrawable);
-    }
 
 
-    /**
-     * drawable转为bitmap
-     * @param drawable 要转的drawable
-     * @return 转换成的bitmap
-     */
-    public Bitmap drawableToBitmap(Drawable drawable) {
-        Bitmap bitmap = Bitmap.createBitmap(
-                drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(),
-                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565
-        );
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        drawable.draw(canvas);
-        return bitmap;
-    }
+
 }

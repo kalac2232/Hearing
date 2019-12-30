@@ -28,7 +28,6 @@ import java.lang.reflect.Field;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.RecordViewAdapter;
 import cn.kalac.hearing.utils.DensityUtil;
-import cn.kalac.hearing.utils.TurntableDisplayUtil;
 
 /**
  *
@@ -39,7 +38,6 @@ public class RecordView extends ConstraintLayout {
 
     private static final String TAG = "RecordView";
 
-    private View mRootView;
     private ImageView mIvNeedle;
     private int mScreenWidth;
     private int mScreenHeigth;
@@ -63,6 +61,10 @@ public class RecordView extends ConstraintLayout {
     public enum NeedleStatus {
         PLAY, PAUSE, TOPLAY, TOPAUSE
     }
+
+    /*手柄起始角度*/
+    public static final float ROTATION_INIT_NEEDLE = -30;
+
     public RecordView(Context context) {
         this(context,null);
     }
@@ -77,12 +79,11 @@ public class RecordView extends ConstraintLayout {
     }
 
     private void initView(Context context) {
-        // 导入布局
-        mRootView = LayoutInflater.from(context).inflate(R.layout.recordview_layout, this, true);
-
         //获取屏幕的宽高信息
         mScreenHeigth = DensityUtil.getScreenHeight(context);
         mScreenWidth = DensityUtil.getScreenWidth(context);
+        // 导入布局
+        LayoutInflater.from(context).inflate(R.layout.recordview_layout, this, true);
 
         //初始化指针
         initNeedle();
@@ -92,14 +93,14 @@ public class RecordView extends ConstraintLayout {
         fixViewPager();
         //初始化动画
         initObjectAnimation();
-        //setBackgroundColor(Color.RED);
 
     }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(mScreenWidth, (int) (mScreenWidth ));
+        setMeasuredDimension(mScreenWidth, mScreenWidth);
     }
 
     /**
@@ -107,17 +108,21 @@ public class RecordView extends ConstraintLayout {
      */
     private void initNeedle() {
         //获取指针
-        mIvNeedle = mRootView.findViewById(R.id.iv_recordview_Needle);
+        mIvNeedle = findViewById(R.id.iv_recordview_Needle);
 
-        Log.i(TAG, "initView: " +mIvNeedle.getWidth());
-        Log.i(TAG, "initView: " +mIvNeedle.getHeight());
 
-        int pivotX = (int) (TurntableDisplayUtil.SCALE_NEEDLE_PIVOT_X * mScreenWidth);
-        int pivotY = (int) (TurntableDisplayUtil.SCALE_NEEDLE_PIVOT_Y * mScreenWidth);
         //设置旋转点
-        mIvNeedle.setPivotX(pivotX);
-        mIvNeedle.setPivotY(pivotY);
-        mIvNeedle.setRotation(TurntableDisplayUtil.ROTATION_INIT_NEEDLE);
+        mIvNeedle.post(new Runnable() {
+            @Override
+            public void run() {
+                float pivotX = mIvNeedle.getWidth() * 0.144f;
+                float pivotY = mIvNeedle.getWidth() * 0.164f;
+                mIvNeedle.setPivotX(pivotX);
+                mIvNeedle.setPivotY(pivotY);
+                mIvNeedle.setRotation(ROTATION_INIT_NEEDLE);
+            }
+        });
+
     }
 
 
@@ -225,8 +230,7 @@ public class RecordView extends ConstraintLayout {
     private void initObjectAnimation() {
 
         //指针动画
-        mNeedleAnimator = ObjectAnimator.ofFloat(mIvNeedle, View.ROTATION, TurntableDisplayUtil
-                .ROTATION_INIT_NEEDLE, 0);
+        mNeedleAnimator = ObjectAnimator.ofFloat(mIvNeedle, View.ROTATION, ROTATION_INIT_NEEDLE, 0);
         mNeedleAnimator.setDuration(DURATION_NEEDLE_ANIAMTOR);
         mNeedleAnimator.setInterpolator(new AccelerateInterpolator());
 

@@ -3,6 +3,8 @@ package cn.kalac.hearing.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.viewpager.widget.ViewPager;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +37,7 @@ public class MainActivity extends BaseActivity {
     //view
     private ViewPager mVpMainContent;
     private TextView mTvHotWord;
-    private MiniSoundWave mBtnJump;
+    private MiniSoundWave mBtnJumpPlay;
     //状态
     private boolean isFillHotWord = false;
 
@@ -112,7 +114,7 @@ public class MainActivity extends BaseActivity {
         MainPagerFragAdapter contentAdapter = new MainPagerFragAdapter(getSupportFragmentManager());
         mVpMainContent.setAdapter(contentAdapter);
         //跳转播放页按钮
-        mBtnJump = findViewById(R.id.btn_jumpTOPlay);
+        mBtnJumpPlay = findViewById(R.id.btn_jumpTOPlay);
 
         llBottomBar = findViewById(R.id.ll_bottom_bar);
         //BlurDrawable blurDrawable = new BlurDrawable();
@@ -130,7 +132,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void addListener() {
-        mBtnJump.setOnClickListener(new View.OnClickListener() {
+        mBtnJumpPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //跳转播放界面
@@ -190,11 +192,13 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void musicStatusToPlay() {
-        mBtnJump.start();
+        mBtnJumpPlay.start();
+        Log.i(TAG, "musicStatusToPlay: ");
     }
 
     @Override
     protected void musicStatusToPause() {
-        mBtnJump.pause();
+        Log.i(TAG, "musicStatusToPause: ");
+        mBtnJumpPlay.pause();
     }
 }

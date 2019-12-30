@@ -58,6 +58,7 @@ public class RecordViewAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_recordview_viewpager_layout, container, false);
         mCoverImageView = view.findViewById(R.id.iv_recordview_Album);
+        mCoverImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         //获取当前播放的歌曲id
         MusicBean music = PlayListManager.getInstance().getMusic(position);

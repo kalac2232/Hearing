@@ -13,7 +13,7 @@
         android:id="@+id/iv_playmusic_cover_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#5000"/>
+        android:background="#8000"/>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/need_margin_top_content"
         android:layout_width="match_parent"
@@ -29,7 +29,10 @@
         <ImageView
             android:id="@+id/ib_goback_btn"
             android:layout_width="wrap_content"
-            android:layout_height="23dp"
+            android:layout_height="43dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="10dp"
             android:onClick="onBackBtnClick"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"

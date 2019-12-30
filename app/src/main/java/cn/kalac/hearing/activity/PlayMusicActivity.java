@@ -79,6 +79,7 @@ public class PlayMusicActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         //播放音乐
         sendLocalBroadcast(PlayMusicService.ACTION_OPT_MUSIC_PLAY);
+
     }
 
     @Override

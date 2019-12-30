@@ -83,7 +83,7 @@ public class RecordView extends ConstraintLayout {
         mScreenHeigth = DensityUtil.getScreenHeight(context);
         mScreenWidth = DensityUtil.getScreenWidth(context);
         // 导入布局
-        LayoutInflater.from(context).inflate(R.layout.recordview_layout, this, true);
+        importLayout(context);
 
         //初始化指针
         initNeedle();
@@ -94,6 +94,12 @@ public class RecordView extends ConstraintLayout {
         //初始化动画
         initObjectAnimation();
 
+    }
+
+    private void importLayout(Context context) {
+
+        View view = LayoutInflater.from(context).inflate(R.layout.recordview_layout, this, false);
+        addView(view,mScreenWidth, (int) (mScreenWidth * 1.2f));
     }
 
 

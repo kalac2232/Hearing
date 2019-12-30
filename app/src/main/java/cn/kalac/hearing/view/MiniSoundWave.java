@@ -188,7 +188,7 @@ public class MiniSoundWave extends View {
     public void pause() {
         if (mValueAnimator != null) {
             mValueAnimator.cancel();
-            mLinesInitHeightPercent = initLinesHeightData();
+            mHeightValue = 0;
             postInvalidate();
             isRunning = false;
         }

@@ -50,12 +50,14 @@ public class PlayListManager {
         return mList.get(position);
     }
 
-    public void next() {
+    public MusicBean getNext() {
         mCurrentPlayPos ++;
+        return getCurrentMusic();
     }
 
-    public void pre() {
+    public MusicBean getPre() {
         mCurrentPlayPos --;
+        return getCurrentMusic();
     }
 
     public void setCurrentPlayPos(int position) {

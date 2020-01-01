@@ -67,8 +67,6 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         //刷新登录状态
         refreshLoginState();
-        //初始化服务
-        initService();
         //获取热词
         getSearchHotWord();
     }
@@ -139,13 +137,6 @@ public class MainActivity extends BaseActivity {
                 IntentUtil.get().goActivity(mContext,PlayMusicActivity.class);
             }
         });
-    }
-
-    /**
-     * 初始化播放service
-     */
-    private void initService() {
-        startService(PlayMusicService.class);
     }
 
 

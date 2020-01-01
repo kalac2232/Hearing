@@ -156,9 +156,6 @@ public class RecordView extends ConstraintLayout {
                 //用于重新获取mDiscObjectAnimator中的getPrimaryItem(),否则无法滑动后自动旋转。
                 Log.i(TAG, "RecordViewAdapteronPageSelected: ");
                 mRecordViewAdapter.cleanObjectAnimator();
-//                if (mRecordStatus == RecordStatus.PLAY) {
-//                    mRecordViewAdapter.play();
-//                }
                 //如果选中的页使之前页的后一页，回调lisitener
                 if (position == mCurrentVPPosition) {
 
@@ -180,13 +177,11 @@ public class RecordView extends ConstraintLayout {
                     }
                 }
 
-
-
-                //mRecordViewAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                Log.i(TAG, "onPageScrollStateChanged1: ");
                 switch (state){
                     case ViewPager.SCROLL_STATE_IDLE:
                         //无动作、初始状态

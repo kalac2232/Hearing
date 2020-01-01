@@ -13,6 +13,10 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import cn.kalac.easymediaplayer.EasyMediaListener;
+import cn.kalac.easymediaplayer.EasyMediaPlayer;
+import cn.kalac.easymediaplayer.MediaManager;
+import cn.kalac.easymediaplayer.MediaOperator;
 import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.local.MusicBean;
 import cn.kalac.hearing.javabean.net.song.SongMp3ResultBean;
@@ -46,7 +50,7 @@ public class PlayMusicService extends Service {
 
     //private MusicBinder mBinder ;
     //初始化MediaPlayer
-    private MediaPlayer mMediaPlayer = new MediaPlayer();
+    //private MediaPlayer mMediaPlayer = new MediaPlayer();
 
     private MusicOperaReceiver mMusicOperaReceiver = new MusicOperaReceiver();
 
@@ -56,6 +60,8 @@ public class PlayMusicService extends Service {
     private Context mContext;
 
     private MusicBinder mMusicBinder;
+    private MediaOperator mOperator;
+    private MediaManager mMediaManager;
 
 
     @Override
@@ -63,21 +69,17 @@ public class PlayMusicService extends Service {
         super.onCreate();
         initBoardCastReceiver();
         mContext = this;
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                //next();
-                //切换下一首歌的逻辑放到next中，而next具体是循环播放还是怎么播放不在完成监听中控制，在next中控制
-                //而next只在activity中调用
-                sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY_COMPLETE);
-            }
-        });
+        mMediaManager = EasyMediaPlayer.with(this);
+
+        mMediaManager.listener(new MediaListener());
+        mOperator = mMediaManager.createOperator();
+
     }
 
 
     @Override
     public IBinder onBind(Intent intent) {
-        mMusicBinder = new MusicBinder(mContext, mMediaPlayer);
+        mMusicBinder = new MusicBinder(mContext, mMediaManager,mOperator);
         return mMusicBinder;
     }
 
@@ -109,7 +111,7 @@ public class PlayMusicService extends Service {
 
         Log.i(TAG, "play: ");
         //如果正在播放，无须处理本次操作
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+        if (mMediaManager.isPlaying()) {
             Log.i(TAG, "play: 1");
             sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
             return;
@@ -125,12 +127,12 @@ public class PlayMusicService extends Service {
                 public void onAnimationUpdate(ValueAnimator animation) {
                     float values = (float) animation.getAnimatedValue();
 
-                    mMediaPlayer.setVolume(values,values);
+                    mOperator.volume(values,values);
 
                 }
             });
             valueAnimator.start();
-            mMediaPlayer.start();
+            mOperator.start();
             sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
             mIsMusicPause = false;
         } else { //从未开始的状态
@@ -140,16 +142,7 @@ public class PlayMusicService extends Service {
             int songid = music.getId();
             //加载MP3
             loadSongMp3(songid);
-            //如果当前记录的播放id和要播放的id相同，说明是之前已经播放过得，但是暂停了，只需要直接调用start即可
-//            if (mCurrentSongID == songid) {
-//                mMediaPlayer.start();
-//                sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
-//            } else {
-//                //记录当前播放的songId
-//                mCurrentSongID = songid;
-//                //加载MP3
-//                loadSongMp3(songid);
-//            }
+
 
         }
 
@@ -158,9 +151,6 @@ public class PlayMusicService extends Service {
 
     private void pause() {
         Log.i(TAG, "pause: ");
-        if (mMediaPlayer == null) {
-            return;
-        }
         //使声音有渐变效果
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(1,0);
         valueAnimator.setDuration(1000);
@@ -168,28 +158,26 @@ public class PlayMusicService extends Service {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float values = (float) animation.getAnimatedValue();
-                mMediaPlayer.setVolume(values,values);
+                mOperator.volume(values,values);
                 if (values == 0f) {
-                    mMediaPlayer.pause();
-                    mIsMusicPause = true;
-                    //发送暂停状态
+                    mOperator.pause();
 
                 }
             }
         });
         valueAnimator.start();
+        mIsMusicPause = true;
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
     }
 
     private void next() {
-        Log.i(TAG, "next: ");
-        mMediaPlayer.reset();
+        Log.i(TAG, "getNext: ");
+        mOperator.reset();
         //
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
-        PlayListManager.getInstance().next();
         //获取当前要播放的songid
-        MusicBean music = PlayListManager.getInstance().getCurrentMusic();
+        MusicBean music = PlayListManager.getInstance().getNext();
 
         loadSongMp3(music.getId());
 
@@ -198,13 +186,13 @@ public class PlayMusicService extends Service {
     private void prev() {
         Log.i(TAG, "prev: ");
 
-        mMediaPlayer.reset();
+        mOperator.reset();
 
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
-        PlayListManager.getInstance().pre();
+
         //获取当前要播放的songid
-        MusicBean music = PlayListManager.getInstance().getCurrentMusic();
+        MusicBean music =  PlayListManager.getInstance().getPre();
 
         loadSongMp3(music.getId());
     }
@@ -229,40 +217,7 @@ public class PlayMusicService extends Service {
                         return;
                     }
                     String mp3Url = dataBean.getUrl();
-                    try {
-                        mMediaPlayer.reset();
-                        mMediaPlayer.setDataSource(mp3Url);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //异步准备
-                    mMediaPlayer.prepareAsync();
-                    mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            Log.i(TAG, "onCompletion: 加载音乐完成，开始播放");
-                            //使声音有渐变效果
-                            ValueAnimator valueAnimator = ValueAnimator.ofFloat(0,1);
-                            valueAnimator.setDuration(1000);
-                            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                @Override
-                                public void onAnimationUpdate(ValueAnimator animation) {
-                                    float values = (float) animation.getAnimatedValue();
-
-                                    mMediaPlayer.setVolume(values,values);
-
-                                }
-                            });
-                            valueAnimator.start();
-                            mp.start();
-                            //发送状态改变广播
-                            sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
-                            //完成状态是为了其他页展示出相关信息
-                            sendLocalBroadcast(ACTION_STATUS_MUSIC_PREPARE_COMPLETE);
-                        }
-
-                    });
-
+                    mMediaManager.load(mp3Url);
 
                 }
             }
@@ -318,4 +273,34 @@ public class PlayMusicService extends Service {
         }
     }
 
+    class MediaListener extends EasyMediaListener{
+        @Override
+        public void onPrepare() {
+            super.onPrepare();
+            //使声音有渐变效果
+            ValueAnimator valueAnimator = ValueAnimator.ofFloat(0,1);
+            valueAnimator.setDuration(1000);
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float values = (float) animation.getAnimatedValue();
+
+                    mOperator.volume(values,values);
+
+                }
+            });
+            valueAnimator.start();
+            mOperator.start();
+            Log.i(TAG, "onCompletion: 加载音乐完成，开始播放");
+            //发送状态改变广播
+            sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
+            //完成状态是为了其他页展示出相关信息
+            sendLocalBroadcast(ACTION_STATUS_MUSIC_PREPARE_COMPLETE);
+        }
+
+        @Override
+        public void onComplete() {
+            sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY_COMPLETE);
+        }
+    }
 }

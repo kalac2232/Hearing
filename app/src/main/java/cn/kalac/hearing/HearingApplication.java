@@ -16,6 +16,7 @@ import java.util.Arrays;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.kalac.hearing.net.HttpHelper;
 import cn.kalac.hearing.net.OkHttpProcessor;
+import cn.kalac.hearing.service.PlayMusicService;
 import cn.kalac.hearing.utils.ShortcutUtil;
 
 
@@ -42,8 +43,15 @@ public class HearingApplication extends Application {
         Logger.addLogAdapter(new AndroidLogAdapter());
         //添加类3dtouch功能
         ShortcutUtil.addShortcut(this);
+        //启动音乐服务
+        startMusicService();
 
 
+    }
+
+    private void startMusicService() {
+        Intent intent = new Intent(this, PlayMusicService.class);
+        startService(intent);
     }
 
     public static HearingApplication getInstance() {

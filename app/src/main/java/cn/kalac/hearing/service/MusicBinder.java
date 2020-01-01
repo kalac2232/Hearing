@@ -12,13 +12,18 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import cn.kalac.easymediaplayer.MediaManager;
+import cn.kalac.easymediaplayer.MediaOperator;
+
 
 public class MusicBinder extends Binder {
 
 
     private final Context mContext;
 
-    private MediaPlayer mMediaPlayer;
+    private MediaOperator mMediaOperator;
+
+    private MediaManager mMediaManager;
 
     private MusicStatusReceiver mMusicStatusReceiver;
     /**
@@ -29,20 +34,21 @@ public class MusicBinder extends Binder {
     }
     MusicStatue mMusicStatue = MusicStatue.STOP;
 
-    public MusicBinder(Context context, MediaPlayer mediaPlayer) {
+    public MusicBinder(Context context, MediaManager mediaManager, MediaOperator mediaOperator) {
         mContext = context;
-        mMediaPlayer = mediaPlayer;
+        mMediaOperator = mediaOperator;
+        mMediaManager = mediaManager;
         registerMusicStatusReciver();
     }
 
 
     public void setOnBufferingUpdateListener(final OnBufferingUpdateListener onBufferingUpdateListener){
-        mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-            @Override
-            public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                onBufferingUpdateListener.onBufferingUpdate(percent);
-            }
-        });
+//        mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+//            @Override
+//            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+//                onBufferingUpdateListener.onBufferingUpdate(percent);
+//            }
+//        });
     }
 
     /**
@@ -50,7 +56,7 @@ public class MusicBinder extends Binder {
      * @return
      */
     public int getCurrentPosition(){
-        return mMediaPlayer.getCurrentPosition();
+        return mMediaManager.getCurrentPosition();
     }
 
     /**
@@ -58,7 +64,7 @@ public class MusicBinder extends Binder {
      * @param progress
      */
     public void seekto(int progress) {
-        mMediaPlayer.seekTo(progress);
+        mMediaOperator.seekTo(progress);
     }
 
     public boolean isStart() {
@@ -70,7 +76,7 @@ public class MusicBinder extends Binder {
      * @return
      */
     public int getDuration() {
-        return mMediaPlayer.getDuration();
+        return mMediaManager.getDuration();
     }
     public interface OnBufferingUpdateListener{
         void onBufferingUpdate(int percent);

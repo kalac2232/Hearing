@@ -1,12 +1,10 @@
 package cn.kalac.hearing.service;
 
-import android.animation.ValueAnimator;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.MediaPlayer;
 import android.os.IBinder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
@@ -16,7 +14,7 @@ import java.io.IOException;
 import cn.kalac.easymediaplayer.EasyMediaListener;
 import cn.kalac.easymediaplayer.EasyMediaPlayer;
 import cn.kalac.easymediaplayer.MediaManager;
-import cn.kalac.easymediaplayer.MediaOperator;
+import cn.kalac.easymediaplayer.handle.VolumeGradientHandle;
 import cn.kalac.hearing.api.ApiHelper;
 import cn.kalac.hearing.javabean.local.MusicBean;
 import cn.kalac.hearing.javabean.net.song.SongMp3ResultBean;
@@ -47,11 +45,6 @@ public class PlayMusicService extends Service {
 
     /*播放规则*/
 
-
-    //private MusicBinder mBinder ;
-    //初始化MediaPlayer
-    //private MediaPlayer mMediaPlayer = new MediaPlayer();
-
     private MusicOperaReceiver mMusicOperaReceiver = new MusicOperaReceiver();
 
     private boolean mIsMusicPause = false;
@@ -60,7 +53,6 @@ public class PlayMusicService extends Service {
     private Context mContext;
 
     private MusicBinder mMusicBinder;
-    private MediaOperator mOperator;
     private MediaManager mMediaManager;
 
 
@@ -72,14 +64,15 @@ public class PlayMusicService extends Service {
         mMediaManager = EasyMediaPlayer.with(this);
 
         mMediaManager.listener(new MediaListener());
-        mOperator = mMediaManager.createOperator();
+        //使播放暂停有渐变效果
+        mMediaManager.handle(new VolumeGradientHandle());
 
     }
 
 
     @Override
     public IBinder onBind(Intent intent) {
-        mMusicBinder = new MusicBinder(mContext, mMediaManager,mOperator);
+        mMusicBinder = new MusicBinder(mContext, mMediaManager);
         return mMusicBinder;
     }
 
@@ -119,20 +112,7 @@ public class PlayMusicService extends Service {
         //如果当前为暂停状态，直接开始播放即可
         if (mIsMusicPause) {
             Log.i(TAG, "play: 2");
-            //使声音有渐变效果
-            ValueAnimator valueAnimator = ValueAnimator.ofFloat(0,1);
-            valueAnimator.setDuration(1000);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float values = (float) animation.getAnimatedValue();
-
-                    mOperator.volume(values,values);
-
-                }
-            });
-            valueAnimator.start();
-            mOperator.start();
+            mMediaManager.start();
             sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);
             mIsMusicPause = false;
         } else { //从未开始的状态
@@ -142,37 +122,19 @@ public class PlayMusicService extends Service {
             int songid = music.getId();
             //加载MP3
             loadSongMp3(songid);
-
-
         }
-
-
     }
 
     private void pause() {
         Log.i(TAG, "pause: ");
-        //使声音有渐变效果
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(1,0);
-        valueAnimator.setDuration(1000);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float values = (float) animation.getAnimatedValue();
-                mOperator.volume(values,values);
-                if (values == 0f) {
-                    mOperator.pause();
-
-                }
-            }
-        });
-        valueAnimator.start();
+        mMediaManager.pause();
         mIsMusicPause = true;
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
     }
 
     private void next() {
         Log.i(TAG, "getNext: ");
-        mOperator.reset();
+        mMediaManager.reset();
         //
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
@@ -186,7 +148,7 @@ public class PlayMusicService extends Service {
     private void prev() {
         Log.i(TAG, "prev: ");
 
-        mOperator.reset();
+        mMediaManager.reset();
 
         sendLocalBroadcast(ACTION_STATUS_MUSIC_PAUSE);
 
@@ -277,20 +239,7 @@ public class PlayMusicService extends Service {
         @Override
         public void onPrepare() {
             super.onPrepare();
-            //使声音有渐变效果
-            ValueAnimator valueAnimator = ValueAnimator.ofFloat(0,1);
-            valueAnimator.setDuration(1000);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float values = (float) animation.getAnimatedValue();
-
-                    mOperator.volume(values,values);
-
-                }
-            });
-            valueAnimator.start();
-            mOperator.start();
+            mMediaManager.start();
             Log.i(TAG, "onCompletion: 加载音乐完成，开始播放");
             //发送状态改变广播
             sendLocalBroadcast(ACTION_STATUS_MUSIC_PLAY);

@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import cn.kalac.hearing.R;
 import cn.kalac.hearing.adapter.RecordViewAdapter;
 import cn.kalac.hearing.utils.DensityUtil;
+import cn.kalac.hearing.widget.PlayListManager;
 
 /**
  *
@@ -140,9 +141,10 @@ public class RecordView extends ConstraintLayout {
 
         //设置适配器
         mRecordViewAdapter = new RecordViewAdapter(getContext());
-        //设置当前位置
         mVpRecord.setOffscreenPageLimit(1);
         mVpRecord.setAdapter(mRecordViewAdapter);
+        //设置当前位置
+        mVpRecord.setCurrentItem(PlayListManager.getInstance().getCurrentPlayPos());
 
         //添加监听
         mVpRecord.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

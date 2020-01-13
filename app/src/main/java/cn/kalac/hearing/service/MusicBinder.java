@@ -21,8 +21,6 @@ public class MusicBinder extends Binder {
 
     private final Context mContext;
 
-    private MediaOperator mMediaOperator;
-
     private MediaManager mMediaManager;
 
     private MusicStatusReceiver mMusicStatusReceiver;
@@ -34,9 +32,8 @@ public class MusicBinder extends Binder {
     }
     MusicStatue mMusicStatue = MusicStatue.STOP;
 
-    public MusicBinder(Context context, MediaManager mediaManager, MediaOperator mediaOperator) {
+    public MusicBinder(Context context, MediaManager mediaManager) {
         mContext = context;
-        mMediaOperator = mediaOperator;
         mMediaManager = mediaManager;
         registerMusicStatusReciver();
     }
@@ -64,7 +61,7 @@ public class MusicBinder extends Binder {
      * @param progress
      */
     public void seekto(int progress) {
-        mMediaOperator.seekTo(progress);
+        mMediaManager.seekTo(progress);
     }
 
     public boolean isStart() {

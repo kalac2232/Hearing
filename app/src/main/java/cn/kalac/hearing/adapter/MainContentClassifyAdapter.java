@@ -108,7 +108,7 @@ public class MainContentClassifyAdapter extends RecyclerView.Adapter<MainContent
     private void initRecomPlayList(final RecyclerView recyclerView) {
         HttpHelper.getInstance().get(ApiHelper.getRecomPlayList(), new HttpCallback<NetRecomPLayListBean>() {
             @Override
-            public void onSuccess(NetRecomPLayListBean netRecomPLayListBean) {
+            public void onResultSuccess(NetRecomPLayListBean netRecomPLayListBean) {
 
                 MainClassifyDetailedAdapter adapter = new MainClassifyDetailedAdapter(mContext, netRecomPLayListBean, TYPE_RECOM_PLAYLIST);
                 recyclerView.setAdapter(adapter);
@@ -118,7 +118,7 @@ public class MainContentClassifyAdapter extends RecyclerView.Adapter<MainContent
             }
 
             @Override
-            public void onFailed(String string) {
+            public void onResultFailed(String string) {
                 NetRecomPLayListBean netRecomPLayListBean = DataUtil.loadBeanFormLoacl(ApiHelper.getRecomPlayList(), NetRecomPLayListBean.class);
                 if (netRecomPLayListBean == null) {
                     return;
@@ -137,7 +137,7 @@ public class MainContentClassifyAdapter extends RecyclerView.Adapter<MainContent
     private void initRecomNewMusic(final RecyclerView recyclerView) {
         HttpHelper.getInstance().get(ApiHelper.getRecomNewMusic(), new HttpCallback<NetRecomNewMusic>() {
             @Override
-            public void onSuccess(NetRecomNewMusic netRecomNewMusic) {
+            public void onResultSuccess(NetRecomNewMusic netRecomNewMusic) {
 
                 MainClassifyDetailedAdapter adapter = new MainClassifyDetailedAdapter(mContext, netRecomNewMusic, TYPE_NEW_MUSIC);
                 recyclerView.setAdapter(adapter);
@@ -147,7 +147,7 @@ public class MainContentClassifyAdapter extends RecyclerView.Adapter<MainContent
             }
 
             @Override
-            public void onFailed(String string) {
+            public void onResultFailed(String string) {
                 NetRecomNewMusic netRecomNewMusic = DataUtil.loadBeanFormLoacl(ApiHelper.getRecomPlayList(), NetRecomNewMusic.class);
                 if (netRecomNewMusic == null) {
                     return;

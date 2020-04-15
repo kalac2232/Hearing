@@ -101,22 +101,20 @@ public class DiscoverFragment extends Fragment {
 
     private void initBanner() {
         final String bannerUrl = ApiHelper.getBannerUrl();
-        HttpHelper.getInstance().get(bannerUrl, new HttpCallback<BannerBean>() {
+        HttpHelper.getInstance().get(bannerUrl, new HttpCallback<BannerBean>(getActivity()) {
 
             @Override
-            public void onSuccess(BannerBean bannerBean) {
-                if (bannerBean.getCode() == 200) {
-                    List<BannerBean.BannersBean> banners = bannerBean.getBanners();
+            public void onResultSuccess(BannerBean bannerBean) {
+                List<BannerBean.BannersBean> banners = bannerBean.getBanners();
 
-                    setAdapterData(banners);
+                setAdapterData(banners);
 
-                    String json = getResult();
-                    DataUtil.saveJson(bannerUrl, json);
-                }
+                String json = getResult();
+                DataUtil.saveJson(bannerUrl, json);
             }
 
             @Override
-            public void onFailed(String string) {
+            public void onResultFailed(String string) {
                 Toast.makeText(mContext, "网络错误：" + string, Toast.LENGTH_SHORT).show();
                 Logger.e(string);
                 BannerBean bannerBean = DataUtil.loadBeanFormLoacl(bannerUrl, BannerBean.class);

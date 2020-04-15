@@ -170,7 +170,7 @@ public class PlayMusicService extends Service {
         HttpHelper.getInstance().get(url, new HttpCallback<SongMp3ResultBean>() {
 
             @Override
-            public void onSuccess(SongMp3ResultBean songMp3ResultBean) {
+            public void onResultSuccess(SongMp3ResultBean songMp3ResultBean) {
                 int code = songMp3ResultBean.getCode();
                 if (code == 200) {
                     SongMp3ResultBean.DataBean dataBean = songMp3ResultBean.getData().get(0);
@@ -185,8 +185,8 @@ public class PlayMusicService extends Service {
             }
 
             @Override
-            public void onFailed(String string) {
-                Log.i(TAG, "onFailed: "+string);
+            public void onResultFailed(String string) {
+                Log.i(TAG, "onResultFailed: "+string);
             }
         });
 

@@ -9,16 +9,7 @@ public class BannerBean {
      * code : 200
      */
 
-    private int code;
     private List<BannersBean> banners;
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
 
     public List<BannersBean> getBanners() {
         return banners;

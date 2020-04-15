@@ -6,14 +6,14 @@ package cn.kalac.hearing.net;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import cn.kalac.hearing.HearingApplication;
 import cn.kalac.hearing.net.cookies.PersistentCookieStore;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -65,7 +65,7 @@ public class OkHttpProcessor implements IHttpProcessor {
     }
 
     @Override
-    public void get(String url, final ICallBack callBack) {
+    public void get(String url, final HttpCallback callBack) {
 
         final Request request = new Request.Builder()
                 .get()
@@ -74,13 +74,7 @@ public class OkHttpProcessor implements IHttpProcessor {
         mOkHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, final IOException e) {
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        callBack.onFailed(e.toString());
-                    }
-                });
+                throwErrorMessage(callBack,e.toString());
 
             }
 
@@ -88,22 +82,38 @@ public class OkHttpProcessor implements IHttpProcessor {
             public void onResponse(Call call, final Response response) throws IOException {
 
                 if (response.isSuccessful()) {
-                    final String result = response.body().string();
-                    myHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callBack.onSuccess(result);
+                    final String json = response.body().string();
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        if (jsonObject.has("code")) {
+                            int code = jsonObject.getInt("code");
+                            if (code >= 200 && code < 300) {
+                                myHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callBack.onSuccess(json);
+                                    }
+                                });
+                            } else {
+                                throwErrorMessage(callBack,"request error ,return " + code);
+                            }
+                        } else {
+                            myHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callBack.onSuccess(json);
+                                }
+                            });
                         }
-                    });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
 
                 } else {
-                    myHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            callBack.onFailed(response.message().toString());
-                        }
-                    });
+                    throwErrorMessage(callBack,response.message());
 
                 }
             }
@@ -111,7 +121,7 @@ public class OkHttpProcessor implements IHttpProcessor {
     }
 
     @Override
-    public void post(String url, Map<String, Object> params,final ICallBack callBack) {
+    public void post(String url, Map<String, Object> params,final HttpCallback callBack) {
         RequestBody requestbody = appendBody(params);
 
         final Request request = new Request.Builder()
@@ -121,13 +131,7 @@ public class OkHttpProcessor implements IHttpProcessor {
         mOkHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, final IOException e) {
-                myHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        callBack.onFailed(e.toString());
-
-                    }
-                });
+                throwErrorMessage(callBack,e.toString());
 
             }
 
@@ -145,20 +149,24 @@ public class OkHttpProcessor implements IHttpProcessor {
                         }
                     });
                 } else {
-                    myHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callBack.onFailed(response.message());
 
-                        }
-                    });
+                    throwErrorMessage(callBack,response.message());
 
                 }
             }
         });
-
-
     }
+
+    private void throwErrorMessage(HttpCallback callBack,String msg) {
+        myHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                callBack.onFailed(msg);
+
+            }
+        });
+    }
+
 
     /**
      * 快速构建参数

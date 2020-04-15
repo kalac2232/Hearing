@@ -27,13 +27,13 @@ public class RecomDailyModelImpl extends ModelHelper<RecomDailyPresenter> implem
         HttpHelper.getInstance().get(url, new HttpCallback<NetRecommendSongsBean>() {
 
             @Override
-            public void onSuccess(NetRecommendSongsBean netRecommendSongsBean) {
+            public void onResultSuccess(NetRecommendSongsBean netRecommendSongsBean) {
 
                 mPresenter.requstDataSuccess(url,netRecommendSongsBean);
             }
 
             @Override
-            public void onFailed(String string) {
+            public void onResultFailed(String string) {
                 mPresenter.requstDataFailed(string);
             }
         });

@@ -105,7 +105,7 @@ public abstract class BaseActivity extends FragmentActivity implements BGASwipeB
      * 设置状态栏颜色
      * @param isGray
      */
-    protected void setStatueTextColor(boolean isGray) {
+    protected void setStatueTextColorIsGray(boolean isGray) {
         if (isGray) {
             // 灰色
             //android6.0以后可以对状态栏文字颜色和图标进行修改

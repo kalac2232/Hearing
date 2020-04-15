@@ -4,9 +4,11 @@ package cn.kalac.hearing.net;
  * Created by Kalac on 2019/2/1
  */
 
+import android.app.Activity;
+
 import java.util.Map;
 
-public class HttpHelper implements IHttpProcessor{
+public class HttpHelper {
     /**
      * 被代理的对象
      */
@@ -36,13 +38,17 @@ public class HttpHelper implements IHttpProcessor{
     }
 
 
-    @Override
-    public void get(String url, ICallBack callBack) {
+
+    public void get(String url, HttpCallback callBack) {
         mIHttpProcessor.get(url, callBack);
     }
 
-    @Override
-    public void post(String url, Map<String, Object> params, ICallBack callBack) {
+    private boolean isActivityAlive(Activity activity) {
+        return activity != null && !activity.isFinishing();
+    }
+
+
+    public void post(String url, Map<String, Object> params, HttpCallback callBack) {
         mIHttpProcessor.post(url, params, callBack);
     }
 }

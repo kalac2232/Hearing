@@ -41,12 +41,12 @@ public class MineFragment extends Fragment {
                 HttpHelper.getInstance().get(url, new HttpCallback<LoginResultBean>() {
 
                     @Override
-                    public void onSuccess(LoginResultBean loginResultBean) {
+                    public void onResultSuccess(LoginResultBean loginResultBean) {
                         Toast.makeText(getContext(),"登录成功"+loginResultBean.getProfile().getNickname(),Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onFailed(String string) {
+                    public void onResultFailed(String string) {
                         Toast.makeText(getContext(),"登录失败"+string,Toast.LENGTH_SHORT).show();
                     }
                 });

@@ -10,16 +10,8 @@ public class SearchHotWordBean {
      * result : {"hots":[{"first":"吴青峰新歌","second":1,"third":null,"iconType":1},{"first":"夏目友人帐","second":1,"third":null,"iconType":0},{"first":"触及真心OST","second":1,"third":null,"iconType":0},{"first":"东方风云榜投票","second":1,"third":null,"iconType":0},{"first":"起风了","second":1,"third":null,"iconType":0},{"first":"阿丽塔","second":1,"third":null,"iconType":0},{"first":"A妹新专辑","second":1,"third":null,"iconType":0},{"first":"流浪地球","second":1,"third":null,"iconType":0},{"first":"远东韵律Vava合作新歌","second":1,"third":null,"iconType":0},{"first":"ONE OK ROCK新歌","second":1,"third":null,"iconType":0}]}
      */
 
-    private int code;
     private ResultBean result;
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
 
     public ResultBean getResult() {
         return result;

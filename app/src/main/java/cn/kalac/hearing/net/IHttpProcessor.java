@@ -8,11 +8,10 @@ import java.util.Map;
 
 public interface IHttpProcessor {
 
-    // Get
-    void get(String url, ICallBack callBack);
-    //Post
-    void post(String url, Map<String, Object> params, ICallBack callBack);
-    //Update
-    //Delete
+
+    void get(String url, HttpCallback callBack);
+
+    void post(String url, Map<String, Object> params, HttpCallback callBack);
+
 
 }

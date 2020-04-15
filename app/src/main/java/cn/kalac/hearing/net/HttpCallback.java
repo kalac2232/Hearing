@@ -4,30 +4,76 @@ package cn.kalac.hearing.net;
  * Created by Kalac on 2019/2/1
  */
 
+import android.app.Activity;
+
 import com.google.gson.Gson;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-public abstract class HttpCallback<Result> implements ICallBack {
+public abstract class HttpCallback<Result>{
     private String mResult;
-    @Override
-    public void onSuccess(String result) {
-        Gson gson = new Gson();
-        Class<?> cls = analysisClzzInfo();
-        mResult = result;
-        Result objResult = (Result) gson.fromJson(result, cls);
-        onSuccess(objResult);
+    private Activity activity;
+    private boolean isSetActivity;
+
+    public HttpCallback() {
+        isSetActivity = false;
+    }
+
+
+    public HttpCallback(Activity activity) {
+        this.activity = activity;
+        isSetActivity = true;
+    }
+
+
+    protected void onSuccess(String result) {
+        Class<?> cls = analysisClazzInfo();
+        Result objResult;
+        if (cls.equals(String.class)) {
+            objResult = (Result) result;
+        } else {
+            Gson gson = new Gson();
+            mResult = result;
+            objResult = (Result) gson.fromJson(result, cls);
+        }
+
+
+        if (isSetActivity) {
+            if (isActivityAlive(activity)) {
+                onResultSuccess(objResult);
+            }
+        } else {
+            onResultSuccess(objResult);
+        }
+
+
 
     }
 
-    public abstract void onSuccess(Result result);
+    private boolean isActivityAlive(Activity activity) {
+        return activity != null && !activity.isFinishing();
+    }
+
+    protected void onFailed(String msg) {
+        if (isSetActivity) {
+            if (isActivityAlive(activity)) {
+                onResultFailed(msg);
+            }
+        } else {
+            onResultFailed(msg);
+        }
+
+    }
+
+    public abstract void onResultSuccess(Result result);
+    public abstract void onResultFailed(String errorMsg);
 
     /**
      * 利用反射获得类的信息
      * @return Class<?> 需要实现的Json解析类
      */
-    private Class<?> analysisClzzInfo() {
+    private Class<?> analysisClazzInfo() {
 
         Type genType = getClass().getGenericSuperclass();
 

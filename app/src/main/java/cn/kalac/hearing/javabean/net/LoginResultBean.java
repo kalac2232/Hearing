@@ -9,16 +9,8 @@ import java.util.List;
 public class LoginResultBean {
 
 
-    /**
-     * loginType : 1
-     * code : 200
-     * account : {"id":1450212239,"userName":"1_17684721017","type":1,"status":0,"whitelistAuthority":0,"createTime":1525588808258,"salt":"[B@67c000ac","tokenVersion":0,"ban":0,"baoyueVersion":0,"donateVersion":0,"vipType":0,"viptypeVersion":0,"anonimousUser":false}
-     * profile : {"detailDescription":"","followed":false,"avatarImgIdStr":"109951163250239066","backgroundImgIdStr":"109951162868128395","backgroundUrl":"https://p1.music.126.net/2zSNIqTcpHL2jIvU6hG0EA==/109951162868128395.jpg","userId":1450212239,"accountStatus":0,"vipType":0,"gender":0,"avatarImgId":109951163250239070,"birthday":-2209017600000,"nickname":"哈哈哈哈8比","city":150500,"province":150000,"defaultAvatar":true,"avatarUrl":"https://p1.music.126.net/RLeBJe4D1ZzUtltxfoKDMg==/109951163250239066.jpg","experts":{},"backgroundImgId":109951162868128400,"userType":0,"djStatus":0,"mutual":false,"remarkName":null,"expertTags":null,"authStatus":0,"description":"","signature":"","authority":0,"avatarImgId_str":"109951163250239066","followeds":0,"follows":3,"eventCount":0,"playlistCount":1,"playlistBeSubscribedCount":0}
-     * bindings : [{"refreshTime":1549029762,"url":"","expiresIn":2147483647,"expired":false,"userId":1450212239,"tokenJsonStr":"{\"countrycode\":\"\",\"cellphone\":\"17684721017\",\"hasPassword\":true}","id":6789349318,"type":1}]
-     */
 
     private int loginType;
-    private int code;
     private AccountBean account;
     private ProfileBean profile;
     private List<BindingsBean> bindings;
@@ -29,14 +21,6 @@ public class LoginResultBean {
 
     public void setLoginType(int loginType) {
         this.loginType = loginType;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
     }
 
     public AccountBean getAccount() {
